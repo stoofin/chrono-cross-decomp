@@ -1,5 +1,6 @@
 #include "common.h"
 #include "system/sound.h"
+#include "system/soundCommand.h"
 
 //----------------------------------------------------------------------------------------------------------------------
 s32 InitSound()
@@ -140,10 +141,19 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004AADC);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004AB10);
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004AB4C);
+//----------------------------------------------------------------------------------------------------------------------
+void func_8004AB4C()
+{
+    Sound_ExecuteSoundVm2Function( SOUND_COMMAND_UNK_F0 );
+}
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004AB6C);
+//----------------------------------------------------------------------------------------------------------------------
+void func_8004AB6C()
+{
+    Sound_ExecuteSoundVm2Function( SOUND_COMMAND_UNK_F1 );
+}
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004AB8C);
 
 //----------------------------------------------------------------------------------------------------------------------
