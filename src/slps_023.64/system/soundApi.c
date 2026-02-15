@@ -77,7 +77,38 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A1F8);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A234);
 
+//----------------------------------------------------------------------------------------------------------------------
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A260);
+#else
+s32 func_8004A260()
+{
+    FSoundChannel* pChannel;
+    s32 out_UnkFlags;
+    s32 Mask;
+
+    if( g_Sound_VoiceSchedulerState.ActiveChannelMask == 0)
+    {
+        return 0;
+    }
+
+    pChannel = SfxSoundChannels;
+    out_UnkFlags = 0;
+    Mask = 0x1000;
+
+    do
+    {
+        if( g_Sound_VoiceSchedulerState.ActiveChannelMask & Mask )
+        {
+            out_UnkFlags |= pChannel->unk_Flags;
+        }
+        Mask <<= 1;
+        pChannel++;
+
+    } while( Mask & 0xFFFFFF );
+    return out_UnkFlags & 0xFFFFFF;
+}
+#endif
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A2C8);
 
