@@ -51,8 +51,18 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A00C);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A03C);
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A05C);
+//----------------------------------------------------------------------------------------------------------------------
+// TODO(jperos): This should be easy enough to name if I can remember what saved/pushed configs do
+s32 func_8004A05C()
+{
+    if( !g_pSavedMousicConfig )
+    {
+        g_PushedMusicConfig.MusicId = 0;
+    }
+    return 0;
+}
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A07C);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A0B0);
