@@ -15,7 +15,22 @@ options:
 
   ld_script_path: linker/slps_023.64.ld
   ld_dependencies: True
-
+  ld_sections_allowlist:
+    - .debug_line
+    - .debug_info
+    - .debug_abbrev
+    - .debug_aranges
+    - .debug_str
+    - .debug_ranges
+    - .debug_loc
+    - .debug_frame
+    - .debug_line_str
+    - .debug_rnglists
+    - .debug_loclists
+    - .symtab
+    - .strtab
+    - .shstrtab
+  
   find_file_boundaries: False
   gp_value: 0x80073B70
   global_vram_start: 0x80010000
