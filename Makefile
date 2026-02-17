@@ -14,6 +14,7 @@ SKIP_ASM       ?= 0
 GAME_NAME    := slps_023.64
 ROM_DIR      := disc
 EXTRACT_DIR  := disc/extracted
+CACHE_DIR    "= .cache
 CONFIG_DIR   := config
 LINKER_DIR   := linker
 BUILD_DIR    := build
@@ -213,11 +214,12 @@ clean:
 	$(Q)rm -rf $(PERMUTER_DIR)
 
 reset: clean
-	@echo "[reset] Removing $(ASM_DIR), $(LINKER_DIR), $(EXPECTED_DIR), and $(CTX_DIR)..."
+	@echo "[reset] Removing $(ASM_DIR), $(LINKER_DIR), $(EXPECTED_DIR), $(CTX_DIR), and $(CACHE_DIR)..."
 	$(Q)rm -rf $(ASM_DIR)
 	$(Q)rm -rf $(LINKER_DIR)
 	$(Q)rm -rf $(EXPECTED_DIR)
 	$(Q)rm -rf $(CTX_DIR)
+	$(Q)rm -rf $(CACHE_DIR)
 
 regenerate: reset
 	@echo "[regenerate] Regenerating split output..."
@@ -245,6 +247,9 @@ clean-progress: clean
 	$(Q)rm -rf $(LINKER_DIR)
 	$(Q)$(MAKE) generate
 	$(Q)$(MAKE) progress
+
+build-pcsx-tools:
+	./tools/scripts/build_pcsx_tools.sh
 
 # Recipes
 
@@ -288,5 +293,5 @@ $(CTX_FILE):
 
 ### Settings
 .SECONDARY:
-.PHONY: all clean default clean-check objdiff-config generate-context clean-context
+.PHONY: all clean default clean-check objdiff-config generate-context clean-context build-pcsx-tools
 SHELL = /bin/bash -e -o pipefail

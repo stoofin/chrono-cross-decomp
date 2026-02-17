@@ -1,9 +1,11 @@
+.cache/
 asm/
 assets/
 ctx/
 disc/*
 build/
 linker/
+tools/pcsx-redux-tools/
 .vscode/
 .idea/
 __pycache__/
