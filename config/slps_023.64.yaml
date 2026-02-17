@@ -50,7 +50,7 @@ options:
   symbol_addrs_path: 
     - config/symbol_addrs.slps_023.64.txt
   reloc_addrs_path: 
-    - config/reloc_addrs.txt
+    - config/reloc_addrs.slps_23.64.txt
 
   undefined_funcs_auto_path: linker/undefined_funcs_auto.slps_023.64.txt
   undefined_syms_auto_path: linker/undefined_syms_auto.slps_023.64.txt
