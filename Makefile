@@ -252,6 +252,9 @@ clean-progress: clean
 build-pcsx-tools:
 	./tools/scripts/build_pcsx_tools.sh
 
+extract-psyq-objs:
+	./tools/scripts/extract_psyq_objs.sh
+
 # Recipes
 
 # .elf targets
@@ -294,5 +297,5 @@ $(CTX_FILE):
 
 ### Settings
 .SECONDARY:
-.PHONY: all clean default clean-check objdiff-config generate-context clean-context build-pcsx-tools
+.PHONY: all clean default clean-check objdiff-config generate-context clean-context build-pcsx-tools extract-psyq-objs
 SHELL = /bin/bash -e -o pipefail
