@@ -57,7 +57,7 @@ jobs:
 
       - name: Reassemble ROM
         run: |
-          mkdir -p disc
+          mkdir -p assets/disc
           cat tmp/x* > assets/disc/cdrom.dat
           rm -rf tmp
           echo "ROM size: $(stat -c%s assets/disc/cdrom.dat) bytes"
