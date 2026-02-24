@@ -6,4 +6,4 @@
 	url = git@github.com:matt-kempster/m2c.git
 [submodule "tools/psxlib-objdumper"]
 	path = tools/psxlib-objdumper
-	url = git@gist.github.com:7b3160f57c8855786d9cb0e9a40bf5c0.git
+	url = https://gist.github.com/7b3160f57c8855786d9cb0e9a40bf5c0.git
