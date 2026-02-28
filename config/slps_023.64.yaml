@@ -11,6 +11,7 @@ options:
   asm_path: asm/slps_023.64
   src_path: src/slps_023.64
   build_path: build
+  lib_path: assets/psyq/450/lib
   # create_asm_dependencies: True
 
   ld_script_path: linker/slps_023.64.ld
@@ -80,61 +81,372 @@ segments:
     align: 4
     section_order: [".text", ".rodata", ".sdata", ".data", ".sbss", ".bss"]
     subsegments:
-      - [0x00800, asm]
-      - [0x008C4, asm, psyq/libc]
-      - [0x01574, asm, psyq/libgpu]
-      - [0x05364, asm, psyq/libpad]
-      - [0x08E94, asm, psyq/libmath]
-      - [0x09534, asm, psyq/libcard]
+
+      # === .text ===
+      - [0x00800, asm] # 2MBYTE.OBJ
+      - [0x008C4, asm, psyq/450/obj/libc2/abs, .text]
+      - [0x008F4, asm, psyq/450/obj/libc2/atoi, .text]
+      - [0x00A44, asm, psyq/450/obj/libc2/bcopy, .text]
+      - [0x00A84, asm, psyq/450/obj/libc2/bzero, .text]
+      - [0x00AB4, asm, psyq/450/obj/libc2/ctype, .text]
+      - [0x00B24, asm, psyq/450/obj/libc2/exit, .text]
+      - [0x00B34, asm, psyq/450/obj/libc2/itoa, .text]
+      - [0x00B74, asm, psyq/450/obj/libc2/lsearch, .text]
+      - [0x00BD4, asm, psyq/450/obj/libc2/memcpy, .text]
+      - [0x00C14, asm, psyq/450/obj/libc2/memmove, .text]
+      - [0x00C84, asm, psyq/450/obj/libc2/memset, .text]
+      - [0x00CB4, asm, psyq/450/obj/libc2/putchar, .text]
+      - [0x00F14, asm, psyq/450/obj/libc2/puts, .text]
+      - [0x00F74, asm, psyq/450/obj/libc2/rand, .text]
+      - [0x00FB4, asm, psyq/450/obj/libc2/setjmp, .text]
+      - [0x01034, asm, psyq/450/obj/libc2/strcat, .text]
+      - [0x010E4, asm, psyq/450/obj/libc2/strchr, .text]
+      - [0x01124, asm, psyq/450/obj/libc2/strcmp, .text]
+      - [0x01194, asm, psyq/450/obj/libc2/strcpy, .text]
+      - [0x011E4, asm, psyq/450/obj/libc2/strlen, .text]
+      - [0x01224, asm, psyq/450/obj/libc2/strstr, .text]
+      - [0x01294, asm, psyq/450/obj/libc2/strtok, .text]
+      - [0x013B4, asm, psyq/450/obj/libc2/strtoul, .text]
+      - [0x01504, asm, psyq/450/obj/libc2/todigit, .text]
+
+      - [0x01794, asm, psyq/450/obj/libgpu/e00, .text]
+      - [0x01884, asm, psyq/450/obj/libgpu/e01, .text]
+      - [0x018F4, asm, psyq/450/obj/libgpu/e02, .text]
+      - [0x01964, asm, psyq/450/obj/libgpu/e03, .text]
+      - [0x01A24, asm, psyq/450/obj/libgpu/e04, .text]
+      - [0x01A64, asm, psyq/450/obj/libgpu/p00, .text]
+      - [0x01AA4, asm, psyq/450/obj/libgpu/p01, .text]
+      - [0x01AC4, asm, psyq/450/obj/libgpu/p02, .text]
+      - [0x01B24, asm, psyq/450/obj/libgpu/p03, .text]
+      - [0x01B64, asm, psyq/450/obj/libgpu/p04, .text]
+      - [0x01B84, asm, psyq/450/obj/libgpu/p05, .text]
+      - [0x01BA4, asm, psyq/450/obj/libgpu/p06, .text]
+      - [0x01BE4, asm, psyq/450/obj/libgpu/p07, .text]
+      - [0x01C24, asm, psyq/450/obj/libgpu/p08, .text]
+      - [0x01C54, asm, psyq/450/obj/libgpu/p09, .text]
+      - [0x01C74, asm, psyq/450/obj/libgpu/p10, .text]
+      - [0x01CA4, asm, psyq/450/obj/libgpu/p11, .text]
+      - [0x01CD4, asm, psyq/450/obj/libgpu/p12, .text]
+      - [0x01CF4, asm, psyq/450/obj/libgpu/p13, .text]
+      - [0x01D14, asm, psyq/450/obj/libgpu/p14, .text]
+      - [0x01D34, asm, psyq/450/obj/libgpu/p15, .text]
+      - [0x01D54, asm, psyq/450/obj/libgpu/p16, .text]
+      - [0x01D74, asm, psyq/450/obj/libgpu/p17, .text]
+      - [0x01D94, asm, psyq/450/obj/libgpu/p18, .text]
+      - [0x01DB4, asm, psyq/450/obj/libgpu/p19, .text]
+      - [0x01DD4, asm, psyq/450/obj/libgpu/p20, .text]
+      - [0x01DF4, asm, psyq/450/obj/libgpu/p21, .text]
+      - [0x01E14, asm, psyq/450/obj/libgpu/p22, .text]
+      - [0x01E34, asm, psyq/450/obj/libgpu/p23, .text]
+      - [0x01E54, asm, psyq/450/obj/libgpu/p24, .text]
+      - [0x01E74, asm, psyq/450/obj/libgpu/p25, .text]
+      - [0x01E94, asm, psyq/450/obj/libgpu/p26, .text]
+      - [0x01EB4, asm, psyq/450/obj/libgpu/p27, .text]
+      - [0x01ED4, asm, psyq/450/obj/libgpu/p28, .text]
+      - [0x01EF4, asm, psyq/450/obj/libgpu/p29, .text]
+      - [0x01F14, asm, psyq/450/obj/libgpu/p30, .text]
+      - [0x01F44, asm, psyq/450/obj/libgpu/p31, .text]
+      - [0x01F64, asm, psyq/450/obj/libgpu/p32, .text]
+      - [0x01F94, asm, psyq/450/obj/libgpu/p33, .text]
+      - [0x01FC4, asm, psyq/450/obj/libgpu/p34, .text]
+      - [0x02024, asm, psyq/450/obj/libgpu/p35, .text]
+      - [0x02094, asm, psyq/450/obj/libgpu/p36, .text]
+      - [0x020D4, asm, psyq/450/obj/libgpu/p38, .text]
+      - [0x02144, asm, psyq/450/obj/libgpu/p39, .text]
+      - [0x02174, asm, psyq/450/obj/libgpu/p40, .text]
+      - [0x021A4, asm, psyq/450/obj/libgpu/p41, .text]
+      - [0x02244, asm, psyq/450/obj/libgpu/param, .text]
+      - [0x02434, asm, psyq/450/obj/libgpu/sys, .text]
+
+      - [0x05364, asm, psyq/450/obj/libpad/padcmd, .text]
+      - [0x05F64, asm, psyq/450/obj/libpad/padentry, .text]
+      - [0x06424, asm, psyq/450/obj/libpad/padif, .text]
+      - [0x06A54, asm, psyq/450/obj/libpad/padmain, .text]
+      - [0x07824, asm, psyq/450/obj/libpad/padportd, .text]
+      - [0x07E84, asm, psyq/450/obj/libpad/padseqd, .text]
+      - [0x08344, asm, psyq/450/obj/libpad/padseqm, .text]
+      - [0x08DD4, asm, psyq/450/obj/libpad/waitrc2, .text]
+
+      - [0x08E94, asm, psyq/450/obj/libmath/sqrt, .text]
+      - [0x08FD4, asm, psyq/450/obj/libmath/gedf2, .text]
+      - [0x090B4, asm, psyq/450/obj/libmath/adddf3, .text]
+      - [0x09434, asm, psyq/450/obj/libmath/fixdfsi, .text]
+
+      - [0x09534, asm, psyq/460/obj/libcard/c112, .text]
+      - [0x09544, asm, psyq/460/obj/libcard/c171, .text]
+      - [0x09554, asm, psyq/460/obj/libcard/c172, .text]
+      - [0x09564, asm, psyq/460/obj/libcard/c173, .text]
+      - [0x09574, asm, psyq/460/obj/libcard/a74, .text]
+      - [0x09584, asm, psyq/460/obj/libcard/a75, .text]
+      - [0x09594, asm, psyq/460/obj/libcard/a76, .text]
+      - [0x095A4, asm, psyq/460/obj/libcard/a78, .text]
+      - [0x095B4, asm, psyq/460/obj/libcard/a79, .text]
+      - [0x095C4, asm, psyq/460/obj/libcard/a80, .text]
+      - [0x095D4, asm, psyq/460/obj/libcard/a92, .text]
+      - [0x095E4, asm, psyq/460/obj/libcard/a93, .text]
+      - [0x095F4, asm, psyq/460/obj/libcard/card, .text]
+      - [0x09634, asm, psyq/460/obj/libcard/patch, .text]
+      - [0x09854, asm, psyq/460/obj/libcard/init, .text]
+      - [0x09954, asm, psyq/460/obj/libcard/end, .text]
+
       - [0x099D4, asm]
       - [0x0CC50, asm]
-      - [0x13040, asm, psyq/libapi]
-      - [0x138A0, asm, psyq/libcd]
-      - [0x157B0, asm, psyq/libgte]
-      - [0x18050, asm, psyq/libetc]
-      - [0x18D60, asm, psyq/libsn]
-      - [0x18F20, asm, psyq/libspu]
+
+      - [0x13040, asm, psyq/450/obj/libapi/c57, .text]
+      - [0x13050, asm, psyq/450/obj/libapi/c68, .text]
+      - [0x13060, asm, psyq/450/obj/libapi/c73, .text]
+      - [0x13070, asm, psyq/450/obj/libapi/a07, .text]
+      - [0x13080, asm, psyq/450/obj/libapi/a08, .text]
+      - [0x13090, asm, psyq/450/obj/libapi/a09, .text]
+      - [0x130A0, asm, psyq/450/obj/libapi/a11, .text]
+      - [0x130B0, asm, psyq/450/obj/libapi/a12, .text]
+      - [0x130C0, asm, psyq/450/obj/libapi/a32, .text]
+      - [0x130D0, asm, psyq/450/obj/libapi/a36, .text]
+      - [0x130E0, asm, psyq/450/obj/libapi/a37, .text]
+      - [0x130F0, asm, psyq/450/obj/libapi/a50, .text]
+      - [0x13100, asm, psyq/450/obj/libapi/a51, .text]
+      - [0x13110, asm, psyq/450/obj/libapi/a52, .text]
+      - [0x13120, asm, psyq/450/obj/libapi/a53, .text]
+      - [0x13130, asm, psyq/450/obj/libapi/a54, .text]
+      - [0x13140, asm, psyq/450/obj/libapi/a67, .text]
+      - [0x13150, asm, psyq/450/obj/libapi/a81, .text]
+      - [0x13160, asm, psyq/450/obj/libapi/a91, .text]
+      - [0x13170, asm, psyq/450/obj/libapi/l02, .text]
+      - [0x13180, asm, psyq/450/obj/libapi/l03, .text]
+      - [0x13190, asm, psyq/450/obj/libapi/l10, .text]
+      - [0x131A0, asm, psyq/450/obj/libapi/first, .text]
+      - [0x13440, asm, psyq/450/obj/libapi/a66, .text]
+      - [0x13450, asm, psyq/450/obj/libapi/pad, .text]
+      - [0x13750, asm, psyq/450/obj/libapi/a18, .text]
+      - [0x13760, asm, psyq/450/obj/libapi/a19, .text]
+      - [0x13770, asm, psyq/450/obj/libapi/a20, .text]
+      - [0x13780, asm, psyq/450/obj/libapi/a21, .text]
+      - [0x13790, asm, psyq/450/obj/libapi/patch, .text]
+      - [0x13830, asm, psyq/450/obj/libapi/chclrpad, .text]
+
+      - [0x138A0, asm, psyq/450/obj/libcd/sys, .text]
+      - [0x13EB0, asm, psyq/450/obj/libcd/bios, .text]
+      - [0x15620, asm, psyq/450/obj/libcd/s_002, .text]
+
+      - [0x157B0, asm, psyq/450/obj/libgte/geo_00, .text]
+      - [0x15880, asm, psyq/450/obj/libgte/geo_01, .text]
+      - [0x15920, asm, psyq/450/obj/libgte/geo_03, .text]
+      - [0x15C80, asm, psyq/450/obj/libgte/fog_01, .text]
+      - [0x15CF0, asm, psyq/450/obj/libgte/fog_02, .text]
+      - [0x15E00, asm, psyq/450/obj/libgte/msc00, .text]
+      - [0x15E90, asm, psyq/450/obj/libgte/msc01, .text]
+      - [0x15F20, asm, psyq/450/obj/libgte/msc02, .text]
+      - [0x161D0, asm, psyq/450/obj/libgte/msc06, .text]
+      - [0x16460, asm, psyq/450/obj/libgte/mtx_000, .text]
+      - [0x16570, asm, psyq/450/obj/libgte/mtx_003, .text]
+      - [0x166D0, asm, psyq/450/obj/libgte/mtx_005, .text]
+      - [0x16700, asm, psyq/450/obj/libgte/mtx_006, .text]
+      - [0x16850, asm, psyq/450/obj/libgte/mtx_009, .text]
+      - [0x168A0, asm, psyq/450/obj/libgte/mtx_00b, .text]
+      - [0x169B0, asm, psyq/450/obj/libgte/mtx_03, .text]
+      - [0x16AC0, asm, psyq/450/obj/libgte/mtx_05, .text]
+      - [0x16B10, asm, psyq/450/obj/libgte/mtx_06, .text]
+      - [0x16B70, asm, psyq/450/obj/libgte/mtx_07, .text]
+      - [0x16BA0, asm, psyq/450/obj/libgte/mtx_08, .text]
+      - [0x16CE0, asm, psyq/450/obj/libgte/mtx_09, .text]
+      - [0x16D10, asm, psyq/450/obj/libgte/mtx_10, .text]
+      - [0x16D40, asm, psyq/450/obj/libgte/mtx_11, .text]
+      - [0x16D70, asm, psyq/450/obj/libgte/mtx_12, .text]
+      - [0x16D90, asm, psyq/450/obj/libgte/reg03, .text]
+      - [0x16EA0, asm, psyq/450/obj/libgte/reg09, .text]
+      - [0x16EB0, asm, psyq/450/obj/libgte/reg10, .text]
+      - [0x16ED0, asm, psyq/450/obj/libgte/reg11, .text]
+      - [0x16EF0, asm, psyq/450/obj/libgte/reg12, .text]
+      - [0x16F10, asm, psyq/450/obj/libgte/reg13, .text]
+      - [0x16F20, asm, psyq/450/obj/libgte/smp, .text]
+      - [0x17100, asm, psyq/450/obj/libgte/smp_00, .text]
+      - [0x17310, asm, psyq/450/obj/libgte/smp_02, .text]
+      - [0x17340, asm, psyq/450/obj/libgte/smp_03, .text]
+      - [0x173A0, asm, psyq/450/obj/libgte/smp_04, .text]
+      - [0x173D0, asm]  # gap: 0x30 | Probably libgte/smp_05 for NormalClip()
+      - [0x17400, asm, psyq/450/obj/libgte/cmb_00, .text]
+      - [0x17480, asm, psyq/450/obj/libgte/cmb_11, .text]
+      - [0x174C0, asm, psyq/450/obj/libgte/fgo_01, .text]
+      - [0x17750, asm, psyq/450/obj/libgte/fgo_09, .text]
+      - [0x179E0, asm, psyq/450/obj/libgte/rmat_00, .text]
+      - [0x17BE0, asm, psyq/450/obj/libgte/rmat_01, .text]
+      - [0x17DF0, asm, psyq/450/obj/libgte/ratan, .text]
+      - [0x17F70, asm, psyq/450/obj/libgte/patchgte, .text]
+
+      - [0x18050, asm, psyq/450/obj/libetc/vsync, .text]
+      - [0x18260, asm, psyq/450/obj/libetc/intr, .text]
+
+      - [0x18920, asm, psyq/450/obj/libapi/c114, .text]
+      - [0x18940, asm, psyq/450/obj/libapi/a23, .text]
+      - [0x18950, asm, psyq/450/obj/libapi/a24, .text]
+      - [0x18960, asm, psyq/450/obj/libapi/a25, .text]
+      - [0x18970, asm, psyq/450/obj/libetc/intr_vb, .text]
+
+      - [0x18A90, asm, psyq/450/obj/libetc/intr_dma, .text]
+      - [0x18D30, asm, psyq/450/obj/libetc/vmode, .text]
+
+      - [0x18D60, asm, psyq/450/obj/libsn/open, .text]
+      - [0x18D80, asm, psyq/450/obj/libsn/close, .text]
+      - [0x18D90, asm, psyq/450/obj/libsn/lseek, .text]
+      - [0x18DB4, asm, psyq/450/obj/libsn/fsinit, .text]
+      - [0x18DC0, asm, psyq/450/obj/libsn/read, .text]
+      - [0x18E80, asm, psyq/450/obj/libsn/snread, .text]
+      - [0x18E98, asm, psyq/450/obj/libsn/_fixusdf, .text]
+
+      - [0x18F20, asm, psyq/450/obj/libspu/s_i, .text]
+      - [0x18F40, asm, psyq/450/obj/libspu/s_ini, .text]
+      - [0x190A0, asm, psyq/450/obj/libspu/spu, .text]
+      - [0x19BE0, asm, psyq/450/obj/libspu/s_dcb, .text]
+      - [0x19C10, asm, psyq/450/obj/libspu/s_sr, .text]
+      - [0x19CE0, asm, psyq/450/obj/libspu/s_m_util, .text]
+
       - [0x19DF0, asm]
-      - [0x19DF0, asm]
-      - [0x1A508, asm]
-      - [0x1BD2C, asm]
-      - [0x2225C, asm]
-      - [0x2A200, asm]
+
+      - [0x1B5A4, asm, psyq/450/obj/libsn/creat, .text]
+      - [0x1B5C4, asm, psyq/450/obj/libsn/write, .text]
+      - [0x1B684, asm, psyq/450/obj/libsn/snwrite, .text]
+      - [0x1B69C, asm, psyq/450/obj/libgte/mtx_00a, .text]
+
+      - [0x1B7DC, asm]  # gap: 0x4820
+
+      - [0x1FFFC, asm, psyq/450/obj/libgte/fgo_03, .text]
+      - [0x2028C, asm, psyq/450/obj/libgte/fgo_04, .text]
+      - [0x2042C, asm, psyq/450/obj/libgte/fgo_05, .text]
+
+      - [0x205CC, asm]  # gap: 0x4EFC
+
+      - [0x254C8, asm, psyq/450/obj/libspu/s_gr, .text]
+      - [0x254E8, asm, psyq/450/obj/libgte/reg08, .text]
+
+      - [0x25508, asm]  # gap: 0x1EEC
+
+      - [0x273F4, asm, psyq/450/obj/libspu/s_q, .text]
+      - [0x27474, asm, psyq/450/obj/libapi/a13, .text]
+
+      - [0x27484, asm]  # gap: 0xB4E4
+
+      - [0x32968, asm, psyq/450/obj/libgte/mtx_004, .text]
+
+      - [0x32AC8, asm]  # gap: 0x78B4
+
+      - [0x3A37C, asm, psyq/450/obj/libcd/event, .text]
+      - [0x3A4CC, asm, psyq/450/obj/libgte/mtx_04, .text]
+      - [0x3A5DC, asm, psyq/450/obj/libgte/fgo_00, .text]
+      - [0x3A61C, asm, psyq/450/obj/libgte/smp_01, .text]
+
       - [0x3A71C, c, system/soundApi]
-      - [0x3B8B4, asm, psyq/libspu/SpuSetTransferStartAddr]
+
+      - [0x3B8B4, asm, psyq/450/obj/libspu/s_stsa, .text]
+
       - [0x3B914, c, system/spu]
-      - [0x3BFF4, asm, psyq/libapi_2]
-      - [0x3C164, asm, psyq/libspu2]
+
+      - [0x3BFF4, asm, psyq/450/obj/libapi/counter, .text]
+      - [0x3C164, asm, psyq/450/obj/libspu/s_m_init, .text]
+      - [0x3C1C4, asm, psyq/450/obj/libspu/s_si, .text]
+      - [0x3C304, asm, psyq/450/obj/libspu/s_sic, .text]
+      - [0x3C344, asm, psyq/450/obj/libspu/s_cb, .text]
+      - [0x3C374, asm, psyq/450/obj/libspu/s_r, .text]
+      - [0x3C3D4, asm, psyq/450/obj/libspu/s_w, .text]
+      - [0x3C434, asm, psyq/450/obj/libspu/s_stm, .text]
+      - [0x3C464, asm, psyq/450/obj/libspu/s_stc, .text]
+
       - [0x3C494, c, system/sound]
-      - [0x3E4B0, asm, psyq/libspu3]
+
+      - [0x3E4B0, asm, psyq/450/obj/libspu/s_snc, .text]
+      - [0x3E500, asm, psyq/450/obj/libspu/s_gvex, .text]
+      - [0x3E520, asm, psyq/450/obj/libspu/s_srmd, .text]
+
       - [0x3E550, c, system/sound2]
       - [0x3F78C, c, system/soundCommand]
-      - [0x41E04, asm, psyq/libspu_4]
-      - [0x42644, asm, psyq/libapi_3]
-      - [0x42654, asm, psyq/libspu_5]
+
+      - [0x41E04, asm, psyq/450/obj/libspu/s_srmt, .text]
+      - [0x41FD4, asm, psyq/450/obj/libspu/s_sra, .text]
+      - [0x424A4, asm, psyq/450/obj/libspu/s_crwa, .text]
+      - [0x42644, asm, psyq/450/obj/libapi/a10, .text]
+      - [0x42654, asm, psyq/450/obj/libspu/s_grmt, .text]
+
       - [0x42664, c, system/sound3]
       - [0x44668, c, system/soundVM]
       - [0x46210, c, system/sound4]
-      - [0x46B7C, asm, psyq/libspu/SpuSetIRQAddr]
-      - [0x46BBC, asm]
-      - [0x46C6C, rodata, psyq/libc]     # 0x8005646C
-      - [0x46C8C, rodata, psyq/libgpu]   # 0x8005648C
-      - [0x46EDC, rodata, psyq/libpad]   # 0x800566DC
-      - [0x46EFC, rodata, psyq/libmath]  # 0x800566FC
-      - [0x508E0, rodata, 99D4]          # 0x800600E0
+
+      - [0x46B7C, asm, psyq/450/obj/libspu/s_sia, .text]
+      - [0x46BBC, asm, psyq/450/obj/libgte/cmb_07, .text] # size: 0xB0
+
+      # === .rdata ===
+      - [0x46C6C, rodata, psyq/450/obj/libc2/itoa, .rdata]  # size: 0x10
+      - [0x46C7C, rodata, psyq/450/obj/libc2/puts, .rdata]  # size: 0x10
+      - [0x46C8C, rodata, psyq/450/obj/libgpu/p02, .rdata]  # size: 0x20
+      - [0x46CAC, rodata, psyq/450/obj/libgpu/p03, .rdata]  # size: 0x10
+      - [0x46CBC, rodata, psyq/450/obj/libgpu/sys, .rdata]  # size: 0x220
+      - [0x46EDC, rodata, psyq/450/obj/libpad/padentry, .rdata]  # size: 0x20
+      - [0x46EFC, rodata, psyq/450/obj/libmath/sqrt, .rdata]  # size: 0x10
+
+      - [0x46F0C, rodata, 99D4]          # 0x800600E0
       - [0x5983C, rodata, 19DF0]         # 0x8006903C
       - [0x599D0, rodata, CC50]
-      - [0x59BE8, rodata, psyq/libcd]    # 0x800693E8
-      - [0x59CE0, rodata, psyq/libetc]   # 0x800694E0
-      - [0x59DA0, rodata, psyq/libspu]   # 0x800695A0
+
+      - [0x59A70, rodata, psyq/450/obj/libcd/sys, .rdata]  # size: 0x10
+      - [0x59A80, rodata, psyq/450/obj/libcd/bios, .rdata]  # size: 0x260
+      - [0x59CE0, rodata, psyq/450/obj/libetc/vsync, .rdata]  # size: 0x10
+      - [0x59CF0, rodata, psyq/450/obj/libetc/intr, .rdata]  # size: 0x70
+      - [0x59D60, rodata, psyq/450/obj/libetc/intr_dma, .rdata]  # size: 0x30
+      - [0x59D90, rodata, psyq/450/obj/libspu/spu, .rdata]  # size: 0x50
+
       - [0x59F04, rodata, 1A508]
       - [0x5A0A8, rodata, 1BD2C]
-      - [0x5A2EC, rodata, psyq/libgte]   # 0x80069AEC
-      - [0x5A914, rodata, 2225C]
+      - [0x5A2EC, rodata, psyq/450/obj/libgte/geo_01, .rdata]
+      - [0x5A394, rodata, 2225C]
+      # - [0x5A914, rodata, 2225C]
       - [0x5ABB8, rodata, 2A200]
-      - [0x5B0C4, rodata, psyq/libspu2]  # 0x8006A8C4
+
+      - [0x5B0A4, rodata, psyq/450/obj/libcd/event, .rdata]  # size: 0x20
+      - [0x5B0C4, rodata, psyq/450/obj/libspu/s_si, .rdata]  # size: 0x30
       - [0x5B0F4, rodata, system/sound3] # 0x8006A8F4
-      - [0x5B290, data]   # 0x8006AA90
+
+      # === .data ===
+      # - [0x5B1F4, o, ../assets/psyq/450/obj/libc/ctype0, .data] # 0x8006A8F4
+      - [0x5B1F4, data, psyq/450/obj/libc, ctype0, .data]  # size: 0x90 | duplicate with libc2
+      # - [0x5b1f4, data, psyq/450/obj/libc2, ctype, .data]  # size: 0x90
+      - [0x5B284, data, psyq/450/obj/libc2/putchar, .data]  # size: 0x10
+      - [0x5B294, data, psyq/450/obj/libc2/puts, .data]  # size: 0x10
+      - [0x5B2A4, data, psyq/450/obj/libc2/strtok, .data]  # size: 0x10
+      - [0x5B2B4, data, psyq/450/obj/libgpu/break, .data]  # size: 0x20
+      - [0x5B2D4, data, psyq/450/obj/libgpu/param, .data]  # size: 0x10
+      - [0x5B2E4, data, psyq/450/obj/libgpu/sys, .data]  # size: 0x1a0
+      - [0x5B484, data, psyq/450/obj/libpad/padif, .data]  # size: 0x30
+      - [0x5B4B4, data, psyq/450/obj/libpad/padmain, .data]  # size: 0x80
+      - [0x5B534, data, psyq/450/obj/libpad/padportd, .data]  # size: 0x10
+      - [0x5B544, data, psyq/460/obj/libcard/init, .data]  # size: 0x10
+      - [0x5B554, data]  # gap: 0x1e8
+      - [0x5B73C, data, psyq/450/obj/libapi/pad, .data]  # size: 0x10
+      - [0x5B74C, data, psyq/450/obj/libcd/sys, .data]  # size: 0x80
+      - [0x5B7CC, data, psyq/450/obj/libcd/bios, .data]  # size: 0x320
+      - [0x5BAEC, data, psyq/450/obj/libgte/sincos, .data]  # size: 0x810
+      - [0x5C2FC, data, psyq/450/obj/libgte/msc00, .data]  # size: 0x10
+      - [0x5C30C, data, psyq/450/obj/libgte/sqrtbl, .data]  # size: 0x180
+      - [0x5C48C, data, psyq/450/obj/libgte/msc02, .data]  # size: 0x1a0
+      - [0x5C62C, data, psyq/450/obj/libgte/mtx_006, .data]  # size: 0x310
+      - [0x5C93C, data, psyq/450/obj/libgte/cstbl, .data]  # size: 0x4000
+      - [0x6093C, data, psyq/450/obj/libgte/ratan, .data]  # size: 0x810
+      - [0x6114C, data, psyq/450/obj/libetc/vsync, .data]  # size: 0x20
+      - [0x6116C, data, psyq/450/obj/libetc/intr, .data]  # size: 0x1100
+      - [0x6226C, data, psyq/450/obj/libetc/intr_vb, .data]  # size: 0x30
+      - [0x6229C, data, psyq/450/obj/libetc/intr_dma, .data]  # size: 0x30
+      - [0x622CC, data, psyq/450/obj/libetc/vmode, .data]  # size: 0x10
+      - [0x622DC, data, psyq/450/obj/libsn/sndef, .data]  # size: 0x8
+      - [0x622E4, data, psyq/450/obj/libspu/s_ini, .data]  # size: 0x80
+      - [0x62364, data, psyq/450/obj/libspu/spu, .data]  # size: 0x60
+      - [0x623C4, data, psyq/450/obj/libspu/s_m, .data]  # size: 0x10
+      - [0x623C4, data, psyq/450/obj/libcd/event, .data]  # size: 0x10
+      - [0x623D4, data, psyq/450/obj/libspu/s_rmp0, .data]  # size: 0x30
+      - [0x62404, data]  # gap: 0x129c
+      - [0x636A0, data, psyq/450/obj/libapi/counter, .data]  # size: 0x20
+      - [0x636C0, data]  # gap: 0x400
+      - [0x63AC0, data, psyq/450/obj/libspu/zerobuf, .data]  # size: 0x400
+      - [0x63EC0, data, psyq/450/obj/libspu/s_rmp2, .data]  # size: 0x2b0
+      # - [auto, data, psyq/450/obj/libpad/padportm, .data]  # size: 0x10 | can't find in slps_023.64
+      # - [auto, data, psyq/450/obj/libc2/sprintf, .data]  # size: 0x10 | may be compiled out
+      # - [auto, data, psyq/450/obj/libmath/ferr, .data]  # size: 0x10 | Can't find in slps_023.64
       # - [0x64380, bss]    # 0x80073B80
       # - [0x85898]         # 0x80095098
 
