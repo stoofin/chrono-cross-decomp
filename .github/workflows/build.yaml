@@ -64,6 +64,7 @@ jobs:
 
       - name: Download psyq objects
         run: |
+          mkdir -p lib/
           curl -L \
             -H "Authorization: Bearer ${{ secrets.DECOMP_DEPENDENCIES_TOKEN }}" \
             -H "Accept: application/octet-stream" \
