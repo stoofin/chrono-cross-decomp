@@ -62,16 +62,12 @@ jobs:
           rm -rf tmp
           echo "ROM size: $(stat -c%s assets/disc/cdrom.dat) bytes"
 
-      - name: Get release info
-        run: |
-          curl -H "Authorization: Bearer ${{ secrets.DECOMP_DEPENDENCIES_TOKEN }}" \
-            https://api.github.com/repos/jdperos/chrono-cross-decomp-dependencies/releases/tags/psyq_objs
-
       - name: Download psyq objects
         run: |
           curl -L \
             -H "Authorization: Bearer ${{ secrets.DECOMP_DEPENDENCIES_TOKEN }}" \
-            https://github.com/jdperos/chrono-cross-decomp-dependencies/releases/download/psyq_objs/psyq_obj.tar.gz \
+            -H "Accept: application/octet-stream" \
+            https://api.github.com/repos/jdperos/chrono-cross-decomp-dependencies/releases/assets/364315325 \
             | tar xz -C ./lib/
 
       - name: Extract and prepare
