@@ -84,11 +84,11 @@ segments:
 
       # === .text ===
       - [0x00800, asm] # 2MBYTE.OBJ
-      - [0x008C4, asm, psyq/450/obj/libc2/abs, .text]
-      - [0x008F4, asm, psyq/450/obj/libc2/atoi, .text]
-      - [0x00A44, asm, psyq/450/obj/libc2/bcopy, .text]
-      - [0x00A84, asm, psyq/450/obj/libc2/bzero, .text]
-      - [0x00AB4, asm, psyq/450/obj/libc2/ctype, .text]
+      - [0x008C4, o, ../lib/450/libc2/abs, .text]
+      - [0x008F4, o, ../lib/450/libc2/atoi, .text]
+      - [0x00A44, o, ../lib/450/libc2/bcopy, .text]
+      - [0x00A84, o, ../lib/450/libc2/bzero, .text]
+      - [0x00AB4, o, ../lib/450/libc2/ctype, .text]
       - [0x00B24, asm, psyq/450/obj/libc2/exit, .text]
       - [0x00B34, asm, psyq/450/obj/libc2/itoa, .text]
       - [0x00B74, asm, psyq/450/obj/libc2/lsearch, .text]
@@ -405,8 +405,8 @@ segments:
 
       # === .data ===
       # - [0x5B1F4, o, ../assets/psyq/450/obj/libc/ctype0, .data] # 0x8006A8F4
-      - [0x5B1F4, data, psyq/450/obj/libc/ctype0, .data]  # size: 0x90 | duplicate with libc2
-      # - [0x5b1f4, data, psyq/450/obj/libc2/ctype, .data]  # size: 0x90
+      # - [0x5B1F4, data, psyq/450/obj/libc/ctype0, .data]  # size: 0x90 | duplicate with libc2
+      - [0x5B1F4, o, ../lib/450/libc2/ctype, .data]  # size: 0x90
       - [0x5B284, data, psyq/450/obj/libc2/putchar, .data]  # size: 0x10
       - [0x5B294, data, psyq/450/obj/libc2/puts, .data]  # size: 0x10
       - [0x5B2A4, data, psyq/450/obj/libc2/strtok, .data]  # size: 0x10
