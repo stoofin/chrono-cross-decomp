@@ -58,7 +58,34 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80051F7C);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052458);
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_800526FC);
+void func_800526FC(FSoundChannelConfig* arg0, FSoundChannel* arg1) {
+    s32 temp_s0;
+    s32 ticks;
+    u32 temp_v0_2;
+
+    ticks = g_Sound_MasterFadeTimer.TicksRemaining;
+    if (ticks == 0) {
+        return;
+    }
+    ticks = ticks - 1;
+    g_Sound_MasterFadeTimer.TicksRemaining = ticks;
+
+    if (ticks == 0) {
+        temp_v0_2 = arg0->ActiveChannelMask;
+        arg0->MusicId = 0;
+        arg0->ActiveChannelMask = 0;
+        arg0->PendingKeyOnMask = 0;
+        arg0->ActiveNoteMask = 0;
+        arg0->PendingKeyOffMask = temp_v0_2;
+        return;
+    }
+
+    temp_s0 = g_Sound_MasterFadeTimer.Value + g_Sound_MasterFadeTimer.Step;
+    if ((temp_s0 & 0xFFFF0000) != (g_Sound_MasterFadeTimer.Value & 0xFFFF0000)) {
+        Sound_MarkActiveChannelsVolumeDirty(arg0, arg1);
+    }
+    g_Sound_MasterFadeTimer.Value = temp_s0;
+}
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052790);
 
