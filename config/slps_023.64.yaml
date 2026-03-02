@@ -91,24 +91,24 @@ segments:
       - [0x00A44, o, ../lib/450/libc2/bcopy, .text]
       - [0x00A84, o, ../lib/450/libc2/bzero, .text]
       - [0x00AB4, o, ../lib/450/libc2/ctype, .text]
-      - [0x00B24, asm, psyq/450/obj/libc2/exit, .text]
+      - [0x00B24, o, ../lib/450/libc2/exit, .text]
       - [0x00B34, o, ../lib/450/libc2/itoa, .text]
-      - [0x00B74, asm, psyq/450/obj/libc2/lsearch, .text]
-      - [0x00BD4, asm, psyq/450/obj/libc2/memcpy, .text]
-      - [0x00C14, asm, psyq/450/obj/libc2/memmove, .text]
-      - [0x00C84, asm, psyq/450/obj/libc2/memset, .text]
+      - [0x00B74, o, ../lib/450/libc2/lsearch, .text]
+      - [0x00BD4, o, ../lib/450/libc2/memcpy, .text]
+      - [0x00C14, o, ../lib/450/libc2/memmove, .text]
+      - [0x00C84, o, ../lib/450/libc2/memset, .text]
       - [0x00CB4, asm, psyq/450/obj/libc2/putchar, .text]
       - [0x00F14, o, ../lib/450/libc2/puts, .text]
       - [0x00F74, asm, psyq/450/obj/libc2/rand, .text]
-      - [0x00FB4, asm, psyq/450/obj/libc2/setjmp, .text]
-      - [0x01034, asm, psyq/450/obj/libc2/strcat, .text]
-      - [0x010E4, asm, psyq/450/obj/libc2/strchr, .text]
-      - [0x01124, asm, psyq/450/obj/libc2/strcmp, .text]
-      - [0x01194, asm, psyq/450/obj/libc2/strcpy, .text]
-      - [0x011E4, asm, psyq/450/obj/libc2/strlen, .text]
-      - [0x01224, asm, psyq/450/obj/libc2/strstr, .text]
-      - [0x01294, asm, psyq/450/obj/libc2/strtok, .text]
-      - [0x013B4, asm, psyq/450/obj/libc2/strtoul, .text]
+      - [0x00FB4, o, ../lib/450/libc2/setjmp, .text]
+      - [0x01034, o, ../lib/450/libc2/strcat, .text]
+      - [0x010E4, o, ../lib/450/libc2/strchr, .text]
+      - [0x01124, o, ../lib/450/libc2/strcmp, .text]
+      - [0x01194, o, ../lib/450/libc2/strcpy, .text]
+      - [0x011E4, o, ../lib/450/libc2/strlen, .text]
+      - [0x01224, o, ../lib/450/libc2/strstr, .text]
+      - [0x01294, o, ../lib/450/libc2/strtok, .text]
+      - [0x013B4, o, ../lib/450/libc2/strtoul, .text]
       - [0x01504, asm, psyq/450/obj/libc2/todigit, .text]
 
       - [0x01794, asm, psyq/450/obj/libgpu/e00, .text]
@@ -410,7 +410,7 @@ segments:
       # - [0x5B284, o, ../lib/450/libc2/putchar, .data]  # size: 0x10
       - [0x5B284, data, psyq/450/obj/libc2/putchar, .data]  # size: 0x10
       - [0x5B294, o, ../lib/450/libc2/puts, .data]  # size: 0x10
-      - [0x5B2A4, data, psyq/450/obj/libc2/strtok, .data]  # size: 0x10
+      - [0x5B2A4, o, ../lib/450/libc2/strtok, .data]  # size: 0x10
       - [0x5B2B4, data, psyq/450/obj/libgpu/break, .data]  # size: 0x20
       - [0x5B2D4, data, psyq/450/obj/libgpu/param, .data]  # size: 0x10
       - [0x5B2E4, data, psyq/450/obj/libgpu/sys, .data]  # size: 0x1a0

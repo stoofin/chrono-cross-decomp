@@ -1,0 +1,347 @@
+# PSY-Q Splat Subsegments
+# Binary: D:\Dev\Decomp\ChronoCross\disc\extracted\prog\slps_023.64
+# SDK Version: 450
+# Objects: 237
+# Blocks: 0
+# .data offsets: resolved
+# .rdata offsets: resolved
+#
+# Format: [offset, type, library, object, section]
+#
+
+      # === .text segments ===
+      - [0x800, lib, 2MBYTE.OBJ, 2MBYTE, .text]
+      - [0x8C4, lib, LIBC2, ABS, .text]
+      - [0x8F4, lib, LIBC2, ATOI, .text]
+      - [0xA44, lib, LIBC2, BCOPY, .text]
+      - [0xA84, lib, LIBC2, BZERO, .text]
+      - [0xAB4, lib, LIBC2, CTYPE, .text]
+      - [0xB24, lib, LIBC2, EXIT, .text]
+      - [0xB34, lib, LIBC2, ITOA, .text]
+      - [0xB74, lib, LIBC2, LSEARCH, .text]
+      - [0xBD4, lib, LIBC2, MEMCPY, .text]
+      - [0xC14, lib, LIBC2, MEMMOVE, .text]
+      - [0xC84, lib, LIBC2, MEMSET, .text]
+      - [0xCB4, lib, LIBC2, PUTCHAR, .text]
+      - [0xF14, lib, LIBC2, PUTS, .text]
+      - [0xF74, lib, LIBC2, RAND, .text]
+      - [0xFB4, lib, LIBC2, SETJMP, .text]
+      - [0x1034, lib, LIBC2, STRCAT, .text]
+      - [0x10E4, lib, LIBC2, STRCHR, .text]
+      - [0x1124, lib, LIBC2, STRCMP, .text]
+      - [0x1194, lib, LIBC2, STRCPY, .text]
+      - [0x11E4, lib, LIBC2, STRLEN, .text]
+      - [0x1224, lib, LIBC2, STRSTR, .text]
+      - [0x1294, lib, LIBC2, STRTOK, .text]
+      - [0x13B4, lib, LIBC2, STRTOUL, .text]
+      - [0x1504, lib, LIBC2, TODIGIT, .text]
+      - [0x1574, lib, LIBGPU, BREAK, .text]
+      - [0x1794, lib, LIBGPU, E00, .text]
+      - [0x1884, lib, LIBGPU, E01, .text]
+      - [0x18F4, lib, LIBGPU, E02, .text]
+      - [0x1964, lib, LIBGPU, E03, .text]
+      - [0x1A24, lib, LIBGPU, E04, .text]
+      - [0x1A64, lib, LIBGPU, P00, .text]
+      - [0x1AA4, lib, LIBGPU, P01, .text]
+      - [0x1AC4, lib, LIBGPU, P02, .text]
+      - [0x1B24, lib, LIBGPU, P03, .text]
+      - [0x1B64, lib, LIBGPU, P04, .text]
+      - [0x1B84, lib, LIBGPU, P05, .text]
+      - [0x1BA4, lib, LIBGPU, P06, .text]
+      - [0x1BE4, lib, LIBGPU, P07, .text]
+      - [0x1C24, lib, LIBGPU, P08, .text]
+      - [0x1C54, lib, LIBGPU, P09, .text]
+      - [0x1C74, lib, LIBGPU, P10, .text]
+      - [0x1CA4, lib, LIBGPU, P11, .text]
+      - [0x1CD4, lib, LIBGPU, P12, .text]
+      - [0x1CF4, lib, LIBGPU, P13, .text]
+      - [0x1D14, lib, LIBGPU, P14, .text]
+      - [0x1D34, lib, LIBGPU, P15, .text]
+      - [0x1D54, lib, LIBGPU, P16, .text]
+      - [0x1D74, lib, LIBGPU, P17, .text]
+      - [0x1D94, lib, LIBGPU, P18, .text]
+      - [0x1DB4, lib, LIBGPU, P19, .text]
+      - [0x1DD4, lib, LIBGPU, P20, .text]
+      - [0x1DF4, lib, LIBGPU, P21, .text]
+      - [0x1E14, lib, LIBGPU, P22, .text]
+      - [0x1E34, lib, LIBGPU, P23, .text]
+      - [0x1E54, lib, LIBGPU, P24, .text]
+      - [0x1E74, lib, LIBGPU, P25, .text]
+      - [0x1E94, lib, LIBGPU, P26, .text]
+      - [0x1EB4, lib, LIBGPU, P27, .text]
+      - [0x1ED4, lib, LIBGPU, P28, .text]
+      - [0x1EF4, lib, LIBGPU, P29, .text]
+      - [0x1F14, lib, LIBGPU, P30, .text]
+      - [0x1F44, lib, LIBGPU, P31, .text]
+      - [0x1F64, lib, LIBGPU, P32, .text]
+      - [0x1F94, lib, LIBGPU, P33, .text]
+      - [0x1FC4, lib, LIBGPU, P34, .text]
+      - [0x2024, lib, LIBGPU, P35, .text]
+      - [0x2094, lib, LIBGPU, P36, .text]
+      - [0x20D4, lib, LIBGPU, P38, .text]
+      - [0x2144, lib, LIBGPU, P39, .text]
+      - [0x2174, lib, LIBGPU, P40, .text]
+      - [0x21A4, lib, LIBGPU, P41, .text]
+      - [0x2244, lib, LIBGPU, PARAM, .text]
+      - [0x2434, lib, LIBGPU, SYS, .text]
+      - [0x5364, lib, LIBPAD, PADCMD, .text]
+      - [0x5F64, lib, LIBPAD, PADENTRY, .text]
+      - [0x6424, lib, LIBPAD, PADIF, .text]
+      - [0x6A54, lib, LIBPAD, PADMAIN, .text]
+      - [0x7824, lib, LIBPAD, PADPORTD, .text]
+      - [0x7E84, lib, LIBPAD, PADSEQD, .text]
+      - [0x8344, lib, LIBPAD, PADSEQM, .text]
+      - [0x8DD4, lib, LIBPAD, WAITRC2, .text]
+      - [0x8E94, lib, LIBMATH, SQRT, .text]
+      - [0x8FD4, lib, LIBMATH, GEDF2, .text]
+      - [0x90B4, lib, LIBMATH, ADDDF3, .text]
+      - [0x9434, lib, LIBMATH, FIXDFSI, .text]
+      - [0x9534, lib, LIBCARD, C112, .text]
+      - [0x9544, lib, LIBCARD, C171, .text]
+      - [0x9554, lib, LIBCARD, C172, .text]
+      - [0x9564, lib, LIBCARD, C173, .text]
+      - [0x9574, lib, LIBCARD, A74, .text]
+      - [0x9584, lib, LIBCARD, A75, .text]
+      - [0x9594, lib, LIBCARD, A76, .text]
+      - [0x95A4, lib, LIBCARD, A78, .text]
+      - [0x95B4, lib, LIBCARD, A79, .text]
+      - [0x95C4, lib, LIBCARD, A80, .text]
+      - [0x95D4, lib, LIBCARD, A92, .text]
+      - [0x95E4, lib, LIBCARD, A93, .text]
+      - [0x95F4, lib, LIBCARD, CARD, .text]
+      - [0x9634, lib, LIBCARD, PATCH, .text]
+      - [0x9854, lib, LIBCARD, INIT, .text]
+      - [0x9954, lib, LIBCARD, END, .text]
+      - [0x99D4, asm]  # gap: 0x966C
+      - [0x13040, lib, LIBAPI, C57, .text]
+      - [0x13050, lib, LIBAPI, C68, .text]
+      - [0x13060, lib, LIBAPI, C73, .text]
+      - [0x13070, lib, LIBAPI, A07, .text]
+      - [0x13080, lib, LIBAPI, A08, .text]
+      - [0x13090, lib, LIBAPI, A09, .text]
+      - [0x130A0, lib, LIBAPI, A11, .text]
+      - [0x130B0, lib, LIBAPI, A12, .text]
+      - [0x130C0, lib, LIBAPI, A32, .text]
+      - [0x130D0, lib, LIBAPI, A36, .text]
+      - [0x130E0, lib, LIBAPI, A37, .text]
+      - [0x130F0, lib, LIBAPI, A50, .text]
+      - [0x13100, lib, LIBAPI, A51, .text]
+      - [0x13110, lib, LIBAPI, A52, .text]
+      - [0x13120, lib, LIBAPI, A53, .text]
+      - [0x13130, lib, LIBAPI, A54, .text]
+      - [0x13140, lib, LIBAPI, A67, .text]
+      - [0x13150, lib, LIBAPI, A81, .text]
+      - [0x13160, lib, LIBAPI, A91, .text]
+      - [0x13170, lib, LIBAPI, L02, .text]
+      - [0x13180, lib, LIBAPI, L03, .text]
+      - [0x13190, lib, LIBAPI, L10, .text]
+      - [0x131A0, lib, LIBAPI, FIRST, .text]
+      - [0x13440, lib, LIBAPI, A66, .text]
+      - [0x13450, lib, LIBAPI, PAD, .text]
+      - [0x13750, lib, LIBAPI, A18, .text]
+      - [0x13760, lib, LIBAPI, A19, .text]
+      - [0x13770, lib, LIBAPI, A20, .text]
+      - [0x13780, lib, LIBAPI, A21, .text]
+      - [0x13790, lib, LIBAPI, PATCH, .text]
+      - [0x13830, lib, LIBAPI, CHCLRPAD, .text]
+      - [0x138A0, lib, LIBCD, SYS, .text]
+      - [0x13EB0, lib, LIBCD, BIOS, .text]
+      - [0x15620, lib, LIBCD, S_002, .text]
+      - [0x157B0, lib, LIBGTE, GEO_00, .text]
+      - [0x15880, lib, LIBGTE, GEO_01, .text]
+      - [0x15920, lib, LIBGTE, GEO_03, .text]
+      - [0x15C80, lib, LIBGTE, FOG_01, .text]
+      - [0x15CF0, lib, LIBGTE, FOG_02, .text]
+      - [0x15E00, lib, LIBGTE, MSC00, .text]
+      - [0x15E90, lib, LIBGTE, MSC01, .text]
+      - [0x15F20, lib, LIBGTE, MSC02, .text]
+      - [0x161D0, lib, LIBGTE, MSC06, .text]
+      - [0x16460, lib, LIBGTE, MTX_000, .text]
+      - [0x16570, lib, LIBGTE, MTX_003, .text]
+      - [0x166D0, lib, LIBGTE, MTX_005, .text]
+      - [0x16700, lib, LIBGTE, MTX_006, .text]
+      - [0x16850, lib, LIBGTE, MTX_009, .text]
+      - [0x168A0, lib, LIBGTE, MTX_00B, .text]
+      - [0x169B0, lib, LIBGTE, MTX_03, .text]
+      - [0x16AC0, lib, LIBGTE, MTX_05, .text]
+      - [0x16B10, lib, LIBGTE, MTX_06, .text]
+      - [0x16B70, lib, LIBGTE, MTX_07, .text]
+      - [0x16BA0, lib, LIBGTE, MTX_08, .text]
+      - [0x16CE0, lib, LIBGTE, MTX_09, .text]
+      - [0x16D10, lib, LIBGTE, MTX_10, .text]
+      - [0x16D40, lib, LIBGTE, MTX_11, .text]
+      - [0x16D70, lib, LIBGTE, MTX_12, .text]
+      - [0x16D90, lib, LIBGTE, REG03, .text]
+      - [0x16EA0, lib, LIBGTE, REG09, .text]
+      - [0x16EB0, lib, LIBGTE, REG10, .text]
+      - [0x16ED0, lib, LIBGTE, REG11, .text]
+      - [0x16EF0, lib, LIBGTE, REG12, .text]
+      - [0x16F10, lib, LIBGTE, REG13, .text]
+      - [0x16F20, lib, LIBGTE, SMP, .text]
+      - [0x17100, lib, LIBGTE, SMP_00, .text]
+      - [0x17310, lib, LIBGTE, SMP_02, .text]
+      - [0x17340, lib, LIBGTE, SMP_03, .text]
+      - [0x173A0, lib, LIBGTE, SMP_04, .text]
+      - [0x173D0, asm]  # gap: 0x30
+      - [0x17400, lib, LIBGTE, CMB_00, .text]
+      - [0x17480, lib, LIBGTE, CMB_11, .text]
+      - [0x174C0, lib, LIBGTE, FGO_01, .text]
+      - [0x17750, lib, LIBGTE, FGO_09, .text]
+      - [0x179E0, lib, LIBGTE, RMAT_00, .text]
+      - [0x17BE0, lib, LIBGTE, RMAT_01, .text]
+      - [0x17DF0, lib, LIBGTE, RATAN, .text]
+      - [0x17F70, lib, LIBGTE, PATCHGTE, .text]
+      - [0x18050, lib, LIBETC, VSYNC, .text]
+      - [0x18260, lib, LIBETC, INTR, .text]
+      - [0x18920, lib, LIBAPI, C114, .text]
+      - [0x18940, lib, LIBAPI, A23, .text]
+      - [0x18950, lib, LIBAPI, A24, .text]
+      - [0x18960, lib, LIBAPI, A25, .text]
+      - [0x18970, lib, LIBETC, INTR_VB, .text]
+      - [0x18A90, lib, LIBETC, INTR_DMA, .text]
+      - [0x18D30, lib, LIBETC, VMODE, .text]
+      - [0x18D60, lib, LIBSN, OPEN, .text]
+      - [0x18D80, lib, LIBSN, CLOSE, .text]
+      - [0x18D90, lib, LIBSN, LSEEK, .text]
+      - [0x18DB4, lib, LIBSN, FSINIT, .text]
+      - [0x18DC0, lib, LIBSN, READ, .text]
+      - [0x18E80, lib, LIBSN, SNREAD, .text]
+      - [0x18E98, lib, LIBSN, _FIXUSDF, .text]
+      - [0x18F20, lib, LIBSPU, S_I, .text]
+      - [0x18F40, lib, LIBSPU, S_INI, .text]
+      - [0x190A0, lib, LIBSPU, SPU, .text]
+      - [0x19BE0, lib, LIBSPU, S_DCB, .text]
+      - [0x19C10, lib, LIBSPU, S_SR, .text]
+      - [0x19CE0, lib, LIBSPU, S_M_UTIL, .text]
+      - [0x19DF0, asm]  # gap: 0x17B4
+      - [0x1B5A4, lib, LIBSN, CREAT, .text]
+      - [0x1B5C4, lib, LIBSN, WRITE, .text]
+      - [0x1B684, lib, LIBSN, SNWRITE, .text]
+      - [0x1B69C, lib, LIBGTE, MTX_00A, .text]
+      - [0x1B7DC, asm]  # gap: 0x4820
+      - [0x1FFFC, lib, LIBGTE, FGO_03, .text]
+      - [0x2028C, lib, LIBGTE, FGO_04, .text]
+      - [0x2042C, lib, LIBGTE, FGO_05, .text]
+      - [0x205CC, asm]  # gap: 0x4EFC
+      - [0x254C8, lib, LIBSPU, S_GR, .text]
+      - [0x254E8, lib, LIBGTE, REG08, .text]
+      - [0x25508, asm]  # gap: 0x1EEC
+      - [0x273F4, lib, LIBSPU, S_Q, .text]
+      - [0x27474, lib, LIBAPI, A13, .text]
+      - [0x27484, asm]  # gap: 0xB4E4
+      - [0x32968, lib, LIBGTE, MTX_004, .text]
+      - [0x32AC8, asm]  # gap: 0x78B4
+      - [0x3A37C, lib, LIBCD, EVENT, .text]
+      - [0x3A4CC, lib, LIBGTE, MTX_04, .text]
+      - [0x3A5DC, lib, LIBGTE, FGO_00, .text]
+      - [0x3A61C, lib, LIBGTE, SMP_01, .text]
+      - [0x3A71C, asm]  # gap: 0x1198
+      - [0x3B8B4, lib, LIBSPU, S_STSA, .text]
+      - [0x3B914, asm]  # gap: 0x6E0
+      - [0x3BFF4, lib, LIBAPI, COUNTER, .text]
+      - [0x3C164, lib, LIBSPU, S_M_INIT, .text]
+      - [0x3C1C4, lib, LIBSPU, S_SI, .text]
+      - [0x3C304, lib, LIBSPU, S_SIC, .text]
+      - [0x3C344, lib, LIBSPU, S_CB, .text]
+      - [0x3C374, lib, LIBSPU, S_R, .text]
+      - [0x3C3D4, lib, LIBSPU, S_W, .text]
+      - [0x3C434, lib, LIBSPU, S_STM, .text]
+      - [0x3C464, lib, LIBSPU, S_STC, .text]
+      - [0x3C494, asm]  # gap: 0x201C
+      - [0x3E4B0, lib, LIBSPU, S_SNC, .text]
+      - [0x3E500, lib, LIBSPU, S_GVEX, .text]
+      - [0x3E520, lib, LIBSPU, S_SRMD, .text]
+      - [0x3E550, asm]  # gap: 0x38B4
+      - [0x41E04, lib, LIBSPU, S_SRMT, .text]
+      - [0x41FD4, lib, LIBSPU, S_SRA, .text]
+      - [0x424A4, lib, LIBSPU, S_CRWA, .text]
+      - [0x42644, lib, LIBAPI, A10, .text]
+      - [0x42654, lib, LIBSPU, S_GRMT, .text]
+      - [0x42664, asm]  # gap: 0x4518
+      - [0x46B7C, lib, LIBSPU, S_SIA, .text]
+      - [0x46BBC, lib, LIBGTE, CMB_07, .text]
+
+      # === .data segments ===
+      - [0x5B1F4, lib, LIBC, CTYPE0, .data]  # size: 0x90 | Duplicate with libc2
+      - [0x5B1F4, lib, LIBC2, CTYPE, .data]  # size: 0x90
+      - [0x5B284, lib, LIBC2, PUTCHAR, .data]  # size: 0x10
+      - [0x5B294, lib, LIBC2, PUTS, .data]  # size: 0x10
+      - [0x5B2A4, lib, LIBC2, STRTOK, .data]  # size: 0x10
+      - [0x5B2B4, lib, LIBGPU, BREAK, .data]  # size: 0x20
+      - [0x5B2D4, lib, LIBGPU, PARAM, .data]  # size: 0x10
+      - [0x5B2E4, lib, LIBGPU, SYS, .data]  # size: 0x1A0
+      - [0x5B484, lib, LIBPAD, PADIF, .data]  # size: 0x30
+      - [0x5B4B4, lib, LIBPAD, PADMAIN, .data]  # size: 0x80
+      - [0x5B534, lib, LIBPAD, PADPORTD, .data]  # size: 0x10
+      - [0x5B544, lib, LIBCARD, INIT, .data]  # size: 0x10
+      - [0x5B554, data]  # gap: 0x1E8
+      - [0x5B73C, lib, LIBAPI, PAD, .data]  # size: 0x10
+      - [0x5B74C, lib, LIBCD, SYS, .data]  # size: 0x80
+      - [0x5B7CC, lib, LIBCD, BIOS, .data]  # size: 0x320
+      - [0x5BAEC, lib, LIBGTE, SINCOS, .data]  # size: 0x810
+      - [0x5C2FC, data]  # gap: 0x10
+      - [0x5C30C, lib, LIBGTE, SQRTBL, .data]  # size: 0x180
+      - [0x5C2FC, lib, LIBGTE, MSC00, .data]  # size: 0x10
+      - [0x5C30C, data]  # gap: 0x180
+      - [0x5C48C, lib, LIBGTE, MSC02, .data]  # size: 0x1A0
+      - [0x5C62C, lib, LIBGTE, MTX_006, .data]  # size: 0x310
+      - [0x5C93C, lib, LIBGTE, CSTBL, .data]  # size: 0x4000
+      - [0x6093C, lib, LIBGTE, RATAN, .data]  # size: 0x810
+      - [0x6114C, lib, LIBETC, VSYNC, .data]  # size: 0x20
+      - [0x6116C, lib, LIBETC, INTR, .data]  # size: 0x1100
+      - [0x6226C, lib, LIBETC, INTR_VB, .data]  # size: 0x30
+      - [0x6229C, lib, LIBETC, INTR_DMA, .data]  # size: 0x30
+      - [0x622CC, lib, LIBETC, VMODE, .data]  # size: 0x10
+      - [0x622DC, lib, LIBSN, SNDEF, .data]  # size: 0x8
+      - [0x622E4, lib, LIBSPU, S_INI, .data]  # size: 0x80
+      - [0x62364, lib, LIBSPU, SPU, .data]  # size: 0x60
+      - [0x623C4, lib, LIBSPU, S_M, .data]  # size: 0x10
+      - [0x623C4, lib, LIBCD, EVENT, .data]  # size: 0x10
+      - [0x623D4, lib, LIBSPU, S_RMP0, .data]  # size: 0x30
+      - [0x62404, data]  # gap: 0x129C
+      - [0x636A0, lib, LIBAPI, COUNTER, .data]  # size: 0x20
+      - [0x636C0, data]  # gap: 0x400
+      - [0x63AC0, lib, LIBSPU, ZEROBUF, .data]  # size: 0x400
+      - [0x63EC0, lib, LIBSPU, S_RMP2, .data]  # size: 0x2B0
+      - [auto, lib, LIBPAD, PADPORTM, .data]  # size: 0x10 | Can't find in slps_023.64
+      - [auto, lib, LIBC2, SPRINTF, .data]  # size: 0x10 | May be compiled out
+      - [auto, lib, LIBMATH, FERR, .data]  # size: 0x10 | Can't find in slps_023.64
+
+      # === .rdata segments ===
+      - [0x46C6C, lib, LIBC2, ITOA, .rdata]  # size: 0x10
+      - [0x46C7C, lib, LIBC2, PUTS, .rdata]  # size: 0x10
+      - [0x46C8C, lib, LIBGPU, P02, .rdata]  # size: 0x20
+      - [0x46CAC, lib, LIBGPU, P03, .rdata]  # size: 0x10
+      - [0x46CBC, lib, LIBGPU, SYS, .rdata]  # size: 0x220
+      - [0x46EDC, lib, LIBPAD, PADENTRY, .rdata]  # size: 0x20
+      - [0x46EFC, lib, LIBMATH, SQRT, .rdata]  # size: 0x10
+      - [0x46F0C, rodata]  # gap: 0x12B64
+      - [0x59A70, lib, LIBCD, SYS, .rdata]  # size: 0x10
+      - [0x59A80, lib, LIBCD, BIOS, .rdata]  # size: 0x260
+      - [0x59CE0, lib, LIBETC, VSYNC, .rdata]  # size: 0x10
+      - [0x59CF0, lib, LIBETC, INTR, .rdata]  # size: 0x70
+      - [0x59D60, lib, LIBETC, INTR_DMA, .rdata]  # size: 0x30
+      - [0x59D90, lib, LIBSPU, SPU, .rdata]  # size: 0x50
+      - [0x59DE0, rodata]  # gap: 0x12C4
+      - [0x5B0A4, lib, LIBCD, EVENT, .rdata]  # size: 0x20
+      - [0x5B0C4, lib, LIBSPU, S_SI, .rdata]  # size: 0x30
+      - [auto, lib, LIBC2, SPRINTF, .rdata]  # size: 0xE0 | not sure if this data is used
+
+      # === .bss segments ===
+      - [auto, lib, LIBC2, ITOA, .bss]  # size: 0x10
+      - [auto, lib, LIBC2, PUTCHAR, .bss]  # size: 0x20
+      - [auto, lib, LIBC2, RAND, .bss]  # size: 0x10
+      - [auto, lib, LIBGPU, SYS, .bss]  # size: 0x1950
+      - [auto, lib, LIBPAD, PADCMD, .bss]  # size: 0x10
+      - [auto, lib, LIBPAD, PADMAIN, .bss]  # size: 0x20
+      - [auto, lib, LIBPAD, PADPORTD, .bss]  # size: 0x270
+      - [auto, lib, LIBPAD, WAITRC2, .bss]  # size: 0x8
+      - [auto, lib, LIBCARD, PATCH, .bss]  # size: 0x10
+      - [auto, lib, LIBCARD, END, .bss]  # size: 0x10
+      - [auto, lib, LIBAPI, FIRST, .bss]  # size: 0x30
+      - [auto, lib, LIBAPI, PAD, .bss]  # size: 0x10
+      - [auto, lib, LIBAPI, PATCH, .bss]  # size: 0x10
+      - [auto, lib, LIBAPI, CHCLRPAD, .bss]  # size: 0x10
+      - [auto, lib, LIBCD, BIOS, .bss]  # size: 0x34
+      - [auto, lib, LIBGTE, PATCHGTE, .bss]  # size: 0x10
+      - [auto, lib, LIBSPU, SPU, .bss]  # size: 0x14
