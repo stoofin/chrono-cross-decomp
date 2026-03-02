@@ -109,7 +109,9 @@ segments:
       - [0x01224, o, ../lib/450/libc2/strstr, .text]
       - [0x01294, o, ../lib/450/libc2/strtok, .text]
       - [0x013B4, o, ../lib/450/libc2/strtoul, .text]
-      - [0x01504, asm, psyq/450/obj/libc2/todigit, .text]
+      - [0x01504, o, ../lib/450/libc2/todigit, .text]
+
+      - [0x01574, asm] # looks like some gpu stuff
 
       - [0x01794, asm, psyq/450/obj/libgpu/e00, .text]
       - [0x01884, asm, psyq/450/obj/libgpu/e01, .text]
