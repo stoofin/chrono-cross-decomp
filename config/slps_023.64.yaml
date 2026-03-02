@@ -92,7 +92,7 @@ segments:
       - [0x00A84, o, ../lib/450/libc2/bzero, .text]
       - [0x00AB4, o, ../lib/450/libc2/ctype, .text]
       - [0x00B24, asm, psyq/450/obj/libc2/exit, .text]
-      - [0x00B34, asm, psyq/450/obj/libc2/itoa, .text]
+      - [0x00B34, o, ../lib/450/libc2/itoa, .text]
       - [0x00B74, asm, psyq/450/obj/libc2/lsearch, .text]
       - [0x00BD4, asm, psyq/450/obj/libc2/memcpy, .text]
       - [0x00C14, asm, psyq/450/obj/libc2/memmove, .text]
@@ -375,7 +375,7 @@ segments:
       - [0x46BBC, asm, psyq/450/obj/libgte/cmb_07, .text] # size: 0xB0
 
       # === .rdata ===
-      - [0x46C6C, rodata, psyq/450/obj/libc2/itoa, .rdata]  # size: 0x10
+      - [0x46C6C, o, ../lib/450/libc2/itoa, .rdata]  # size: 0x10
       - [0x46C7C, o, ../lib/450/libc2/puts, .rdata]  # size: 0x10
       - [0x46C8C, rodata, psyq/450/obj/libgpu/p02, .rdata]  # size: 0x20
       - [0x46CAC, rodata, psyq/450/obj/libgpu/p03, .rdata]  # size: 0x10
@@ -449,8 +449,8 @@ segments:
       - [0x64170, data]    # Some rodata from the game module
       - [0x64380, data]    # 0x80073B80
 
-      # - [0x64380, sbss]    # 0x80073B80
-      - [0x64388, data, psyq/450/obj/libc2/itoa, .bss]    # 0x80073B88
+      - [0x64380, sbss]    # 0x80073B80
+      - [0x64388, o, ../lib/450/libc2/itoa, .bss]    # 0x80073B88
       - [0x64398, bss]    # 0x80073B98
 
   - type: data
