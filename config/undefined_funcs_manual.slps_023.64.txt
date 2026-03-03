@@ -1,3 +1,13 @@
+_err_math     = 0x801EA800;
+__muldf3      = 0x801EA990;
+__ltdf2       = 0x801EAE10;
+_add_mant_d   = 0x801EAEF0;
+__divdf3      = 0x801EAFA0;
+__gtdf2       = 0x801EB2D0;
+_dbl_shift    = 0x801EB3B0;
+_mainasu      = 0x801EB530;
+
+
 func_80336D0C = 0x80336D0C;
 func_8031A7C8 = 0x8031A7C8;
 func_8031A8F4 = 0x8031A8F4;

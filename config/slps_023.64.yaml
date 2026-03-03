@@ -169,11 +169,10 @@ segments:
       - [0x07E84, asm, psyq/450/obj/libpad/padseqd, .text]
       - [0x08344, asm, psyq/450/obj/libpad/padseqm, .text]
       - [0x08DD4, asm, psyq/450/obj/libpad/waitrc2, .text]
-
-      - [0x08E94, asm, psyq/450/obj/libmath/sqrt, .text]
-      - [0x08FD4, asm, psyq/450/obj/libmath/gedf2, .text]
-      - [0x090B4, asm, psyq/450/obj/libmath/adddf3, .text]
-      - [0x09434, asm, psyq/450/obj/libmath/fixdfsi, .text]
+      - [0x08E94, o, ../lib/450/libmath/sqrt, .text]
+      - [0x08FD4, o, ../lib/450/libmath/gedf2, .text]
+      - [0x090B4, o, ../lib/450/libmath/adddf3, .text]
+      - [0x09434, o, ../lib/450/libmath/fixdfsi, .text]
 
       - [0x09534, asm, psyq/460/obj/libcard/c112, .text]
       - [0x09544, asm, psyq/460/obj/libcard/c171, .text]
@@ -382,7 +381,7 @@ segments:
       - [0x46CAC, o, ../lib/450/libgpu/p03, .rdata]  # size: 0x10
       - [0x46CBC, o, ../lib/450/libgpu/sys, .rdata]  # size: 0x220
       - [0x46EDC, rodata, psyq/450/obj/libpad/padentry, .rdata]  # size: 0x20
-      - [0x46EFC, rodata, psyq/450/obj/libmath/sqrt, .rdata]  # size: 0x10
+      - [0x46EFC, o, ../lib/450/libmath/sqrt, .rdata]  # size: 0x10
 
       - [0x46F0C, rodata, 99D4]          # 0x800600E0
       - [0x5983C, rodata, 19DF0]         # 0x8006903C
@@ -454,6 +453,11 @@ segments:
       - [0x643B8, o, ../lib/450/libc2/rand, .bss] # size: 0x10
       - [0x643C8, o, ../lib/450/libgpu/sys, .bss] # size: 0x1950
       - [0x65D18, bss]    # 0x80073B98
+      # - [0x65D18, bss, psyq/450/obj/libpad/padcmd, .bss]  # size: 0x10
+      # - [0x65D28, bss, psyq/450/obj/libpad/padmain, .bss]  # size: 0x20
+      # - [0x65D48, bss, psyq/450/obj/libpad/padportd, .bss]  # size: 0x270
+      # - [0x65FB8, bss, psyq/450/obj/libpad/waitrc2, .bss]  # size: 0x8
+      # - [0x65FC0, bss]    
 
   - type: data
     start: 0x8587C

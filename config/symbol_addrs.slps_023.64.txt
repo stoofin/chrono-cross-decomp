@@ -742,3 +742,5 @@ g_Sound_GlobalFlags            = 0x80094F90; // type:FSoundGlobalFlags size:0xC
 g_Sound_80094FA0               = 0x80094FA0; // type:FSound80094FA0  size:0x60
 g_Sound_VoiceChannelConfigs    = 0x80095000;
 g_Sound_VoiceModeFlags         = 0x80095070; // type:FSoundVoiceModeFlags size:0xC
+
+_mtapLastResult = 0x80344464;
