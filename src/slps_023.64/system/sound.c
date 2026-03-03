@@ -4,8 +4,6 @@
 #include "system/sound.h"
 
 
-// s32 _mtapLastResult = 0;
-
 typedef struct
 {
     SpuVolume volume;

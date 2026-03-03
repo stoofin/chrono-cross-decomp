@@ -1,0 +1,4 @@
+_startTime      = 0x800757B8;
+_waitTime       = 0x800757BC;
+
+_mtapLastResult = 0x80344464;

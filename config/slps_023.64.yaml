@@ -161,14 +161,14 @@ segments:
       - [0x02244, o, ../lib/450/libgpu/param, .text]
       - [0x02434, o, ../lib/450/libgpu/sys, .text]
 
-      - [0x05364, asm, psyq/450/obj/libpad/padcmd, .text]
-      - [0x05F64, asm, psyq/450/obj/libpad/padentry, .text]
-      - [0x06424, asm, psyq/450/obj/libpad/padif, .text]
-      - [0x06A54, asm, psyq/450/obj/libpad/padmain, .text]
-      - [0x07824, asm, psyq/450/obj/libpad/padportd, .text]
-      - [0x07E84, asm, psyq/450/obj/libpad/padseqd, .text]
-      - [0x08344, asm, psyq/450/obj/libpad/padseqm, .text]
-      - [0x08DD4, asm, psyq/450/obj/libpad/waitrc2, .text]
+      - [0x05364, o, ../lib/450/libpad/padcmd, .text]
+      - [0x05F64, o, ../lib/450/libpad/padentry, .text]
+      - [0x06424, o, ../lib/450/libpad/padif, .text]
+      - [0x06A54, o, ../lib/450/libpad/padmain, .text]
+      - [0x07824, o, ../lib/450/libpad/padportd, .text]
+      - [0x07E84, o, ../lib/450/libpad/padseqd, .text]
+      - [0x08344, o, ../lib/450/libpad/padseqm, .text]
+      - [0x08DD4, o, ../lib/450/libpad/waitrc2, .text]
       - [0x08E94, o, ../lib/450/libmath/sqrt, .text]
       - [0x08FD4, o, ../lib/450/libmath/gedf2, .text]
       - [0x090B4, o, ../lib/450/libmath/adddf3, .text]
@@ -380,7 +380,7 @@ segments:
       - [0x46C8C, o, ../lib/450/libgpu/p02, .rdata]  # size: 0x20
       - [0x46CAC, o, ../lib/450/libgpu/p03, .rdata]  # size: 0x10
       - [0x46CBC, o, ../lib/450/libgpu/sys, .rdata]  # size: 0x220
-      - [0x46EDC, rodata, psyq/450/obj/libpad/padentry, .rdata]  # size: 0x20
+      - [0x46EDC, o, ../lib/450/libpad/padentry, .rdata]  # size: 0x20
       - [0x46EFC, o, ../lib/450/libmath/sqrt, .rdata]  # size: 0x10
 
       - [0x46F0C, rodata, 99D4]          # 0x800600E0
@@ -412,9 +412,9 @@ segments:
       - [0x5B2B4, o, ../lib/450/libgpu/break, .data]  # size: 0x20
       - [0x5B2D4, o, ../lib/450/libgpu/param, .data]  # size: 0x10
       - [0x5B2E4, o, ../lib/450/libgpu/sys, .data]  # size: 0x1a0
-      - [0x5B484, data, psyq/450/obj/libpad/padif, .data]  # size: 0x30
-      - [0x5B4B4, data, psyq/450/obj/libpad/padmain, .data]  # size: 0x80
-      - [0x5B534, data, psyq/450/obj/libpad/padportd, .data]  # size: 0x10
+      - [0x5B484, o, ../lib/450/libpad/padif, .data]  # size: 0x30
+      - [0x5B4B4, o, ../lib/450/libpad/padmain, .data]  # size: 0x80
+      - [0x5B534, o, ../lib/450/libpad/padportd, .data]  # size: 0x10
       - [0x5B544, data, psyq/460/obj/libcard/init, .data]  # size: 0x10
       - [0x5B554, data]  # gap: 0x1e8
       - [0x5B73C, data, psyq/450/obj/libapi/pad, .data]  # size: 0x10
@@ -452,12 +452,12 @@ segments:
       - [0x64398, o, ../lib/450/libc2/putchar, .bss] # size: 0x20
       - [0x643B8, o, ../lib/450/libc2/rand, .bss] # size: 0x10
       - [0x643C8, o, ../lib/450/libgpu/sys, .bss] # size: 0x1950
-      - [0x65D18, bss]    # 0x80073B98
-      # - [0x65D18, bss, psyq/450/obj/libpad/padcmd, .bss]  # size: 0x10
-      # - [0x65D28, bss, psyq/450/obj/libpad/padmain, .bss]  # size: 0x20
-      # - [0x65D48, bss, psyq/450/obj/libpad/padportd, .bss]  # size: 0x270
-      # - [0x65FB8, bss, psyq/450/obj/libpad/waitrc2, .bss]  # size: 0x8
-      # - [0x65FC0, bss]    
+      - [0x65D18, o, ../lib/450/libpad/padcmd, .bss]  # size: 0x10
+      - [0x65D28, o, ../lib/450/libpad/padmain, .bss]  # size: 0x20
+      - [0x65D48, o, ../lib/450/libpad/padportd, .bss]  # size: 0x270
+      # - [0x65FB8, o, ../lib/450/libpad/waitrc2, .bss]  # size: 0x8
+      - [0x65FB8, bss] # libpad/waitrc2 | size: 0x8
+      - [0x65FC0, bss]    
 
   - type: data
     start: 0x8587C
