@@ -472,8 +472,6 @@ segments:
       - [0x75DC0, o, ../lib/450/libspu/spu, .bss]  # size: 0x14
       - [0x75DD4, bss]    
 
-
-
   - type: data
     start: 0x8587C
     vram: 0x8009507C

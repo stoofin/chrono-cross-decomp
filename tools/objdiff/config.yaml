@@ -16,7 +16,7 @@ ignored_files:
   - slps_023.64/header
 
 ssh:
-  enabled: true                                      # Set to true to enable SSH builds
+  enabled: false                                     # Set to true to enable SSH builds
   host: "192.168.64.8"                               # VM hostname or IP address
   user: "jdperos"                                    # SSH username (leave empty to use current user)
   port: 22                                           # SSH port (default: 22)
