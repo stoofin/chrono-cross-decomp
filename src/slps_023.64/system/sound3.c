@@ -87,7 +87,7 @@ void func_800526FC(FSoundChannelConfig* arg0, FSoundChannel* arg1) {
     g_Sound_MasterFadeTimer.Value = temp_s0;
 }
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052790);
+INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", Sound_MainLoop);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052DA4);
 

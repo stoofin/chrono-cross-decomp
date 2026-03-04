@@ -661,6 +661,7 @@ u32 Sound_ExecuteSoundVm2Function( u32 in_FunctionIndex );
 void UpdateCdVolume();
 void memcpy32( s32* in_Src, s32* in_Dst, uint in_Size );
 void memswap32( s32* in_A, s32* in_B, uint in_Size );
+long Sound_MainLoop();
 s32 Sound_ComputeSlideStep( u32*, u8, s16, u32 );
 void Sound_CopyInstrumentInfoToChannel( FSoundChannel* in_pChannel, FSoundInstrumentInfo* in_pInstrumentInfo, u32 in_StartAddress );
 void Sound_SetInstrumentToChannel( FSoundChannel *in_Channel, u32 in_Index );
@@ -771,6 +772,9 @@ void unk_Sound_80055a10();
 u32 unk_Sound_80055e0c(s32*);
 u32 unk_Sound_80056144( u32 in_RepeatAddressL, u32 in_RepeatAddressR, int in_Param3, SpuIRQCallbackProc in_IrqCallback );
 
+extern s32 g_Sound_EventDescriptor;
+extern s8 g_Sound_NullWaveformBuf[64];
+
 // RODATA it seems
 extern u32 g_Sound_ProgramCounter;
 extern const u32 g_SemitonePitchTable[SEMITONES_IN_OCTAVE];
@@ -805,3 +809,6 @@ extern FSoundGlobalFlags g_Sound_GlobalFlags;
 extern FSound80094FA0 g_Sound_80094FA0;
 extern FSoundChannelConfig* g_Sound_VoiceChannelConfigs[VOICE_COUNT];
 extern FSoundVoiceModeFlags g_Sound_VoiceModeFlags;
+
+#define SPU_MALLOC_NUM_BLOCKS 4
+char g_SpuMallocRecTable[ SPU_MALLOC_RECSIZ * (SPU_MALLOC_NUM_BLOCKS + 1) ];

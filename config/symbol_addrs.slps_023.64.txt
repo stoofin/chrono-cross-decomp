@@ -571,6 +571,7 @@ SpuGetReverbModeType = 0x80051E54;
 UpdateCdVolume                      = 0x80051E64;
 memcpy32                            = 0x80051E84;
 memswap32                           = 0x80051F04;
+Sound_MainLoop                      = 0x80052790;
 Sound_ComputeSlideStep              = 0x80053D1C;
 Sound_CopyInstrumentInfoToChannel   = 0x80053D90;
 Sound_SetInstrumentToChannel        = 0x80053DC4;
@@ -709,6 +710,8 @@ _spu_inTransfer                = 0x80071B98;
 _spu_transferCallback          = 0x80071B9C;
 
 //----------------------------------------------------------------------------------------------------------------------
+g_Sound_EventDescriptor        = 0x80072234;
+g_Sound_NullWaveformBuf        = 0x80072250;
 g_Sound_ProgramCounter         = 0x80072328;
 g_SemitonePitchTable           = 0x8007232C;
 g_Sound_StereoPanGainTableQ15  = 0x8007245C; // size:0x200
@@ -725,6 +728,7 @@ g_SpuVoiceInfo                 = 0x800917F8; // type:FSpuVoiceInfo[] size:0xC0
 g_PrimaryMusicConfig           = 0x800918B8; // type:FSoundChannelConfig size:0x80
 g_PushedMusicConfig            = 0x80091940; // type:FSoundChannelConfig size:0x80
 g_InstrumentInfo               = 0x800919C8; // type:FSoundInstrumentInfo[] size:0x1000
+g_SpuMallocRecTable            = 0x800929E8; // size:0x28
 g_Music_LoopCounter            = 0x80092A10;
 g_Sound_Sfx_ProgramOffsets     = 0x80092A14;
 g_bSpuTransferring             = 0x80092A18;
@@ -742,6 +746,7 @@ g_Sound_GlobalFlags            = 0x80094F90; // type:FSoundGlobalFlags size:0xC
 g_Sound_80094FA0               = 0x80094FA0; // type:FSound80094FA0  size:0x60
 g_Sound_VoiceChannelConfigs    = 0x80095000;
 g_Sound_VoiceModeFlags         = 0x80095070; // type:FSoundVoiceModeFlags size:0xC
+
 
 _startTime = 0x800757B8;
 _waitTime  = 0x800757BC;
