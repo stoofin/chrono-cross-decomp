@@ -23,10 +23,25 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound4", unk_Sound_80055ab0);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound4", unk_Sound_80055b40);
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound4", Sound_Cmd_E2_80055cfc);
+//----------------------------------------------------------------------------------------------------------------------
+void Sound_Cmd_E2_80055cfc()
+{
+    unk_Sound_80055a10();
+}
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound4", Sound_Cmd_E4_SetVolumeStereoPair);
+//----------------------------------------------------------------------------------------------------------------------
+void Sound_Cmd_E4_SetVolumeStereoPair( FSoundCommandParams* in_Params )
+{
+    g_Sound_80094FA0.Volume = in_Params->Param1;
+    g_Sound_80094FA0.field18_0x48 = 0;
+    if( g_Sound_80094FA0.VoicesInUseFlags != 0 )
+    {
+        SetVoiceVolume( g_Sound_80094FA0.VoiceIndex, (u32) ((s32) (g_Sound_80094FA0.Volume << 15) >> 16), 0U, 0U );
+        SetVoiceVolume( g_Sound_80094FA0.VoiceIndex + 1, 0U, (u32) ((s32) (g_Sound_80094FA0.Volume << 15) >> 16), 0U );
+    }
+}
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound4", Sound_Cmd_E5_80055d8c);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound4", unk_Sound_80055e0c);
