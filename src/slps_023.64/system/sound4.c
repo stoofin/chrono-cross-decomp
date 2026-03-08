@@ -42,8 +42,20 @@ void Sound_Cmd_E4_SetVolumeStereoPair( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound4", Sound_Cmd_E5_80055d8c);
+void Sound_Cmd_E5_80055d8c( FSoundCommandParams* in_Params )
+{
+    u16 var_a1;
 
+    var_a1 = 1;
+    if( in_Params->Param1 != 0 )
+    {
+        var_a1 = (u16)in_Params->Param1;
+    }
+    g_Sound_80094FA0.field17_0x44 = (s16) ((s16) (in_Params->Param2 - g_Sound_80094FA0.Volume) / (s16) var_a1);
+    g_Sound_80094FA0.field18_0x48 = (s16) var_a1;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound4", unk_Sound_80055e0c);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound4", unk_Sound_80055e60);
