@@ -83,7 +83,7 @@ void Sound_Start()
     WriteSpu( (s32)g_Sound_NullWaveformBuf, SOUND_NULL_WAVEFORM_BUF_SIZE );
     WaitForSpuTransfer();
     Sound_Setup();
-    SpuSetIRQ( NULL );
+    SpuSetIRQ( SPU_OFF );
     SpuSetIRQCallback( NULL );
 
     do {
