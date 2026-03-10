@@ -2,7 +2,7 @@
 #include "psyq/libspu.h"
 
 #define VOICE_COUNT 24
-#define VOICE_MASK_ALL ( 0x3FF )
+#define VOICE_MASK_ALL ( 0xFFFFFFU )
 
 #define SOUND_CHANNEL_COUNT 0x20
 #define SOUND_LFO_COUNT     (0x10)
@@ -776,7 +776,8 @@ u32 unk_Sound_80055e0c(s32*);
 u32 unk_Sound_80056144( u32 in_RepeatAddressL, u32 in_RepeatAddressR, int in_Param3, SpuIRQCallbackProc in_IrqCallback );
 
 extern s32 g_Sound_EventDescriptor;
-extern s8 g_Sound_NullWaveformBuf[64];
+#define SOUND_NULL_WAVEFORM_BUF_SIZE (64)
+extern s8 g_Sound_NullWaveformBuf[ SOUND_NULL_WAVEFORM_BUF_SIZE ];
 
 // RODATA it seems
 extern u32 g_Sound_ProgramCounter;

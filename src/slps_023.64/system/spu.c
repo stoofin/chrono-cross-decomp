@@ -1,6 +1,8 @@
 #include "common.h"
 #include "psyq/libspu.h"
 #include "psyq/libapi.h"
+
+#include "system/spu.h"
 #include "system/sound.h"
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -76,8 +78,8 @@ void Sound_Start()
     SpuStart();
     SpuInitMalloc( 4, g_SpuMallocRecTable );
     SpuSetTransferMode( 0 );
-    SpuSetTransferStartAddr( 0x1010U );
-    WriteSpu( (s32)g_Sound_NullWaveformBuf, 0x40 );
+    SpuSetTransferStartAddr( SPU_WAVEFORM_DATA_START );
+    WriteSpu( (s32)g_Sound_NullWaveformBuf, SOUND_NULL_WAVEFORM_BUF_SIZE );
     WaitForSpuTransfer();
     Sound_Setup();
     SpuSetIRQ( 0 );
@@ -99,4 +101,25 @@ void Sound_Start()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/spu", Sound_Stop);
+void Sound_Stop()
+{
+    if( g_bSpuTransferring == true )
+    {
+        WriteSpu( (s32) g_Sound_NullWaveformBuf, SOUND_NULL_WAVEFORM_BUF_SIZE );
+        WaitForSpuTransfer();
+    }
+
+    do {
+    } while( StopRCnt( 0xF2000002U ) == 0 );
+
+    UnDeliverEvent( 0xF2000002U, 2U );
+
+    do {
+    } while( DisableEvent( g_Sound_EventDescriptor ) == 0 );
+
+    do {
+    } while( CloseEvent( g_Sound_EventDescriptor ) == 0 );
+
+    SetVoiceKeyOff( VOICE_MASK_ALL );
+    SpuQuit();
+}
