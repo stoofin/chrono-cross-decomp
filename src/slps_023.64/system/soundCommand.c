@@ -52,13 +52,23 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_C5_800
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_70_SetCdVolume( FSoundCommandParams* in_pParams )
 {
-    D_80092A64 = 0;
+    g_Sound_CdVolumeFadeLength = 0;
     g_CdVolume = (u16)in_pParams->Param1 << 0x10;
     UpdateCdVolume();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_71_8004FC0C);
+void Sound_Cmd_71_FadeCdVolume(FSoundCommandParams* in_Params) {
+    s32 fadeLengthArg = (s32)in_Params->Param1;
+    s32 fadeLength = 1;
+    s32 targetVolume;
+    if (fadeLengthArg != 0) {
+        fadeLength = fadeLengthArg;
+    }
+    targetVolume = (s32)(u16)in_Params->Param2 << 0x10;
+    g_Sound_CdVolumeFadeLength = (s16)fadeLength;
+    g_Sound_CdVolumeFadeStep = (targetVolume - g_CdVolume) / fadeLength;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_72_8004FC74);
