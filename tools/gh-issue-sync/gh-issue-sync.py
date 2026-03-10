@@ -30,7 +30,7 @@ from typing import Optional
 
 TOOL_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = TOOL_DIR / "config.toml"
-DEFAULT_FILE = "todo.txt"
+DEFAULT_FILE = "todo.md"
 
 TODO_HEADER = """\
 <!--
@@ -98,14 +98,14 @@ class Config:
 
 
 CONFIG_TEMPLATE = """\
-owner = ""
-repo  = ""
-file  = "todo.txt"
+# IMPORTANT: Keep this file out of git — add it to .gitignore.
+owner = "" # your github username e.g. jdperos
+repo  = "" # repo name e.g. chrono-cross-decomp
+file  = "todo.txt" # from root directory
 
 [auth]
 # Paste your GitHub personal access token here.
 # Needs 'repo' scope (or 'public_repo' for public repos).
-# Keep this file out of git — add it to .gitignore.
 token = ""
 
 # Alternatively, leave token blank and set an env var instead:
@@ -614,6 +614,44 @@ class GitHub:
             "GET", f"/repos/{self.owner}/{self.repo}/issues/comments/{comment_id}"
         )
 
+    def list_issues(self, state: str = "open") -> list[dict]:
+        """Fetch all issues (not PRs), paginated."""
+        results = []
+        page = 1
+        while True:
+            batch = self._req(
+                "GET",
+                f"/repos/{self.owner}/{self.repo}/issues"
+                f"?state={state}&per_page=100&page={page}"
+            )
+            if not batch:
+                break
+            for item in batch:
+                if "pull_request" not in item:  # exclude PRs
+                    results.append(item)
+            if len(batch) < 100:
+                break
+            page += 1
+        return results
+
+    def list_comments(self, issue_number: int) -> list[dict]:
+        """Fetch all comments for an issue, paginated."""
+        results = []
+        page = 1
+        while True:
+            batch = self._req(
+                "GET",
+                f"/repos/{self.owner}/{self.repo}/issues/{issue_number}/comments"
+                f"?per_page=100&page={page}"
+            )
+            if not batch:
+                break
+            results.extend(batch)
+            if len(batch) < 100:
+                break
+            page += 1
+        return results
+
     def create_comment(self, issue_number: int, body: str) -> dict:
         return self._req(
             "POST", f"/repos/{self.owner}/{self.repo}/issues/{issue_number}/comments",
@@ -684,12 +722,22 @@ def cmd_check(doc: ParsedDocument) -> list[str]:
 
 def cmd_pull(doc: ParsedDocument, cfg: Config, gh: GitHub, path: Path) -> None:
     rw = FileRewriter(doc.lines)
-    changed = 0
+    refreshed = 0
+    new_issues = 0
+    new_comments = 0
 
+    # Build a set of issue numbers already tracked locally
+    local_issue_numbers: set[int] = {
+        b.issue_line.issue_marker
+        for b in doc.issue_blocks
+        if isinstance(b.issue_line.issue_marker, int)
+    }
+
+    # ── 1. Refresh existing tracked issues ───────────────────────────────────
     for block in doc.issue_blocks:
         il = block.issue_line
         if not isinstance(il.issue_marker, int):
-            continue  # [gh] entries are not yet on GitHub, skip during pull
+            continue
 
         number = il.issue_marker
 
@@ -713,14 +761,12 @@ def cmd_pull(doc: ParsedDocument, cfg: Config, gh: GitHub, path: Path) -> None:
                 f"Local block marked [closed] — safe to delete."
             )
         elif not remote_closed and il.state == "closed":
-            # Reopened remotely — clear closed marker
-            new_state = None
+            new_state = None  # reopened remotely
 
-        new_issue_line = render_issue_line(
+        rw.replace(il.line_no, render_issue_line(
             il.indent, number, new_state, remote_labels, remote_title
-        )
-        rw.replace(il.line_no, new_issue_line)
-        changed += 1
+        ))
+        refreshed += 1
 
         # Description (top-level only)
         if il.is_top_level:
@@ -732,28 +778,115 @@ def cmd_pull(doc: ParsedDocument, cfg: Config, gh: GitHub, path: Path) -> None:
                     new_desc,
                 )
             elif new_desc:
-                # No existing description — insert after the issue line
                 rw.insert_after(il.line_no, new_desc)
 
         # Comments (top-level only, if pull_comments enabled)
-        if il.is_top_level and cfg.pull_comments:
-            for c in block.comment_lines:
-                if not isinstance(c.comment_marker, int):
-                    continue
+        if not il.is_top_level or not cfg.pull_comments:
+            continue
+
+        try:
+            remote_comments = gh.list_comments(number)
+        except GitHubError as e:
+            warn(f"Could not fetch comments for #{number}: {e.message}")
+            continue
+
+        # Build map of locally known comment IDs
+        local_comment_ids: set[int] = {
+            c.comment_marker
+            for c in block.comment_lines
+            if isinstance(c.comment_marker, int)
+        }
+
+        # Refresh already-tracked comments
+        for c in block.comment_lines:
+            if not isinstance(c.comment_marker, int):
+                continue
+            match = next((r for r in remote_comments if r["id"] == c.comment_marker), None)
+            if match is None:
+                warn(f"Comment #{c.comment_marker} no longer exists on GitHub.")
+                continue
+            rw.replace(c.line_no, render_comment_line(
+                c.comment_marker,
+                match["user"]["login"],
+                match["body"],
+            ))
+
+        # Append new remote comments not yet tracked locally
+        new_remote = [r for r in remote_comments if r["id"] not in local_comment_ids]
+        if new_remote:
+            # Find the line to insert after: last comment line, or last desc line,
+            # or the issue line itself — whichever is latest.
+            if block.comment_lines:
+                insert_after = block.comment_lines[-1].line_no
+            elif block.desc_line_nos:
+                insert_after = block.desc_line_nos[-1]
+            else:
+                insert_after = il.line_no
+
+            lines_to_add = []
+            for r in new_remote:
+                lines_to_add.append(render_comment_line(
+                    r["id"], r["user"]["login"], r["body"]
+                ))
+                new_comments += 1
+                print(f"    New comment #{r['id']} from @{r['user']['login']} on #{number}")
+
+            rw.insert_after(insert_after, lines_to_add)
+
+    # ── 2. Append new remote issues not tracked locally ───────────────────────
+    try:
+        all_remote = gh.list_issues(state="open")
+    except GitHubError as e:
+        warn(f"Could not list remote issues: {e.message}")
+        all_remote = []
+
+    unseen = [r for r in all_remote if r["number"] not in local_issue_numbers]
+
+    if unseen:
+        append_lines: list[str] = []
+        if doc.lines and not doc.lines[-1].endswith("\n"):
+            append_lines.append("\n")  # ensure clean separation
+        if doc.lines:
+            append_lines.append("\n")  # blank line before new block
+
+        for r in sorted(unseen, key=lambda x: x["number"]):
+            number     = r["number"]
+            title      = r["title"]
+            labels     = [lbl["name"] for lbl in r.get("labels", [])]
+            body       = r.get("body") or ""
+            closed     = r["state"] == "closed"
+            state      = "closed" if closed else None
+
+            append_lines.append(render_issue_line("", number, state, labels, title))
+
+            if body:
+                append_lines.extend(body_to_desc_lines(body))
+
+            # Pull comments for each new issue too
+            if cfg.pull_comments:
                 try:
-                    remote_c = gh.get_comment(c.comment_marker)
+                    remote_comments = gh.list_comments(number)
                 except GitHubError as e:
-                    warn(f"Could not fetch comment #{c.comment_marker}: {e.message}")
-                    continue
-                new_c_line = render_comment_line(
-                    c.comment_marker,
-                    remote_c["user"]["login"],
-                    remote_c["body"],
-                )
-                rw.replace(c.line_no, new_c_line)
+                    warn(f"Could not fetch comments for #{number}: {e.message}")
+                    remote_comments = []
+                for rc in remote_comments:
+                    append_lines.append(render_comment_line(
+                        rc["id"], rc["user"]["login"], rc["body"]
+                    ))
+                    new_comments += 1
+
+            append_lines.append("\n")
+            new_issues += 1
+            print(f"  Pulled new issue #{number}: {title}")
+
+        # Append to the rewriter's line list directly (beyond existing lines)
+        rw.lines.extend(append_lines)
 
     path.write_text("".join(rw.get_result()))
-    print(f"Pull complete. {changed} issue(s) refreshed.")
+    print(
+        f"Pull complete. {refreshed} refreshed, "
+        f"{new_issues} new issue(s), {new_comments} new comment(s)."
+    )
 
 
 def cmd_push(doc: ParsedDocument, cfg: Config, gh: GitHub, path: Path) -> None:

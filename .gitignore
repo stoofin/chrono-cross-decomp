@@ -8,6 +8,7 @@ lib/
 linker/
 tools/pcsx-redux-tools/
 tools/objdiff/config.yaml
+tools/gh-issue-sync/config.toml
 .vscode/
 .idea/
 __pycache__/
@@ -17,6 +18,8 @@ expected/
 notes/
 .venv/
 objdiff.json
+todo.md
+
 
 # macOS Finder junk
 .DS_Store
