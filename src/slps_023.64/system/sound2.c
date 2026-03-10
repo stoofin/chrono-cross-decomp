@@ -486,7 +486,7 @@ void func_8004E478( s32 in_ChannelIndex, s32 in_VoiceMask )
         {
             if (ActiveVoices & VoiceBit)
             {
-                Priority = pChannel->field34_0x6c;
+                Priority = pChannel->Priority;
 
                 if (MaxPriority < Priority)
                 {
@@ -506,7 +506,7 @@ void func_8004E478( s32 in_ChannelIndex, s32 in_VoiceMask )
         {
             if (ActiveVoices & VoiceBit)
             {
-                if (MaxPriority == pChannel->field34_0x6c)
+                if (MaxPriority == pChannel->Priority)
                 {
                     UpdateFlags = pChannel->UpdateFlags;
 
@@ -608,9 +608,9 @@ void func_8004E7D8( FSoundChannel* in_pChannel, FSoundCommandParams* in_pCommand
     in_pChannel->Length2 = 1;
     in_pChannel->Type = 1;
     in_pChannel->C_StepsRemaining = 0;
-    in_pChannel->field34_0x6c = -2;
-    in_pChannel->field25_0x54 = 0;
-    in_pChannel->field57_0x9a = 0;
+    in_pChannel->Priority = -2;
+    in_pChannel->E_Value = 0;
+    in_pChannel->E_StepsRemaining = 0;
     in_pChannel->C_Value = (in_pCommandParams->Param4 & 0x7F) << 8;
 
     Sound_ResetChannel(in_pChannel, in_ProgramCounter);

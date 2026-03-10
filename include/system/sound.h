@@ -321,7 +321,7 @@ typedef struct
     /* 0x048 */ u32  AutoPanRatePhase;
     /* 0x04C */ s32  AutoPanRateSlideStep;
     /* 0x050 */ s32  field23_0x50;
-    /* 0x054 */ u32  field25_0x54;
+    /* 0x054 */ u32  E_Value;
     /* 0x058 */ u8   field26_0x58;
     /* 0x059 */ u8   field27_0x59;
     /* 0x05A */ u8   field28_0x5a;
@@ -330,7 +330,7 @@ typedef struct
     /* 0x060 */ s32  VolumeSlideStep;
     /* 0x064 */ s32  PitchSlideStep;
     /* 0x068 */ u32  FinePitchDelta;
-    /* 0x06C */ s32  field34_0x6c;
+    /* 0x06C */ s32  Priority;
     /* 0x070 */ s32  KeyOnVolume;
     /* 0x074 */ s32  KeyOnVolumeSlideStep;
     /* 0x078 */ u16  Type; /* Music, SFX, Menu */
@@ -344,7 +344,7 @@ typedef struct
     /* 0x08E */ s16  LoopStepCounterSnapshot[SOUND_LOOP_STACK_SIZE];
     /* 0x096 */ u16  VolumeBalance; /* Volume is set by "volume << 8" */
     /* 0x098 */ u16  VolumeBalanceSlideLength;
-    /* 0x09A */ s16  field57_0x9a;
+    /* 0x09A */ s16  E_StepsRemaining;
     /* 0x09C */ u16  ChannelVolumeSlideLength;
     /* 0x09E */ u16  KeyOnVolumeSlideLength;
     /* 0x0A0 */ s16  C_StepsRemaining;

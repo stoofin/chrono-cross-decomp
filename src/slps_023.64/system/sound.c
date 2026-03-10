@@ -941,7 +941,7 @@ void func_8004CA1C(FSoundChannel* in_pChannel )
     if( UpdateFlags & 0x10 )
     {
         var_a1 = *((u16*)in_pChannel - 0x6) + in_pChannel->VibratoPitch + (in_pChannel->PitchSlide >> 16);
-        temp_a0_4 = in_pChannel->field25_0x54 & 0xFF00;
+        temp_a0_4 = in_pChannel->E_Value & 0xFF00;
         if (!(in_pChannel->unk_Flags & 0x02000000))
         {
             temp_a0_5 = temp_a0_4 >> 8;
@@ -963,7 +963,7 @@ void func_8004CA1C(FSoundChannel* in_pChannel )
     else if( in_pChannel->VoiceParams.VoiceParamFlags & 0x10 )
     {
         var_a1_2 = in_pChannel->PitchBase + in_pChannel->VibratoPitch + (in_pChannel->PitchSlide >> 16);
-        temp_a0_6 = in_pChannel->field25_0x54 & 0xFF00;
+        temp_a0_6 = in_pChannel->E_Value & 0xFF00;
         if (!(in_pChannel->unk_Flags & 0x02000000))
         {
             temp_a0_7 = temp_a0_6 >> 8;
