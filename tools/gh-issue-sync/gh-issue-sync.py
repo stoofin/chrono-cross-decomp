@@ -34,7 +34,7 @@ DEFAULT_FILE = "todo.md"
 
 TODO_HEADER = """\
 <!--
-# todo.txt
+# todo.md
 #
 # Syntax reference (these lines are local-only and never synced):
 #
@@ -99,9 +99,14 @@ class Config:
 
 CONFIG_TEMPLATE = """\
 # IMPORTANT: Keep this file out of git — add it to .gitignore.
-owner = "" # your github username e.g. jdperos
-repo  = "" # repo name e.g. chrono-cross-decomp
-file  = "todo.txt" # from root directory
+# your github username e.g. jdperos
+owner = ""
+
+# repo name e.g. chrono-cross-decomp
+repo  = ""
+
+# from root directory
+file  = "todo.md"
 
 [auth]
 # Paste your GitHub personal access token here.
