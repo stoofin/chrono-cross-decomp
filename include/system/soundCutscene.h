@@ -17,12 +17,12 @@ typedef struct FSoundCutsceneStreamState
     /* 0x1C */ s32 field7_0x1c;
     /* 0x20 */ s32 field8_0x20;
     /* 0x24 */ s32 field9_0x24;
-    /* 0x28 */ s32 field10_0x28;
+    /* 0x28 */ s32 PageIndex;
     /* 0x2C */ s32 field11_0x2c;
     /* 0x30 */ s32 field12_0x30;
     /* 0x34 */ s32 field13_0x34;
     /* 0x38 */ s32 field14_0x38;
-    /* 0x3C */ s32 field15_0x3c;
+    /* 0x3C */ u32 TotalPageCount;
     /* 0x40 */ s32 Volume;
     /* 0x44 */ s32 field17_0x44;
     /* 0x48 */ s32 field18_0x48;
@@ -37,7 +37,7 @@ typedef struct FSoundCutsceneStreamState
 } FSoundCutsceneStreamState; /* size 0x60 */
 
 void Sound_Cutscene_StopStream();
-u32 Sound_Cutscene_AdvancePage(s32*);
+u32 Sound_Cutscene_AdvancePage(u32*);
 u32 Sound_Cutscene_LoadNextBuffer( u32 in_RepeatAddressL, u32 in_RepeatAddressR, int in_Param3, SpuIRQCallbackProc in_IrqCallback );
 
 extern FSoundCutsceneStreamState g_Sound_Cutscene_StreamState;

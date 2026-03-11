@@ -58,8 +58,18 @@ void Sound_Cmd_E5_FadeOutCutscene( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cutscene_AdvancePage);
+u32 Sound_Cutscene_AdvancePage( u32* in_StreamPageIndex )
+{
+    g_Sound_Cutscene_StreamState.PageIndex++;
+    (*in_StreamPageIndex)++;
+    if( ( g_Sound_Cutscene_StreamState.TotalPageCount - 1 ) < *in_StreamPageIndex )
+    {
+        *in_StreamPageIndex = 0;
+    }
+    return *in_StreamPageIndex;
+}
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cutscene_StartStream);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cutscene_BeginPlayback);

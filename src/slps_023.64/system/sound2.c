@@ -1,5 +1,6 @@
 #include "common.h"
 #include "system/sound.h"
+#include "system/soundCutscene.h"
 
 
 // 0x20 toggles whether we use the alternate sample bank
