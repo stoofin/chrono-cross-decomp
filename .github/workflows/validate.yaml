@@ -33,6 +33,7 @@ jobs:
           python3 -m pip install -U -r requirements.txt
 
       - name: Install system dependencies
+        run: |
           sudo apt-get update
           sudo apt-get install make binutils-mips-linux-gnu cpp-mips-linux-gnu
 
