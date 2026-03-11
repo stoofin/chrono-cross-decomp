@@ -58,15 +58,15 @@ void Sound_Cmd_E5_FadeOutCutscene( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-u32 Sound_Cutscene_AdvancePage( u32* in_StreamPageIndex )
+u32 Sound_Cutscene_AdvancePage( u32* in_pStreamPageIndex )
 {
     g_Sound_Cutscene_StreamState.PageIndex++;
-    (*in_StreamPageIndex)++;
-    if( ( g_Sound_Cutscene_StreamState.TotalPageCount - 1 ) < *in_StreamPageIndex )
+    (*in_pStreamPageIndex)++;
+    if( ( g_Sound_Cutscene_StreamState.TotalPageCount - 1 ) < *in_pStreamPageIndex )
     {
-        *in_StreamPageIndex = 0;
+        *in_pStreamPageIndex = 0;
     }
-    return *in_StreamPageIndex;
+    return *in_pStreamPageIndex;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -74,8 +74,15 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cutscene_
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cutscene_BeginPlayback);
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cutscene_OnInitialTransferComplete);
+//----------------------------------------------------------------------------------------------------------------------
+void Sound_Cutscene_OnInitialTransferComplete()
+{
+    Sound_Cutscene_InitVoice( g_Sound_Cutscene_StreamState.VoiceIndex, 1, 0xF100, 0x10100 );
+    Sound_Cutscene_InitVoice( g_Sound_Cutscene_StreamState.VoiceIndex + 1, 2, 0xF900, 0x10900 );
+    Sound_Cutscene_BeginPlayback( 0x2000, 0x10100, Sound_Cutscene_OnBufferAComplete );
+}
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cutscene_LoadNextBuffer);
 
 //----------------------------------------------------------------------------------------------------------------------

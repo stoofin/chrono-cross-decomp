@@ -37,9 +37,14 @@ typedef struct FSoundCutsceneStreamState
 } FSoundCutsceneStreamState; /* size 0x60 */
 
 void Sound_Cutscene_StopStream();
-u32 Sound_Cutscene_AdvancePage(u32*);
+// FindFreeVoice
+// InitVoice
+void Sound_Cutscene_InitVoice( u32 in_Voice, s32 in_PanMode, u32 in_StartAddr, u32 in_RepeatAddr );
+u32 Sound_Cutscene_AdvancePage( u32* in_pStreamPageIndex );
+// StartStream
+void Sound_Cutscene_BeginPlayback(s32,u32,SpuIRQCallbackProc);
+void Sound_Cutscene_OnInitialTransferComplete();
 u32 Sound_Cutscene_LoadNextBuffer( u32 in_RepeatAddressL, u32 in_RepeatAddressR, int in_Param3, SpuIRQCallbackProc in_IrqCallback );
-
 void Sound_Cutscene_OnBufferAComplete();
 void Sound_Cutscene_OnBufferBComplete();
 
