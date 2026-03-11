@@ -1,4 +1,5 @@
 #include "common.h"
+#include "hw.h"
 #include "psyq/kernel.h"
 #include "psyq/libspu.h"
 #include "psyq/libapi.h"
@@ -86,7 +87,8 @@ extern s32 g_Sound_TempoMultiplier;
 extern s32 g_Sound_UnkFlags_80092AFC;
 extern FSoundChannel* g_Sound_pMusicSoudChannels;
 
-void Sound_Setup(void) {
+void Sound_Setup()
+{
     s32 AssignedVoiceNumber;
     s32 Count;
     s32 VoiceIndex;
@@ -96,9 +98,9 @@ void Sound_Setup(void) {
     u32 var_a0;
 
     g_pActiveMusicConfig = &g_PrimaryMusicConfig;
-    g_pSavedMousicConfig = NULL;
+    g_pSavedMousicConfig = 0;
     g_Sound_pMusicSoudChannels = g_ActiveMusicChannels;
-    g_pSecondaryMusicChannels = NULL;
+    g_pSecondaryMusicChannels = 0;
     g_Sound_LfoPhase = 0;
     g_Sound_GlobalFlags.ControlLatches = 0;
     g_Sound_GlobalFlags.MixBehavior = 1;
@@ -118,12 +120,9 @@ void Sound_Setup(void) {
     g_Sound_MasterPitchScaleQ16_16 = 0;
     D_800919C2 = 0;
     g_Sound_TempoMultiplier = 0;
-
-    pActiveMusicChannel = &g_ActiveMusicChannels[0];
-
+    g_Sound_CdVolumeFadeLength = 0;
     g_PrimaryMusicConfig.A_StepsRemaining = 0;
     g_PrimaryMusicConfig.B_StepsRemaining = 0;
-    g_Sound_CdVolumeFadeLength = 0;
     g_Sound_VoiceSchedulerState.NoiseVoiceFlags = 0;
     g_PrimaryMusicConfig.NoiseChannelFlags = 0;
     g_Sound_VoiceSchedulerState.ReverbVoiceFlags = 0;
@@ -132,46 +131,44 @@ void Sound_Setup(void) {
     g_PrimaryMusicConfig.FmChannelFlags = 0;
     g_PrimaryMusicConfig.TimerLower = 0;
     g_PrimaryMusicConfig.TimerUpperCurrent = 0;
-
-    *(s16* )0x1F801D80 = 0x3FFF;
-    *(s16* )0x1F801D82 = 0x3FFF;
-    *(s16* )0x1F801DB0 = 0x7FFF;
-    *(s16* )0x1F801DB2 = 0x7FFF;
-
-    g_Music_LoopCounter = 0;
-
-    g_Sound_UnkFlags_80092AFC = 0;
-
-    g_Sound_80094FA0.ControlFlags = 0;
-
     g_PrimaryMusicConfig.TimerUpper = 0;
     g_PrimaryMusicConfig.TimerTopCurrent = 0;
 
-    g_Sound_80094FA0.Volume = 0x7F00;
-    g_Sound_80094FA0.field18_0x48 = 0;
+    *SPU_MAIN_VOL_L = 0x3FFF;
+    *SPU_MAIN_VOL_R = 0x3FFF;
+    *CD_VOL_L = 0x7FFF;
+    *CD_VOL_R = 0x7FFF;
+    Count = *SPU_CTRL_REG_CPUCNT;
 
+    g_Music_LoopCounter = 0;
+    g_Sound_UnkFlags_80092AFC = 0;
+    g_Sound_80094FA0.field18_0x48 = 0;
+    g_Sound_80094FA0.ControlFlags = 0;
+    g_Sound_80094FA0.Volume = 0x7F00;
     g_Sound_VoiceModeFlags.Fm = 0;
     g_Sound_VoiceModeFlags.Noise = 0;
     g_Sound_VoiceModeFlags.Reverb = 0;
     g_Sound_MasterFadeTimer.TicksRemaining = 0;
+    AssignedVoiceNumber = Count;
+    *SPU_CTRL_REG_CPUCNT = ( AssignedVoiceNumber & 0xFFFA ) | 1;
     Count = 0;
-    *(u16* )0x1F801DAA = (*(u16* )0x1F801DAA & 0xFFFA) | 1;
+    pActiveMusicChannel = &g_ActiveMusicChannels[0];
 
-    do {
+    while( ( (u32)( Count & 0xFFFF ) ) < SOUND_CHANNEL_COUNT )
+    {
         Count++;
         pActiveMusicChannel->UpdateFlags = 0;
-        pActiveMusicChannel->VoiceParams.AssignedVoiceNumber = 0x18;
+        pActiveMusicChannel->VoiceParams.AssignedVoiceNumber = VOICE_INVALID_INDEX;
         pActiveMusicChannel->Type = 0;
         pActiveMusicChannel->Priority = 0;
-
         pActiveMusicChannel++;
-    } while ((u32) (Count & 0xFFFF) < 0x20U);
+    };
 
-    VoiceIndex = 0xC;
+    VoiceIndex = SOUND_SFX_CHANNEL_COUNT;
     pChannel = &SfxSoundChannels[0];
 
-    // SFX channel setup
-    do {
+    while( ( (u32)( VoiceIndex & 0xFFFF ) ) < VOICE_COUNT )
+    {
         AssignedVoiceNumber = VoiceIndex & 0xFFFF;
         VoiceIndex++;
         pChannel->UpdateFlags = 0;
@@ -184,34 +181,34 @@ void Sound_Setup(void) {
         pChannel->E_Value = 0;
         pChannel->KeyOnVolumeSlideLength = 0;
         pChannel++;
-    } while ((u32) (VoiceIndex & 0xFFFF) < 0x18U);
+    };
 
     g_pActiveMusicConfig->PendingKeyOffMask = 0;
     g_pActiveMusicConfig->ActiveNoteMask = 0;
     g_pActiveMusicConfig->PendingKeyOnMask = 0;
-
     g_Sound_VoiceSchedulerState.TempoAccumumulator = 1;
     g_Sound_VoiceSchedulerState.field5_0x14 = 0x66A80000;
     g_Sound_VoiceSchedulerState.KeyOffFlags = 0;
     g_Sound_VoiceSchedulerState.KeyedFlags = 0;
     g_Sound_VoiceSchedulerState.KeyOnFlags = 0;
-
     g_pActiveMusicConfig->RevDepth = 0x03FFF000;
     g_pActiveMusicConfig->ReverbDepthSlideStep = 0;
     g_pActiveMusicConfig->ReverbDepthSlideLength = 0;
-
-    var_s0_3 = 0;
-
     g_Sound_GlobalFlags.UpdateFlags |= 0x80;
-    Sound_SetReverbMode(4);
-    SpuSetReverb( SPU_ON );
+
+    Sound_SetReverbMode( 4 );
+    SpuSetReverb( 1 );
+    var_s0_3 = 0;
     var_a0 = 0 & 0xFFFF;
 
-    do {
-        SetVoiceRepeatAddr(var_a0, 0x1030U);
-        var_s0_3 += 1;
-        var_a0 = var_s0_3 & 0xFFFF;
-    } while ((u32) (var_s0_3 & 0xFFFF) < 0x18U);
+    while( ( var_s0_3 & 0xFFFF ) < VOICE_COUNT )
+    {
+        s16 newVar;
+        SetVoiceRepeatAddr( var_a0, 0x1030U );
+        var_s0_3++;
+        newVar = var_s0_3;
+        var_a0 = newVar & 0xFFFF;
+    };
 
     D_800909F8.unk4 = 0;
     D_800909F8.unk0 = 0;
@@ -243,7 +240,7 @@ void Sound_Start()
     do {
         temp_v0 = OpenEvent( RCntCNT2, EvSpINT, EvMdINTR, Sound_MainLoop );
         g_Sound_EventDescriptor = temp_v0;
-    } while( temp_v0  == -1 );
+    } while( temp_v0 == -1 );
 
     do {
     } while( EnableEvent(g_Sound_EventDescriptor) == 0 );

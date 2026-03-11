@@ -2,10 +2,13 @@
 #include "psyq/libspu.h"
 
 #define VOICE_COUNT 24
+#define VOICE_INVALID_INDEX VOICE_COUNT
 #define VOICE_MASK_ALL ( 0xFFFFFFU )
 
 #define SOUND_CHANNEL_COUNT 0x20
 #define SOUND_LFO_COUNT     (0x10)
+
+#define SOUND_SFX_CHANNEL_COUNT (12)
 
 // Voice parameter update flags
 #define VOICE_PARAM_VOLUME_L      (1 << 0) /* volume (left) */
@@ -788,7 +791,7 @@ extern s16 g_Sound_StereoPanGainTableQ15[0x100];
 // DATA I think
 extern FSoundChannel g_ActiveMusicChannels[0x20];
 extern u32 D_80090A34;
-extern FSoundChannel SfxSoundChannels[12];
+extern FSoundChannel SfxSoundChannels[SOUND_SFX_CHANNEL_COUNT];
 extern FSoundChannel* g_pSecondaryMusicChannels;
 extern FSoundChannelConfig* g_pSavedMousicConfig; // What even is this used for
 extern FSpuVoiceInfo g_SpuVoiceInfo[VOICE_COUNT];
