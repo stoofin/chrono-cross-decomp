@@ -24,58 +24,53 @@ void Sound_Cutscene_StopStream()
 INCLUDE_ASM( "asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cutscene_FindFreeVoicePair );
 
 //----------------------------------------------------------------------------------------------------------------------
-#ifndef NON_MATCHING
-INCLUDE_ASM( "asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cutscene_InitVoice );
-#else
 void Sound_Cutscene_InitVoice( u32 in_Voice, s32 in_PanMode, u32 in_StartAddr, u32 in_RepeatAddr )
 {
-    s32 temp_v0_2;
     s16 VolR;
-    s32 VolL;
+    s16 VolL;
 
     if( g_Sound_GlobalFlags.MixBehavior & 2 )
     {
-        s32 Volume = (s32)( g_Sound_Cutscene_StreamState.Volume * g_Sound_StereoPanGainTableQ15[0x80] ) >> 0x10;
+        s16 Volume = ( g_Sound_Cutscene_StreamState.Volume * g_Sound_StereoPanGainTableQ15[PAN_CENTER_INDEX] ) >> 0x10;
         VolR = Volume;
         VolL = Volume;
     }
     else
     {
-        if( in_PanMode == 1 )
+        if( in_PanMode == PAN_MODE_LEFT )
         {
+            VolL = g_Sound_Cutscene_StreamState.Volume >> 1;
             VolR = 0;
-            VolL = (s32)( g_Sound_Cutscene_StreamState.Volume >> 1 );
         }
-        else if( in_PanMode == 2 )
+        else if( in_PanMode == PAN_MODE_RIGHT )
         {
             VolL = 0;
-            VolR = (s32)( g_Sound_Cutscene_StreamState.Volume >> 1 );
+            VolR = g_Sound_Cutscene_StreamState.Volume >> 1;
         }
-        else if( in_PanMode == 3 )
+        else if( in_PanMode == PAN_MODE_CENTER )
         {
-            temp_v0_2 = ( (s32)g_Sound_Cutscene_StreamState.Volume >> 1 ) << 0x10;
-            VolL = ( temp_v0_2 >> 0x11 ) + ( temp_v0_2 >> 0x12 );
-            VolR = VolL;
+            s32 VolHalfQ16 = ( g_Sound_Cutscene_StreamState.Volume >> 1 ) << 0x10;
+            VolR = ( VolHalfQ16 >> 0x11 ) + ( VolHalfQ16 >> 0x12 );
+            VolL = VolR;
         }
         else
         {
-            s32 TING = 0xFF;
-            VolL = (s32)( ( g_Sound_Cutscene_StreamState.Volume * g_Sound_StereoPanGainTableQ15[g_Sound_Cutscene_StreamState.field20_0x4d] ) >> 0x10 );
-            VolR = (s32)( ( g_Sound_Cutscene_StreamState.Volume * g_Sound_StereoPanGainTableQ15[g_Sound_Cutscene_StreamState.field20_0x4d ^ TING] ) >> 0x10 );
+            u8 Mask = 0xFF;
+            VolL = ( ( g_Sound_Cutscene_StreamState.Volume * g_Sound_StereoPanGainTableQ15[g_Sound_Cutscene_StreamState.PanPosition] ) >> 0x10 );
+            VolR = ( ( g_Sound_Cutscene_StreamState.Volume * g_Sound_StereoPanGainTableQ15[g_Sound_Cutscene_StreamState.PanPosition ^ Mask] ) >> 0x10 );
         }
     }
 
-    SetVoiceVolume( (s32)in_Voice, (u32)(s16)VolL, (u32)(s16)VolR, 0U );
-    SetVoiceSampleRate( (s32)in_Voice, g_Sound_Cutscene_StreamState.VoiceSampleRate );
+    SetVoiceVolume( in_Voice, VolL, VolR, 0U );
+    SetVoiceSampleRate( in_Voice, g_Sound_Cutscene_StreamState.VoiceSampleRate );
     SetVoiceStartAddr( in_Voice, in_StartAddr );
     SetVoiceRepeatAddr( in_Voice, in_RepeatAddr );
-    SetVoiceAdsrAttackRateAndMode( (s32)in_Voice, 0, 1U );
-    SetVoiceAdsrDecayRate( (s32)in_Voice, 0xF );
-    SetVoiceAdsrSustainLevel( (s32)in_Voice, 0xF );
-    SetVoiceAdsrSustainRateAndDirection( (s32)in_Voice, 0x7F, 3U );
-    SetVoiceAdsrReleaseRateAndMode( (s32)in_Voice, 6, 3U );
+    SetVoiceAdsrAttackRateAndMode( in_Voice, 0, 1U );
+    SetVoiceAdsrDecayRate( in_Voice, 0xF );
+    SetVoiceAdsrSustainLevel( in_Voice, 0xF );
+    SetVoiceAdsrSustainRateAndDirection( in_Voice, 0x7F, 3U );
+    SetVoiceAdsrReleaseRateAndMode( in_Voice, 6, 3U );
 }
-#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_E2_StopCutsceneStream()

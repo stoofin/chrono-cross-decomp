@@ -51,7 +51,7 @@ void SetVoiceFmMode( u32 in_FmMode )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceVolume( s32 in_VoiceIndex, u32 in_VolL, u32 in_VolR, u32 in_VolumeScale )
+void SetVoiceVolume( u32 in_VoiceIndex, u32 in_VolL, u32 in_VolR, u32 in_VolumeScale )
 {
     SpuVolume* pVolume;
 
@@ -69,7 +69,7 @@ void SetVoiceVolume( s32 in_VoiceIndex, u32 in_VolL, u32 in_VolR, u32 in_VolumeS
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceSampleRate( s32 in_VoiceIndex, s32 in_SampleRate )
+void SetVoiceSampleRate( u32 in_VoiceIndex, s32 in_SampleRate )
 {
     VOICE_00_ADPCM_SAMPLE_RATE[in_VoiceIndex * SPU_VOICE_INDEX_STRIDE] = in_SampleRate;
 }
@@ -87,13 +87,13 @@ void SetVoiceRepeatAddr( u32 in_VoiceIndex, u32 in_Addr )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceAdsrLower( s32 in_VoiceIndex, u16 in_Register )
+void SetVoiceAdsrLower( u32 in_VoiceIndex, u16 in_Register )
 {
     VOICE_00_ADPCM_ADSR_LOWER[in_VoiceIndex * SPU_VOICE_INDEX_STRIDE] = in_Register;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceAdsrUpper( s32 in_VoiceIndex, u16 in_Register )
+void SetVoiceAdsrUpper( u32 in_VoiceIndex, u16 in_Register )
 {
     VOICE_00_ADPCM_ADSR_UPPER[in_VoiceIndex * SPU_VOICE_INDEX_STRIDE] = in_Register;
 }
@@ -188,7 +188,7 @@ void SetVoiceAdsrUpper( s32 in_VoiceIndex, u16 in_Register )
 #define ADSR_RELEASE_SHIFT(shift)     (((shift) & 0x1F) << ADSR_RELEASE_SHIFT_POS)
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceAdsrAttackRateAndMode( s32 in_VoiceIndex, s32 in_AttackStep, u32 in_AttackMode )
+void SetVoiceAdsrAttackRateAndMode( u32 in_VoiceIndex, s32 in_AttackStep, u32 in_AttackMode )
 {
     u16* AdsrLower = &VOICE_00_ADPCM_ADSR_LOWER[in_VoiceIndex * SPU_VOICE_INDEX_STRIDE];
     // Extract Attack Mode bit (bit 2 of in_AttackRate -> bit 15 of ADSR)
@@ -199,7 +199,7 @@ void SetVoiceAdsrAttackRateAndMode( s32 in_VoiceIndex, s32 in_AttackStep, u32 in
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceAdsrDecayRate( s32 in_VoiceIndex, s32 in_DecayRate )
+void SetVoiceAdsrDecayRate( u32 in_VoiceIndex, s32 in_DecayRate )
 {
     u16* AdsrLower = &VOICE_00_ADPCM_ADSR_LOWER[in_VoiceIndex * SPU_VOICE_INDEX_STRIDE];
     u16 AttackStep = in_DecayRate * 0x10;
@@ -208,14 +208,14 @@ void SetVoiceAdsrDecayRate( s32 in_VoiceIndex, s32 in_DecayRate )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceAdsrSustainLevel( s32 in_VoiceIndex, s32 in_SustainLevel )
+void SetVoiceAdsrSustainLevel( u32 in_VoiceIndex, s32 in_SustainLevel )
 {
     u16* AdsrLower = &VOICE_00_ADPCM_ADSR_LOWER[in_VoiceIndex * SPU_VOICE_INDEX_STRIDE];
     *AdsrLower = (*AdsrLower & 0xFFF0) | in_SustainLevel;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceAdsrSustainRateAndDirection( s32 in_VoiceIndex, s32 in_SustainRate, u32 in_SustainDirection )
+void SetVoiceAdsrSustainRateAndDirection( u32 in_VoiceIndex, s32 in_SustainRate, u32 in_SustainDirection )
 {
     u16* AdsrUpper = &VOICE_00_ADPCM_ADSR_UPPER[in_VoiceIndex * SPU_VOICE_INDEX_STRIDE];
     u16 SustainDirection = ADSR_SUSTAIN_DIRECTION( in_SustainDirection >> 1 );
@@ -225,7 +225,7 @@ void SetVoiceAdsrSustainRateAndDirection( s32 in_VoiceIndex, s32 in_SustainRate,
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceAdsrReleaseRateAndMode( s32 in_VoiceIndex, s32 in_ReleaseRate, u32 in_ReleaseMode )
+void SetVoiceAdsrReleaseRateAndMode( u32 in_VoiceIndex, s32 in_ReleaseRate, u32 in_ReleaseMode )
 {
     u16* AdsrUpper = &VOICE_00_ADPCM_ADSR_UPPER[in_VoiceIndex * SPU_VOICE_INDEX_STRIDE];
     u16 ReleaseMode = (in_ReleaseMode >> 2) << ADSR_RELEASE_MODE_BIT;
@@ -235,7 +235,7 @@ void SetVoiceAdsrReleaseRateAndMode( s32 in_VoiceIndex, s32 in_ReleaseRate, u32 
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceParams( s32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 in_VolumeScale )
+void SetVoiceParams( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 in_VolumeScale )
 {
     s32 left;
     s32 right;

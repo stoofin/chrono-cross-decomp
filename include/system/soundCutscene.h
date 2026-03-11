@@ -42,11 +42,11 @@ typedef struct FSoundCutsceneStreamState
     /* 0x34 */ u32 StreamPageIndex;
     /* 0x38 */ s32 field14_0x38;
     /* 0x3C */ u32 TotalPageCount;
-    /* 0x40 */ u32 Volume;
+    /* 0x40 */ s32 Volume;
     /* 0x44 */ s32 field17_0x44;
     /* 0x48 */ s32 field18_0x48;
     /* 0x4C */ u8 field19_0x4c;
-    /* 0x4D */ u8 field20_0x4d;
+    /* 0x4D */ u8 PanPosition;
     /* 0x4E */ u8 field21_0x4e;
     /* 0x4F */ u8 field22_0x4f;
     /* 0x50 */ s32 field23_0x50;

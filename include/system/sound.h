@@ -165,7 +165,14 @@
 #define SOUND_UPDATE_REVERB      0x80
 
 #define AKAO_FILE_MAGIC                    (0x4F414B41U) // AKAO in ASCII
-                                                         //
+
+typedef enum EPanMode {
+    PAN_MODE_STEREO = 0,  // use PanPosition field with gain table
+    PAN_MODE_LEFT   = 1,
+    PAN_MODE_RIGHT  = 2,
+    PAN_MODE_CENTER = 3,
+} EPanMode;
+
 typedef struct FAkaoFileBlob
 {
     /* 0x000 */ s32  Magic;                    // AKAO
@@ -530,18 +537,18 @@ void SetVoiceKeyOff( u32 in_KeyOff );
 void SetVoiceReverbMode( u32 in_ReverbMode );
 void SetVoiceNoiseMode( u32 in_NoiseMode );
 void SetVoiceFmMode( u32 in_FmMode );
-void SetVoiceVolume( s32 in_VoiceIndex, u32 in_VolL, u32 in_VolR, u32 in_VolumeScale );
-void SetVoiceSampleRate( s32 in_VoiceIndex, s32 in_SampleRate );
+void SetVoiceVolume( u32 in_VoiceIndex, u32 in_VolL, u32 in_VolR, u32 in_VolumeScale );
+void SetVoiceSampleRate( u32 in_VoiceIndex, s32 in_SampleRate );
 void SetVoiceStartAddr( u32 in_VoiceIndex, u32 in_Addr );
 void SetVoiceRepeatAddr( u32 in_VoiceIndex, u32 in_Addr );
-void SetVoiceAdsrLower( s32 in_VoiceIndex, u16 in_Register );
-void SetVoiceAdsrUpper( s32 in_VoiceIndex, u16 in_Register );
-void SetVoiceAdsrAttackRateAndMode( s32 in_VoiceIndex, s32 in_AttackStep, u32 in_AttackMode );
-void SetVoiceAdsrDecayRate( s32 in_VoiceIndex, s32 in_DecayRate );
-void SetVoiceAdsrSustainLevel( s32 in_VoiceIndex, s32 in_SustainLevel );
-void SetVoiceAdsrSustainRateAndDirection( s32 in_VoiceIndex, s32 in_SustainRate, u32 in_SustainDirection );
-void SetVoiceAdsrReleaseRateAndMode( s32 in_VoiceIndex, s32 in_ReleaseRate, u32 in_ReleaseMode );
-void SetVoiceParams( s32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 in_VolumeScale );
+void SetVoiceAdsrLower( u32 in_VoiceIndex, u16 in_Register );
+void SetVoiceAdsrUpper( u32 in_VoiceIndex, u16 in_Register );
+void SetVoiceAdsrAttackRateAndMode( u32 in_VoiceIndex, s32 in_AttackStep, u32 in_AttackMode );
+void SetVoiceAdsrDecayRate( u32 in_VoiceIndex, s32 in_DecayRate );
+void SetVoiceAdsrSustainLevel( u32 in_VoiceIndex, s32 in_SustainLevel );
+void SetVoiceAdsrSustainRateAndDirection( u32 in_VoiceIndex, s32 in_SustainRate, u32 in_SustainDirection );
+void SetVoiceAdsrReleaseRateAndMode( u32 in_VoiceIndex, s32 in_ReleaseRate, u32 in_ReleaseMode );
+void SetVoiceParams( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 in_VolumeScale );
 void SetVoiceParamsByFlags( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams );
 void Sound_UpdateSlidesAndDelays( FSoundChannel* in_pChannel, u32 in_VoiceFlags, s32 );
 void func_8004C5A4( FSoundChannel* in_pChannel );
@@ -751,7 +758,10 @@ extern s8 g_Sound_NullWaveformBuf[ SOUND_NULL_WAVEFORM_BUF_SIZE ];
 extern u32 g_Sound_ProgramCounter;
 extern const u32 g_SemitonePitchTable[SEMITONES_IN_OCTAVE];
 extern s16* g_Sound_LfoTable[SOUND_LFO_COUNT];
-extern s16 g_Sound_StereoPanGainTableQ15[0x100];
+
+#define SPU_PAN_TABLE_SIZE   (0x100)
+#define PAN_CENTER_INDEX     (SPU_PAN_TABLE_SIZE / 2)
+extern s16 g_Sound_StereoPanGainTableQ15[SPU_PAN_TABLE_SIZE];
 
 // DATA I think
 extern FSoundChannel g_ActiveMusicChannels[0x20];
