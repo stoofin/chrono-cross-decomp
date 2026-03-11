@@ -117,7 +117,7 @@ u32 Sound_Cutscene_LoadNextBuffer( u32 in_RepeatAddressL, u32 in_RepeatAddressR,
 
     repeatAddrL = in_RepeatAddressL;
     repeatAddrR = in_RepeatAddressR;
-    if( (u32)pHeader->TotalPages > (u32)pHeader->CurrentPage )
+    if( pHeader->TotalPages > pHeader->CurrentPage )
     {
         SpuSetIRQCallback( in_IrqCallback );
 
@@ -125,7 +125,7 @@ u32 Sound_Cutscene_LoadNextBuffer( u32 in_RepeatAddressL, u32 in_RepeatAddressR,
 
         if( g_Sound_Cutscene_StreamState.StreamPageIndex == 0 )
         {
-            g_Sound_Cutscene_StreamState.pCurrentChunk = (FSoundCutsceneStreamData*)g_Sound_Cutscene_StreamState.field11_0x2c;
+            g_Sound_Cutscene_StreamState.pCurrentChunk = g_Sound_Cutscene_StreamState.field11_0x2c;
         }
     }
     else

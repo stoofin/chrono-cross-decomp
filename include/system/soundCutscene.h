@@ -10,9 +10,9 @@ typedef struct FAkaoHeader
     /* 0x00 */ u32 Magic;
     /* 0x04 */ s32 unk_0x04;      // -> StreamState.field8_0x20
     /* 0x08 */ u8  unk_0x08[0x8];
-    /* 0x10 */ s32 TotalPages;
+    /* 0x10 */ u32 TotalPages;
     /* 0x14 */ u8  unk_0x14[0xC];
-    /* 0x20 */ s32 CurrentPage;
+    /* 0x20 */ u32 CurrentPage;
 } FAkaoHeader; /* size 0x24 */
 
 typedef struct FSoundCutsceneStreamData
@@ -37,9 +37,9 @@ typedef struct FSoundCutsceneStreamState
     /* 0x20 */ s32 field8_0x20;
     /* 0x24 */ s32 field9_0x24;
     /* 0x28 */ s32 PageIndex;
-    /* 0x2C */ s32 field11_0x2c;
+    /* 0x2C */ FSoundCutsceneStreamData* field11_0x2c;
     /* 0x30 */ s32 field12_0x30;
-    /* 0x34 */ s32 StreamPageIndex;
+    /* 0x34 */ u32 StreamPageIndex;
     /* 0x38 */ s32 field14_0x38;
     /* 0x3C */ u32 TotalPageCount;
     /* 0x40 */ s32 Volume;
