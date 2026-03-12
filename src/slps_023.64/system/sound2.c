@@ -339,14 +339,14 @@ void Sound_LoadAkaoSequence( FAkaoSequence* in_Sequence, s32 in_Mask )
 #endif
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_KillMusicConfig( FSoundChannelConfig* in_Config, FSoundChannel* in_pChannel, u32 arg2 )
+void Sound_KillMusicConfig( FSoundChannelConfig* in_Config, FSoundChannel* in_pChannel, u32 in_MusicId )
 {
     FSoundChannel* pChannel;
     FSoundChannelConfig** ppThisChannelConfig;
     u32 Count;
 
     pChannel = in_pChannel;
-    if( (in_Config->ActiveChannelMask != 0) && ((arg2 == 0) || (arg2 == in_Config->MusicId)))
+    if( ( in_Config->ActiveChannelMask != 0 ) && ( ( in_MusicId == MUSIC_ID_ANY ) || ( in_MusicId == in_Config->MusicId ) ) )
     {
         in_Config->PendingKeyOffMask = -1;
         for( Count = SOUND_CHANNEL_COUNT; Count != 0; Count-- )
@@ -367,7 +367,7 @@ void Sound_KillMusicConfig( FSoundChannelConfig* in_Config, FSoundChannel* in_pC
             if( *ppThisChannelConfig == in_Config )
             {
                 *ppThisChannelConfig = NULL;
-                SetVoiceAdsrReleaseRateAndMode(Count, 5, 3U);
+                SetVoiceAdsrReleaseRateAndMode( Count, 5, 3U );
             }
             ppThisChannelConfig++;
         };

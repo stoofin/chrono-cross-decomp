@@ -58,35 +58,42 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80051F7C);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052458);
 
-void func_800526FC(FSoundChannelConfig* arg0, FSoundChannel* arg1) {
-    s32 temp_s0;
-    s32 ticks;
-    u32 temp_v0_2;
+//----------------------------------------------------------------------------------------------------------------------
+void func_800526FC( FSoundChannelConfig* in_pConfig, FSoundChannel* in_pChannel )
+{
+    s32 NewValue;
+    s32 Ticks;
+    u32 ActiveChannelMask;
 
-    ticks = g_Sound_MasterFadeTimer.TicksRemaining;
-    if (ticks == 0) {
-        return;
-    }
-    ticks = ticks - 1;
-    g_Sound_MasterFadeTimer.TicksRemaining = ticks;
-
-    if (ticks == 0) {
-        temp_v0_2 = arg0->ActiveChannelMask;
-        arg0->MusicId = 0;
-        arg0->ActiveChannelMask = 0;
-        arg0->PendingKeyOnMask = 0;
-        arg0->ActiveNoteMask = 0;
-        arg0->PendingKeyOffMask = temp_v0_2;
+    Ticks = g_Sound_MasterFadeTimer.TicksRemaining;
+    if( Ticks == 0 )
+    {
         return;
     }
 
-    temp_s0 = g_Sound_MasterFadeTimer.Value + g_Sound_MasterFadeTimer.Step;
-    if ((temp_s0 & 0xFFFF0000) != (g_Sound_MasterFadeTimer.Value & 0xFFFF0000)) {
-        Sound_MarkActiveChannelsVolumeDirty(arg0, arg1);
+    Ticks--;
+    g_Sound_MasterFadeTimer.TicksRemaining = Ticks;
+
+    if( Ticks == 0 )
+    {
+        ActiveChannelMask = in_pConfig->ActiveChannelMask;
+        in_pConfig->MusicId = 0;
+        in_pConfig->ActiveChannelMask = 0;
+        in_pConfig->PendingKeyOnMask = 0;
+        in_pConfig->ActiveNoteMask = 0;
+        in_pConfig->PendingKeyOffMask = ActiveChannelMask;
+        return;
     }
-    g_Sound_MasterFadeTimer.Value = temp_s0;
+
+    NewValue = g_Sound_MasterFadeTimer.Value + g_Sound_MasterFadeTimer.Step;
+    if( ( NewValue & 0xFFFF0000 ) != ( g_Sound_MasterFadeTimer.Value & 0xFFFF0000 ) )
+    {
+        Sound_MarkActiveChannelsVolumeDirty( in_pConfig, in_pChannel );
+    }
+    g_Sound_MasterFadeTimer.Value = NewValue;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", Sound_MainLoop);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052DA4);

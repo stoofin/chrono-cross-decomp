@@ -10,6 +10,8 @@
 
 #define SOUND_SFX_CHANNEL_COUNT (12)
 
+#define MUSIC_ID_ANY (0)
+
 // Voice parameter update flags
 #define VOICE_PARAM_VOLUME_L      (1 << 0) /* volume (left) */
 #define VOICE_PARAM_VOLUME_R      (1 << 1) /* volume (right) */
@@ -619,7 +621,7 @@ void Sound_Cmd_D2_80050834( FSoundCommandParams* in_Params );
 void Sound_Cmd_D4_800508A8( FSoundCommandParams* in_Params );
 void Sound_Cmd_D5_800508C4( FSoundCommandParams* in_Params );
 void Sound_Cmd_D6_8005092C( FSoundCommandParams* in_Params );
-void Sound_Cmd_F0_800509A0( FSoundCommandParams* in_Params );
+void Sound_Cmd_F0_StopAllMusic( FSoundCommandParams* in_Params );
 void Sound_Cmd_11_800509F0( FSoundCommandParams* in_Params );
 void Sound_Cmd_F1_80050A58( FSoundCommandParams* in_Params );
 void Sound_Cmd_80_80050B34( FSoundCommandParams* in_Params );

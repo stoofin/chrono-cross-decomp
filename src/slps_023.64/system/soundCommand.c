@@ -300,8 +300,16 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_D5_800
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_D6_8005092C);
 
+#define MUSIC_ID_ANY (0)
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_F0_800509A0);
+void Sound_Cmd_F0_StopAllMusic( FSoundCommandParams* in_Params )
+{
+    Sound_KillMusicConfig( g_pActiveMusicConfig, g_ActiveMusicChannels, MUSIC_ID_ANY );
+    if( g_pSavedMousicConfig != NULL )
+    {
+        Sound_KillMusicConfig( g_pSavedMousicConfig, g_pSecondaryMusicChannels, MUSIC_ID_ANY );
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_11_800509F0);
