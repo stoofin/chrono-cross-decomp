@@ -26,9 +26,7 @@ def get_yaml_target(yaml_file):
 
         # Strip known roots in priority order
         for prefix in (
-            "assets/disc/extracted",
             "disc/extracted",
-            "assets",
             "rom",
         ):
             stripped = strip_prefix(target_path, prefix)

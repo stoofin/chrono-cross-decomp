@@ -12,8 +12,7 @@ SKIP_ASM       ?= 0
 
 # Names and Paths
 GAME_NAME    := slps_023.64
-ASSETS_DIR   := assets
-ROM_DIR      := $(ASSETS_DIR)/disc
+ROM_DIR      := disc
 EXTRACT_DIR  := $(ROM_DIR)/extracted
 CACHE_DIR    := .cache
 CONFIG_DIR   := config
@@ -22,8 +21,7 @@ BUILD_DIR    := build
 OUT_DIR      := $(BUILD_DIR)/out
 TOOLS_DIR    := tools
 OBJDIFF_DIR  := $(TOOLS_DIR)/objdiff
-PERMUTER_DIR := permuter
-ASSETS_DIR   := assets
+SCRIPTS_DIR  := $(TOOLS_DIR)/scripts
 ASM_DIR      := asm
 C_DIR        := src
 EXPECTED_DIR := expected
@@ -211,9 +209,8 @@ generate: $(LD_FILES)
 generate-context: $(CTX_FILE)
 
 clean:
-	@echo "[clean] Removing $(BUILD_DIR) and $(PERMUTER_DIR)..."
+	@echo "[clean] Removing $(BUILD_DIR)..."
 	$(Q)rm -rf $(BUILD_DIR)
-	$(Q)rm -rf $(PERMUTER_DIR)
 
 reset: clean
 	@echo "[reset] Removing $(ASM_DIR), $(LINKER_DIR), $(EXPECTED_DIR), $(CTX_DIR), and $(CACHE_DIR)..."
@@ -254,11 +251,21 @@ clean-progress: clean
 	$(Q)$(MAKE) generate
 	$(Q)$(MAKE) progress
 
+# Lazy tools
 build-pcsx-tools:
 	./tools/scripts/build_pcsx_tools.sh
 
 extract-psyq-objs:
 	./tools/scripts/extract_psyq_objs.sh
+
+decompile:
+	$(Q)$(PYTHON) $(SCRIPTS_DIR)/cc_decompile.py $(FUNC)
+
+asm-diff:
+	$(Q)$(PYTHON) $(SCRIPTS_DIR)/symbol_diff_table.py $(FUNC)
+
+permute:
+	$(Q)$(PYTHON) $(SCRIPTS_DIR)/permuter_helper.py $(FUNC) -j8
 
 # Recipes
 

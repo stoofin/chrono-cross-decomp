@@ -94,18 +94,18 @@ You need to own a legal copy of Chrono Cross: Radical Dreamers Edition. The game
 
 2. Find the `cdrom.dat` file (in the `data` folder)
 
-3. Copy it to the project's `assets/disc/` directory:
+3. Copy it to the project's `disc/` directory:
 
 ```bash
 # From the project root
-mkdir -p assets/disc
-cp "/path/to/cdrom.dat" assets/disc/cdrom.dat
+mkdir -p disc
+cp "/path/to/cdrom.dat" disc/cdrom.dat
 ```
 
 4. Verify the checksum:
 
 ```bash
-sha1sum assets/disc/cdrom.dat
+sha1sum disc/cdrom.dat
 # Should match: 354e6593b639c245ba41db1d0bd49664feb4c65e
 ```
 
@@ -145,6 +145,9 @@ build/out/extracted/prog/slps_023.64: OK
 - `make reset` - Wipe repository (bigger clean)
 - `make generate-context` - Generate context file for m2c and decomp.me
 - `make objdiff-config` - Generate objdiff configuration
+- `make decompile FUNC=<symbol>` - Decompile a function to C using m2c
+- `make asm-diff FUNC=<symbol>` - Show a TARGET vs BASE instruction diff table
+- `make permute FUNC=<symbol>` - Run the permuter on a function
 
 ## Contributing
 
@@ -199,26 +202,24 @@ Improve the build system and developer experience:
 ```
 chrono-cross-decomp/
 ├── asm/                            # Splat-generated assembly (the "target") (gitignored)
-├── assets                          # User-provided assets
-│   ├── disc/                       # ROM and extracted game data (gitignored)
-│   │   ├── extracted/              # Game files extracted from cdrom.dat
-│   │   │   └── prog/               # Game program data
-│   │   │       └── slps_023.64     # Main game executable
-│   │   └── cdrom.dat               # Disk image copied from Radical Dreamers edition
-│   └── psyq/                       # Psyq binaries
-│       └── 450/                    # Version 4.5
-│           ├── lib/                # User-provided lib files
-│           └── obj/                # Extracted obj files
 ├── build/                          # Build files (gitignored)
 │   ├── asm/                        # Built from assembly for comparison
 │   ├── out/                        # Map and elf files
 │   └── src/                        # Built from decompiled source code
 ├── config/                         # Splat configuration and symbol addresses
 ├── ctx/                            # Generated context files (gitignored)
+├── disc/                           # ROM and extracted game data (gitignored)
+│   ├── extracted/                  # Game files extracted from cdrom.dat
+│   │   └── prog/                   # Game program data
+│   │       └── slps_023.64         # Main game executable
+│   └── cdrom.dat                   # Disk image copied from Radical Dreamers edition
+├── expected/                       # Compiled objs from decompiled, used for objdiff
 ├── include/                        # C header files
 │   ├── psyq/                       # PSY-Q SDK headers
 │   └── system/                     # Game system headers
+├── lib/                            # Psyq libraries (gitignored - pulled in script)
 ├── linker/                         # Generated linker scripts (gitignored)
+├── nonmatchings/                   # Permuter work directory
 ├── src/                            # Decompiled C source code
 │   └── slps_023.64/                # Main executable source
 ├── tools/                          # Build tools and scripts

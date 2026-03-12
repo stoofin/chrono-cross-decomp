@@ -6,7 +6,7 @@ usage() {
 Usage: $(basename "$0") [--psyq-root DIR] [--psxlib PATH] [--parser PATH]
 
 Defaults:
-    psyq-root  = assets/psyq
+    psyq-root  = psyq
     psxlib     = tools/psxlib-objdumper/psxlib.py
     parser     = tools/pcsx-redux-tools/psyq-obj-parser
 
@@ -20,7 +20,7 @@ Behavior:
 EOF
 }
 
-PSYQ_ROOT="assets/psyq"
+PSYQ_ROOT="psyq"
 PSXLIB="tools/psxlib-objdumper/psxlib.py"
 PARSER="tools/pcsx-redux-tools/psyq-obj-parser"
 

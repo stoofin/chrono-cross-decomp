@@ -55,10 +55,10 @@ jobs:
 
       - name: Reassemble ROM
         run: |
-          mkdir -p assets/disc
-          cat tmp/x* > assets/disc/cdrom.dat
+          mkdir -p disc
+          cat tmp/x* > disc/cdrom.dat
           rm -rf tmp
-          echo "ROM size: $(stat -c%s assets/disc/cdrom.dat) bytes"
+          echo "ROM size: $(stat -c%s disc/cdrom.dat) bytes"
 
       - name: Download psyq objects
         run: |

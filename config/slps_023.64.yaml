@@ -2,7 +2,7 @@ name: Chrono Cross (USA)
 sha1: 26c3da2599af76f7e352b8594d048b527d6bd0d9
 options:
   basename: slps_023.64
-  target_path: assets/disc/extracted/prog/slps_023.64
+  target_path: disc/extracted/prog/slps_023.64
   elf_path: build/slps_023.64.elf
   base_path: ../
   platform: psx
@@ -11,7 +11,6 @@ options:
   asm_path: asm/slps_023.64
   src_path: src/slps_023.64
   build_path: build
-  lib_path: assets/psyq/450/lib
   # create_asm_dependencies: True
 
   ld_script_path: linker/slps_023.64.ld
