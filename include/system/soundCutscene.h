@@ -56,8 +56,7 @@ typedef struct FSoundCutsceneStreamState
 } FSoundCutsceneStreamState; /* size 0x60 */
 
 void Sound_Cutscene_StopStream();
-// FindFreeVoice
-// InitVoice
+s32 Sound_Cutscene_FindFreeVoicePair();
 void Sound_Cutscene_InitVoice( u32 in_Voice, s32 in_PanMode, u32 in_StartAddr, u32 in_RepeatAddr );
 u32 Sound_Cutscene_AdvancePage( u32* in_pStreamPageIndex );
 // StartStream

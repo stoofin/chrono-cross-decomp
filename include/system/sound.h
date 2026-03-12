@@ -572,6 +572,7 @@ void Sound_ReconcileSavedMusicVoices();
 void Sound_ResetChannel( FSoundChannel* in_pChannel, u8* in_pProgramCounter );
 void Sound_LoadAkaoSequence( FAkaoSequence* in_Sequence, s32 in_Mask );
 void Sound_KillMusicConfig( FSoundChannelConfig *in_Struct,FSoundChannel *in_pChannel, uint);
+void Sound_EvictSfxVoice( u32, u32 );
 void unk_Sound_8004e7d8( FSoundChannel *in_Channel, FSoundCommandParams* in_pCommandParams, uint in_Flags, u8 *in_ProgramCounter );
 void FreeVoiceChannels( FSoundChannel* in_Channel, u32 in_Voice );
 void Sound_PlaySfxProgram( FSoundCommandParams* in_CommandParams, u8* in_ProgramCounter1, u8* in_ProgramCounter2, s32 );
@@ -748,6 +749,7 @@ void SoundVM_FE13_PreventVoicesFromRekeyingOnResume( FSoundChannel* in_pChannel,
 void SoundVM_XX_Unimplemented( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 
 void* func_8004A234( s32 in_VoiceIndex );
+
 
 
 extern s32 g_Sound_EventDescriptor;

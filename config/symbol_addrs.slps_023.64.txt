@@ -489,6 +489,7 @@ Sound_ReconcileSavedMusicVoices           = 0x8004DDF8;
 Sound_ResetChannel                        = 0x8004DF1C;
 ChannelMaskToVoiceMask                    = 0x8004DFC4;
 Sound_LoadAkaoSequence                    = 0x8004E010;
+Sound_EvictSfxVoice                       = 0x8004E478;
 Sound_KillMusicConfig                     = 0x8004E3A4;
 FreeVoiceChannels                         = 0x8004E974;
 Sound_PlaySfxProgram                      = 0x8004E9D0;

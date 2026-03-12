@@ -376,7 +376,7 @@ void Sound_KillMusicConfig( FSoundChannelConfig* in_Config, FSoundChannel* in_pC
 
 //----------------------------------------------------------------------------------------------------------------------
 #ifndef NON_MATCHING
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound2", func_8004E478);
+INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound2", Sound_EvictSfxVoice);
 #else
 #define SOUND_UPDATE_VOICE_ACTIVE         ( 1 << 20 )  // Voice is actively processing  
 #define SOUND_UPDATE_PENDING_RELEASE      ( 1 << 21 )  // Voice marked for release
@@ -388,7 +388,7 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound2", func_8004E478);
 #define RELEASE_MODE_PRIORITY   0x40000000
 #define RELEASE_MODE_PAIR       0x80000000  // Negative value check
 
-void func_8004E478( s32 in_ChannelIndex, s32 in_VoiceMask )
+void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
 {
     FSoundChannel* pChannel;
     u32 VoiceBit;
@@ -445,7 +445,7 @@ void func_8004E478( s32 in_ChannelIndex, s32 in_VoiceMask )
         /* Release left voice */
         if (ActiveVoices & VoiceBit)
         {
-            func_8004E478(pChannel->field23_0x50, 0);
+            Sound_EvictSfxVoice(pChannel->field23_0x50, 0);
         }
 
         VoiceBit <<= 1;
@@ -454,7 +454,7 @@ void func_8004E478( s32 in_ChannelIndex, s32 in_VoiceMask )
         /* Release right voice */
         if (ActiveVoices & VoiceBit)
         {
-            func_8004E478(pChannel->field23_0x50, 0);
+            Sound_EvictSfxVoice(pChannel->field23_0x50, 0);
         }
 
         return;
@@ -693,7 +693,7 @@ void Sound_PlaySfxProgram(FSoundCommandParams* in_CommandParams, u8* in_ProgramC
     {
         if (in_CommandParams->Param2 != 0)
         {
-            func_8004E478(0, in_CommandParams->Param2);
+            Sound_EvictSfxVoice(0, in_CommandParams->Param2);
         }
     }
 
@@ -749,7 +749,7 @@ SEARCH_START:
     if (slotsRemaining == 0)
     {
         /* No free voices - try priority-based stealing */
-        func_8004E478(0, 0x40000000);
+        Sound_EvictSfxVoice(0, 0x40000000);
 
         /* Check if stealing freed anything */
         newActiveVoices = g_Sound_VoiceSchedulerState.ActiveChannelMask |

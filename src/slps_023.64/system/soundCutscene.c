@@ -21,7 +21,36 @@ void Sound_Cutscene_StopStream()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM( "asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cutscene_FindFreeVoicePair );
+s32 Sound_Cutscene_FindFreeVoicePair()
+{
+    u32 BusyMask;
+    s32 VoiceIndex;
+    u32 Bit;
+
+    do
+    {
+        Bit = 0x00C00000;
+        VoiceIndex = 0xb;
+        BusyMask = g_Sound_VoiceSchedulerState.ActiveChannelMask | g_Sound_VoiceSchedulerState.unk_Flags_0x10;
+
+        while( VoiceIndex != 0 )
+        {
+            if( !( BusyMask & Bit ) ) break;
+            VoiceIndex--;
+            Bit >>= 1;
+        };
+
+        if( VoiceIndex )
+        {
+            return VoiceIndex + 0xb;
+        }
+
+        Sound_EvictSfxVoice( 0, 0x40000000 );
+
+    } while( BusyMask != ( g_Sound_VoiceSchedulerState.ActiveChannelMask | g_Sound_VoiceSchedulerState.unk_Flags_0x10 ) );
+
+    return -1;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cutscene_InitVoice( u32 in_Voice, s32 in_PanMode, u32 in_StartAddr, u32 in_RepeatAddr )
