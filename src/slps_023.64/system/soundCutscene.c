@@ -229,4 +229,16 @@ void Sound_Cutscene_OnBufferBComplete()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cmd_E8_80056308);
+void Sound_Cmd_E8_80056308( FSoundCommandParams* in_Params )
+{
+    Sound_Cutscene_StopStream();
+    g_Sound_Cutscene_StreamState.StreamPageIndex = -1U;
+    g_Sound_Cutscene_StreamState.field8_0x20 = 0;
+    g_Sound_Cutscene_StreamState.field9_0x24 = 0;
+    g_Sound_Cutscene_StreamState.PageIndex = 0;
+    g_Sound_Cutscene_StreamState.field14_0x38 = 0;
+    g_Sound_Cutscene_StreamState.field2_0x8 = 0x01000000;
+    g_Sound_Cutscene_StreamState.TotalPageCount = (u32)g_Sound_Vm2Params.Param2 >> 0xC;
+    g_Sound_Cutscene_StreamState.field11_0x2c = (FSoundCutsceneStreamData*)in_Params->Param1;
+    g_Sound_Cutscene_StreamState.field12_0x30 = in_Params->Param2;
+}
