@@ -51,13 +51,39 @@ void Sound_Cmd_40_PushMusicState( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_19_SetMusicLevelImmediate);
+void Sound_Cmd_19_SetMusicLevelImmediate( FSoundCommandParams* in_Params )
+{
+    if( ( g_pActiveMusicConfig->ActiveChannelMask != 0 ) && ( ( g_pSavedMousicConfig == NULL ) || ( g_pSavedMousicConfig->MusicId == 0 ) ) )
+    {
+        g_pSavedMousicConfig = &g_PushedMusicConfig;
+        g_pSecondaryMusicChannels = g_PushedMusicChannels;
+        memcpy32( (s32*)g_pActiveMusicConfig, (s32*)&g_PushedMusicConfig, sizeof(FSoundChannelConfig) );
+        memcpy32( (s32*)g_ActiveMusicChannels, (s32*)g_pSecondaryMusicChannels, sizeof(FSoundChannel) * SOUND_CHANNEL_COUNT );
+    }
+
+    Sound_LoadAkaoSequence( (FAkaoSequence*)in_Params->Param1, 0xFFFFFFFF );
+    g_pActiveMusicConfig->A_Volume = ( in_Params->ExtParam1 & 0x7F ) << 0x10;
+    g_pActiveMusicConfig->A_StepsRemaining = 0;
+    g_pActiveMusicConfig->MusicId = in_Params->Param3;
+    Sound_ReconcileSavedMusicVoices();
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_1A_StartMasterAndMusicVolumeFade);
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_12_8004f3c4);
+void Sound_Cmd_12_8004f3c4( FSoundCommandParams* in_Params )
+{
+    u32 LoopCounter;
+
+    Sound_Cmd_10_StartFieldMusic( in_Params );
+    LoopCounter = 0;
+    if( in_Params->Param4 != 0 )
+    {
+        LoopCounter = in_Params->Param4 - 1;
+    }
+    g_Music_LoopCounter = LoopCounter;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_34_8004F404);
