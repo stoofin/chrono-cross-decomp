@@ -164,7 +164,33 @@ void Sound_Cmd_21_8004F6E8( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_C0_8004F714);
+void Sound_Cmd_C0_8004F714( FSoundCommandParams* in_pCmd )
+{
+    FSoundChannelConfig* pConfig;
+    u32 MusicId;
+
+    MusicId = in_pCmd->Param1;
+
+    if ( MusicId == 0 || MusicId == (u32)g_pActiveMusicConfig->MusicId )
+    {
+        pConfig = g_pActiveMusicConfig;
+        pConfig->A_Volume = ( in_pCmd->Param2 & 0x7F ) << 16;
+        pConfig->A_StepsRemaining = 0;
+        Sound_MarkActiveChannelsVolumeDirty( pConfig, g_ActiveMusicChannels );
+        return;
+    }
+
+    pConfig = g_pSavedMousicConfig;
+
+    if ( pConfig == NULL || MusicId == 0 || MusicId != (u32)pConfig->MusicId )
+    {
+        return;
+    }
+
+    pConfig->A_Volume = ( in_pCmd->Param2 & 0x7F ) << 16;
+    pConfig->A_StepsRemaining = 0;
+    Sound_MarkActiveChannelsVolumeDirty( pConfig, g_pSecondaryMusicChannels );
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_C1_8004F7C8);
