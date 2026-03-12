@@ -146,7 +146,65 @@ u32 Sound_Cutscene_AdvancePage( u32* in_pStreamPageIndex )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCutscene", Sound_Cutscene_StartStream);
+void func_8004AF50( s32, s32 );
+
+void Sound_Cutscene_StartStream( void )
+{
+    s32 voiceIndex;
+    FAkaoHeader* pAkaoHeader;
+    s32 volume;
+    s32 page;
+
+    voiceIndex = Sound_Cutscene_FindFreeVoicePair();
+    if( voiceIndex == -1 )
+    {
+        return;
+    }
+
+    SpuSetIRQ( SPU_OFF );
+    SpuSetIRQCallback( NULL );
+
+    pAkaoHeader = &g_Sound_Cutscene_StreamState.field11_0x2c->AkaoHeader;
+
+    if( pAkaoHeader->unk_0x28 != 0 )
+    {
+        if( g_Sound_Cutscene_StreamState.field18_0x48 == 0 )
+        {
+            volume = g_Sound_Cutscene_StreamState.Volume;
+            g_Sound_Cutscene_StreamState.Volume = 0;
+            func_8004AF50( pAkaoHeader->unk_0x28, volume >> 8 );
+        }
+    }
+
+    g_Sound_Cutscene_StreamState.pCurrentChunk = g_Sound_Cutscene_StreamState.field11_0x2c;
+    g_Sound_Cutscene_StreamState.ChannelFlags = pAkaoHeader->TotalPages;
+    page = pAkaoHeader->CurrentPage;
+    g_Sound_Cutscene_StreamState.VoiceIndex = voiceIndex;
+    g_Sound_Cutscene_StreamState.VoicesInUseFlags = ( 1 << voiceIndex ) | ( 1 << ( voiceIndex + 1 ) );
+    g_Sound_Cutscene_StreamState.StreamPageIndex = 0;
+    g_Sound_Cutscene_StreamState.CurrentPage = page;
+
+    SetVoiceRepeatAddr( g_Sound_Cutscene_StreamState.VoiceIndex, 0x1030 );
+    SetVoiceRepeatAddr( g_Sound_Cutscene_StreamState.VoiceIndex + 1, 0x1030 );
+    SetVoiceKeyOff( g_Sound_Cutscene_StreamState.VoicesInUseFlags );
+
+    g_Sound_Cutscene_StreamState.field2_0x8 = pAkaoHeader->unk_0x18;
+    g_Sound_Cutscene_StreamState.VoiceSampleRate = pAkaoHeader->SampleRate;
+    SpuSetTransferMode( SPU_TRANSFER_BY_DMA );
+    SpuSetTransferStartAddr( 0xF100 );
+
+    g_bSpuTransferring = 1;
+    SpuSetTransferCallback( Sound_Cutscene_OnInitialTransferComplete );
+
+    SpuWrite( g_Sound_Cutscene_StreamState.pCurrentChunk->AudioData, 0x2000 );
+    Sound_Cutscene_AdvancePage( &g_Sound_Cutscene_StreamState.StreamPageIndex );
+    Sound_Cutscene_AdvancePage( &g_Sound_Cutscene_StreamState.StreamPageIndex );
+
+    g_Sound_VoiceSchedulerState.ReverbVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
+    g_Sound_VoiceSchedulerState.FmVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
+    g_Sound_VoiceSchedulerState.NoiseVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
+    g_Sound_GlobalFlags.UpdateFlags |= 0x100;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cutscene_BeginPlayback( s32 in_SomeIndex, u32 in_SampleAddr, SpuIRQCallbackProc in_Callback )

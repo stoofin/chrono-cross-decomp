@@ -11,15 +11,20 @@ typedef struct FAkaoHeader
     /* 0x04 */ s32 unk_0x04;      // -> StreamState.field8_0x20
     /* 0x08 */ u8  unk_0x08[0x8];
     /* 0x10 */ u32 TotalPages;
-    /* 0x14 */ u8  unk_0x14[0xC];
+    /* 0x14 */ u8  unk_0x14[0x4];
+    /* 0x18 */ s32 unk_0x18;      // -> StreamState.field2_0x8
+    /* 0x1C */ u16 SampleRate;
+    /* 0x1E */ u8  unk_0x1E[0x2];
     /* 0x20 */ u32 CurrentPage;
-} FAkaoHeader; /* size 0x24 */
+    /* 0x24 */ u8  unk_0x24[0x4];
+    /* 0x28 */ s32 unk_0x28;      // outgoing voice reference for volume handoff
+} FAkaoHeader; /* size 0x2C */
 
 typedef struct FSoundCutsceneStreamData
 {
     /* 0x00 */ u8          unk_0x00[0x80]; // Probably some pointers to Chunks
     /* 0x80 */ FAkaoHeader AkaoHeader;
-    /* 0xA4 */ u8          unk_0xA4[0x2C];
+    /* 0xAC */ u8          unk_0xAC[0x24];
     /* 0xD0 */ DataBlob    AudioData[1];
 } FSoundCutsceneStreamData; /** size 0x80 + DataBlob */
 #define SOUND_CUTSCENE_STREAM_DATA_HEADER_SIZE ( sizeof(FSoundCutsceneStreamData) - sizeof(DataBlob*) )
