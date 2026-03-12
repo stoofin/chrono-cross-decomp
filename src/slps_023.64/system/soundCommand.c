@@ -106,8 +106,8 @@ void Sound_Cmd_30_8004F450( FSoundCommandParams* in_Params )
 {
     u8* Pc1;
     u8* Pc2;
-    s32 SfxIndex;
     s32 MetadataB;
+    s32 SfxIndex;
 
     MetadataB = g_Sound_Sfx_MetadataTableB[in_Params->Param1];
     in_Params->Param2 = 0x02000000;
@@ -130,7 +130,29 @@ void Sound_Cmd_30_8004F450( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_20_8004F518);
+void Sound_Cmd_20_8004F518( FSoundCommandParams* in_Params )
+{
+    u8* Pc1;
+    u8* Pc2;
+    s32 MetadataB;
+    s32 SfxIndex;
+
+    MetadataB = g_Sound_Sfx_MetadataTableB[in_Params->Param1];
+    in_Params->ExtParam1 = 0;
+    Sound_GetProgramCounters( &Pc1, &Pc2, (s32)in_Params->Param1 );
+    Sound_PlaySfxProgram( in_Params, Pc1, Pc2, false );
+
+    if( MetadataB != 0 )
+    {
+        SfxIndex = 1;
+        do {
+            Sound_GetProgramCounters( &Pc1, &Pc2, in_Params->Param1 + SfxIndex );
+            Sound_PlaySfxProgram( in_Params, Pc1, Pc2, true );
+            MetadataB--;
+            SfxIndex++;
+        } while( MetadataB != 0 );
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_24_8004F5C8);
