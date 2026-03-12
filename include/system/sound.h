@@ -465,7 +465,7 @@ typedef struct
     /* 0x7F */ undefined field40_0x7f;
 } FSoundChannelConfig;
 
-typedef struct
+typedef struct FSoundCommandParams
 {
     u32 Param1;
     u32 Param2;
@@ -602,7 +602,7 @@ void Sound_Cmd_C4_8004FA04( FSoundCommandParams* in_Params );
 void Sound_Cmd_C5_8004FAB8( FSoundCommandParams* in_Params );
 void Sound_Cmd_70_SetCdVolume( FSoundCommandParams* in_Params );
 void Sound_Cmd_71_FadeCdVolume( FSoundCommandParams* in_Params );
-void Sound_Cmd_72_8004FC74( FSoundCommandParams* in_Params );
+void Sound_Cmd_72_FadeCdVolumeFrom( FSoundCommandParams* in_Params );
 void Sound_Cmd_A0_8004FCE4( FSoundCommandParams* in_Params );
 void Sound_Cmd_A1_8004FDCC( FSoundCommandParams* in_Params );
 void Sound_Cmd_A8_8004FF4C( FSoundCommandParams* in_Params );

@@ -213,20 +213,40 @@ void Sound_Cmd_70_SetCdVolume( FSoundCommandParams* in_pParams )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_71_FadeCdVolume(FSoundCommandParams* in_Params) {
-    s32 fadeLengthArg = (s32)in_Params->Param1;
-    s32 fadeLength = 1;
-    s32 targetVolume;
-    if (fadeLengthArg != 0) {
-        fadeLength = fadeLengthArg;
+void Sound_Cmd_71_FadeCdVolume( FSoundCommandParams* in_Params )
+{
+    s32 FadeLength;
+    s32 TargetVolume;
+
+    FadeLength = 1;
+    if( in_Params->Param1 != 0 )
+    {
+        FadeLength = in_Params->Param1;
     }
-    targetVolume = (s32)(u16)in_Params->Param2 << 0x10;
-    g_Sound_CdVolumeFadeLength = (s16)fadeLength;
-    g_Sound_CdVolumeFadeStep = (targetVolume - g_CdVolume) / fadeLength;
+    TargetVolume = (u16)in_Params->Param2 << 0x10;
+    g_Sound_CdVolumeFadeLength = FadeLength;
+    g_Sound_CdVolumeFadeStep = ( TargetVolume - g_CdVolume ) / FadeLength;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_72_8004FC74);
+void Sound_Cmd_72_FadeCdVolumeFrom( FSoundCommandParams* in_Params )
+{
+    s32 StartingVolume;
+    s32 FadeLength;
+    s32 TargetVolume;
+
+    FadeLength = 1;
+    if( in_Params->Param1 != 0 )
+    {
+        FadeLength = in_Params->Param1;
+    }
+
+    g_Sound_CdVolumeFadeLength = FadeLength;
+    TargetVolume = (u16)in_Params->Param3 << 0x10;
+    StartingVolume = (u16)in_Params->Param2 << 0x10;
+    g_CdVolume = StartingVolume;
+    g_Sound_CdVolumeFadeStep = (TargetVolume - StartingVolume) / FadeLength;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_A0_8004FCE4);
@@ -300,7 +320,6 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_D5_800
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_D6_8005092C);
 
-#define MUSIC_ID_ANY (0)
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_F0_StopAllMusic( FSoundCommandParams* in_Params )
 {
