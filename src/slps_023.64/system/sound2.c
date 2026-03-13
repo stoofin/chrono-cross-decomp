@@ -108,39 +108,31 @@ void Sound_ReconcileSavedMusicVoices()
 
 //----------------------------------------------------------------------------------------------------------------------
 // Completely unused in the codebase - modifies a struct, but I'm unaware of what struct exactly
-s32 func_8004DED8( void* arg0 )
+s32 func_8004DED8( FSoundChannelConfig* in_pStruct )
 {
-    s32 var_a1;
-    s32 var_v0;
-    u32 temp_v0;
-    u32 var_v1;
+    s32 count;
+    u32 bit;
 
-    var_a1 = 0;
-    temp_v0 = *( (u32*)arg0 + 1 );
-    var_v1 = 1;
-    if( temp_v0 != 0 )
+    count = 0;
+    bit = 1;
+
+    if( in_pStruct->ActiveChannelMask != 0 )
     {
-        var_v0 = temp_v0 & 1;
-
-loop_2:
-        if( var_v0 != 0 )
+        do
         {
-            var_a1 += 1;
-        }
-        var_v1 *= 2;
-        if( var_v1 != 0 )
-        {
-            var_v0 = temp_v0 & var_v1;
-            if( temp_v0 >= var_v1 )
+            if( in_pStruct->ActiveChannelMask & bit )
             {
-
-
-
-                goto loop_2;
+                count++;
             }
-        }
+            bit <<= 1;
+            if( bit == 0 )
+            {
+                break;
+            }
+        } while( in_pStruct->ActiveChannelMask >= bit );
     }
-    return var_a1;
+
+    return count;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
