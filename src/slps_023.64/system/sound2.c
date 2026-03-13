@@ -108,7 +108,40 @@ void Sound_ReconcileSavedMusicVoices()
 
 //----------------------------------------------------------------------------------------------------------------------
 // Completely unused in the codebase - modifies a struct, but I'm unaware of what struct exactly
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound2", func_8004DED8);
+s32 func_8004DED8( void* arg0 )
+{
+    s32 var_a1;
+    s32 var_v0;
+    u32 temp_v0;
+    u32 var_v1;
+
+    var_a1 = 0;
+    temp_v0 = *( (u32*)arg0 + 1 );
+    var_v1 = 1;
+    if( temp_v0 != 0 )
+    {
+        var_v0 = temp_v0 & 1;
+
+loop_2:
+        if( var_v0 != 0 )
+        {
+            var_a1 += 1;
+        }
+        var_v1 *= 2;
+        if( var_v1 != 0 )
+        {
+            var_v0 = temp_v0 & var_v1;
+            if( temp_v0 >= var_v1 )
+            {
+
+
+
+                goto loop_2;
+            }
+        }
+    }
+    return var_a1;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_ResetChannel( FSoundChannel* in_pChannel, u8* in_ProgramCounter )
@@ -668,139 +701,104 @@ void FreeVoiceChannels( FSoundChannel* in_Channel, u32 in_Voice )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound2", Sound_PlaySfxProgram);
-#else
-#define SOUND_UPDATE_STEREO_LINKED  (1 << 16)  // Second channel of stereo pair
+#define SOUND_UPDATE_STEREO_LINKED ( 1 << 16 )    // Second channel of stereo pair
 
-void Sound_PlaySfxProgram(FSoundCommandParams* in_CommandParams, u8* in_ProgramCounter1, u8* in_ProgramCounter2, s32 in_SkipRelease)
+void Sound_PlaySfxProgram( FSoundCommandParams* in_pCommandParams, u8* in_pProgramCounter1, u8* in_pProgramCounter2, s32 in_NoEvict )
 {
     FSoundChannel* channel;
     u32 voiceBit;
-    u32 activeVoices;
-    u32 newActiveVoices;
     s32 slotsRemaining;
-    s32 isLayered;
-
-    /* Early exit if nothing to play */
-    if (in_ProgramCounter1 == NULL && in_ProgramCounter2 == NULL)
+    s32 activeVoices;
+    
+    if( ( in_pProgramCounter1 == 0 ) && ( in_pProgramCounter2 == 0 ) )
     {
         return;
     }
-
-    /* Conditionally release voices based on CommandParams->Param2 */
-    if (in_SkipRelease == 0)
+    
+    if( !in_NoEvict && in_pCommandParams->Param2 != 0 )
     {
-        if (in_CommandParams->Param2 != 0)
+        Sound_EvictSfxVoice( 0, in_pCommandParams->Param2 );
+    }
+
+    do
+    {
+        channel = &SfxSoundChannels[11];
+        voiceBit = 0x00800000;
+        activeVoices = ( g_Sound_VoiceSchedulerState.ActiveChannelMask | g_Sound_VoiceSchedulerState.unk_Flags_0x10 ) | g_Sound_Cutscene_StreamState.VoicesInUseFlags;
+        if( ( in_pProgramCounter1 != 0 ) && (in_pProgramCounter2 != 0 ) )
         {
-            Sound_EvictSfxVoice(0, in_CommandParams->Param2);
+            slotsRemaining = 11; 
+            channel--;
+            voiceBit = 0x00400000;
+            while( slotsRemaining != 0 )
+            {
+                if( !( activeVoices & ( voiceBit | ( voiceBit << 1 ) ) ) )
+                {
+                    break;
+                }
+                slotsRemaining--;
+                channel--;
+                voiceBit >>= 1;
+                if (slotsRemaining == 0) 
+                {
+                    break;
+                }
+            };
         }
-    }
-
-    isLayered = (in_ProgramCounter1 != NULL && in_ProgramCounter2 != NULL);
-
-SEARCH_START:
-    /* Build combined "in use" mask from all sources */
-    channel = &SfxSoundChannels[11];  /* Start at highest index */
-    voiceBit = 0x00800000;            /* Voice 23 */
-    activeVoices = g_Sound_VoiceSchedulerState.ActiveChannelMask |
-                   g_Sound_VoiceSchedulerState.unk_Flags_0x10 |
-                   g_Sound_Cutscene_StreamState.VoicesInUseFlags;
-
-    if (isLayered)
-    {
-        /* LAYERED: Search for TWO consecutive free voices */
-        slotsRemaining = 11;
-        channel--;                    /* Back up to index 10 */
-        voiceBit = 0x00400000;        /* Voice 22 (first of pair) */
-
-        do
+        else
         {
-            /* Check if both voices in pair are free */
-            if ((activeVoices & (voiceBit | (voiceBit << 1))) == 0)
+            slotsRemaining = 12;
+            while( slotsRemaining != 0 )
             {
-                break;  /* Found a free pair */
-            }
-
-            slotsRemaining--;
-            channel--;
-            voiceBit >>= 1;
-        } while (slotsRemaining != 0);
-    }
-    else
-    {
-        /* SINGLE: Search for ONE free voice */
-        slotsRemaining = 12;
-
-        do
+                if( !( activeVoices & voiceBit ) )
+                {
+                    break;
+                }
+                slotsRemaining--;
+                channel--;
+                voiceBit >>= 1;
+            };
+        }
+        if (slotsRemaining != 0) 
         {
-            if ((activeVoices & voiceBit) == 0)
-            {
-                break;  /* Found a free voice */
-            }
+            break;
+        }
+        
+        Sound_EvictSfxVoice( 0, 0x40000000 );
 
-            slotsRemaining--;
-            channel--;
-            voiceBit >>= 1;
-        } while (slotsRemaining != 0);
-    }
-
-    /* Check if we found a slot */
-    if (slotsRemaining == 0)
-    {
-        /* No free voices - try priority-based stealing */
-        Sound_EvictSfxVoice(0, 0x40000000);
-
-        /* Check if stealing freed anything */
-        newActiveVoices = g_Sound_VoiceSchedulerState.ActiveChannelMask |
-                          g_Sound_VoiceSchedulerState.unk_Flags_0x10 |
-                          g_Sound_Cutscene_StreamState.VoicesInUseFlags;
-
-        if (activeVoices == newActiveVoices)
+        if( activeVoices == (g_Sound_VoiceSchedulerState.ActiveChannelMask | g_Sound_VoiceSchedulerState.unk_Flags_0x10 | g_Sound_Cutscene_StreamState.VoicesInUseFlags) )
         {
-            /* Stealing didn't help - give up */
             return;
         }
-
-        /* Retry search */
-        goto SEARCH_START;
-    }
-
-    /* Setup first channel */
-    if (in_ProgramCounter1 != NULL)
+    } while (slotsRemaining == 0);
+    
+    if( in_pProgramCounter1 != 0 )
     {
-        func_8004E7D8(channel, in_CommandParams, voiceBit, in_ProgramCounter1);
-        FreeVoiceChannels(g_ActiveMusicChannels, channel->VoiceParams.AssignedVoiceNumber);
+        func_8004E7D8( channel, in_pCommandParams, voiceBit, in_pProgramCounter1 );
+        FreeVoiceChannels( g_ActiveMusicChannels, channel->VoiceParams.AssignedVoiceNumber );
     }
-
-    /* Setup second channel (stereo) */
-    if (in_ProgramCounter2 != NULL)
+    if( in_pProgramCounter2 )
     {
-        if (in_ProgramCounter1 != NULL)
+        if( in_pProgramCounter1 != 0 )
         {
             channel++;
             voiceBit <<= 1;
         }
-
-        func_8004E7D8(channel, in_CommandParams, voiceBit, in_ProgramCounter2);
-        FreeVoiceChannels(g_ActiveMusicChannels, channel->VoiceParams.AssignedVoiceNumber);
-
-        /* Mark stereo link on second channel */
-        if (in_ProgramCounter1 != NULL)
+        func_8004E7D8( channel, in_pCommandParams, voiceBit, in_pProgramCounter2 );
+        FreeVoiceChannels( g_ActiveMusicChannels, channel->VoiceParams.AssignedVoiceNumber );
+        if( in_pProgramCounter1 != 0 )
         {
             channel->UpdateFlags |= SOUND_UPDATE_STEREO_LINKED;
         }
     }
-
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_04 | SOUND_GLOBAL_UPDATE_08;
 }
-#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_GetProgramCounters( u8** out_ProgramCounter1, u8** out_ProgramCounter2, int in_SfxIndex )
 {
     in_SfxIndex &= 0x3FF;
-    in_SfxIndex <<= 2;
+    in_SfxIndex <<= 1;
 
     *out_ProgramCounter1 = g_Sound_Sfx_ProgramOffsets[in_SfxIndex] != 0xFFFF
         ? g_Sound_Sfx_ProgramData + g_Sound_Sfx_ProgramOffsets[in_SfxIndex]
