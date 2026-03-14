@@ -249,7 +249,38 @@ void Sound_Cmd_72_FadeCdVolumeFrom( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_A0_8004FCE4);
+void Sound_Cmd_A0_8004FCE4( FSoundCommandParams* in_Params )
+{
+    u_int ChannelIndex;
+    FSoundChannel* pChannel = SfxSoundChannels;
+    u_int ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
+    int CurrentChannelMask = ( 1 << SOUND_SFX_CHANNEL_START_INDEX);
+
+    if( in_Params->Param2 != 0 )
+    {
+        for( ChannelIndex = 0; ChannelIndex < SOUND_SFX_CHANNEL_COUNT; ++ChannelIndex, ++pChannel, CurrentChannelMask <<= 1 )
+        {
+            if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & in_Params->Param2 ) )
+            {
+                pChannel->C_Value = ( in_Params->Param3 & 0x7F ) << 8;
+                pChannel->C_StepsRemaining = 0;
+                pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
+            }
+        }
+    }
+    else
+    {
+        for( ChannelIndex = 0; ChannelIndex < SOUND_SFX_CHANNEL_COUNT; ++ChannelIndex, ++pChannel, CurrentChannelMask <<= 1 )
+        {
+            if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->field23_0x50 == in_Params->Param1 ) )
+            {
+                pChannel->C_Value = ( in_Params->Param3 & 0x7F ) << 8;
+                pChannel->C_StepsRemaining = 0;
+                pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
+            }
+        }
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_A1_8004FDCC);
