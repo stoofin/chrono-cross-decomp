@@ -711,8 +711,26 @@ void Sound_Cmd_81_80050B94( FSoundCommandParams* in_Params )
     Sound_MarkScheduledSfxChannelsVolumeDirty();
 }
 
+// TODO(jperos): What this is
+extern s32 D_80092AFC;
+
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_90_FlagAllChannelsUpdateVolume);
+void Sound_Cmd_90_FlagAllChannelsUpdateVolume( FSoundCommandParams* in_Params )
+{
+    u32 ChannelIndex;
+    FSoundChannel* pChannel;
+
+    D_80092AFC = in_Params->Param1;
+
+    ChannelIndex = 0;
+    pChannel = g_ActiveMusicChannels; 
+    while( ChannelIndex < SOUND_CHANNEL_COUNT )
+    {
+        pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
+        ChannelIndex++;
+        pChannel++;
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_92_80050C34);
