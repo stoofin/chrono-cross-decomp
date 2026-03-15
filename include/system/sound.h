@@ -307,10 +307,7 @@ typedef struct
     /* 0x04C */ s32  AutoPanRateSlideStep;
     /* 0x050 */ s32  field23_0x50;
     /* 0x054 */ u32  E_SampleRate_Value;
-    /* 0x058 */ u8   E_SampleRate_Step;
-    /* 0x059 */ u8   field27_0x59;
-    /* 0x05A */ u8   field28_0x5a;
-    /* 0x05B */ u8   field29_0x5b;
+    /* 0x058 */ s32  E_SampleRate_Step;
     /* 0x05C */ s32  Volume;
     /* 0x060 */ s32  VolumeSlideStep;
     /* 0x064 */ s32  PitchSlideStep;

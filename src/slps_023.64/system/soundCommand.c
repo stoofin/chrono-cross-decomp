@@ -551,7 +551,46 @@ void Sound_Cmd_A4_80050424( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_A5_80050504);
+void Sound_Cmd_A5_80050504( FSoundCommandParams* in_Params )
+{
+    FSoundChannel* pChannel = g_SfxSoundChannels;
+    s32 CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
+    s32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
+    u32 ChannelIndex;
+
+    if( in_Params->Param2 != 0 )
+    {
+        ChannelIndex = 0; 
+        while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
+        {
+            if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & in_Params->Param2 ) )
+            {
+                s16 Length = in_Params->Param3 != 0 ? in_Params->Param3 : 1;
+                pChannel->E_SampleRate_Step = (s16)( (s16)( ( ( (u8)in_Params->Param4 ) << 8 ) - pChannel->E_SampleRate_Value ) / Length );
+                pChannel->E_SampleRate_StepsRemaining = Length;
+            }
+            ChannelIndex++;
+            pChannel++;
+            CurrentChannelMask <<= 1;
+        }
+    }
+    else
+    {
+        ChannelIndex = 0; 
+        while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
+        {
+            if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->field23_0x50 == in_Params->Param1 ) )
+            {
+                s16 Length = in_Params->Param3 != 0 ? in_Params->Param3 : 1;
+                pChannel->E_SampleRate_Step = (s16)( (s16)( ( ( (u8)in_Params->Param4 ) << 8 ) - pChannel->E_SampleRate_Value ) / Length );
+                pChannel->E_SampleRate_StepsRemaining = Length;
+            }
+            ChannelIndex++;
+            pChannel++;
+            CurrentChannelMask <<= 1;
+        }
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 // Sets sample rate on all active SFX voices IF flag 1 << 25 isn't set - currently unknown
