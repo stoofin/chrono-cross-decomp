@@ -768,7 +768,7 @@ void Sound_Cmd_9B_ConsumeChannelModeFlagsAndSanitizeFreeVoices( FSoundCommandPar
         g_pActiveMusicConfig->LastChannelModeFlags = g_pActiveMusicConfig->ActiveChannelMask;
         g_pActiveMusicConfig->ActiveChannelMask = 0;
     }
-    D_80094FFC |= 1 << 0;
+    D_80094FFC |= (1 << 0);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -795,11 +795,57 @@ void Sound_Cmd_9A_80050D38( FSoundCommandParams* in_Params )
         g_pActiveMusicConfig->ActiveChannelMask = temp_v1;
         g_Sound_GlobalFlags.UpdateFlags |= 0x100;
     }
-    D_80094FFC &= ~1;
+    D_80094FFC &= ~(1 << 0);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_9D_80050DD4);
+void Sound_Cmd_9D_80050DD4( FSoundCommandParams* in_Params )
+{
+    FSoundChannel* pChannel;
+    s32 CurrentChannelMask;
+    s32 VoiceIndex;
+    s32 ActiveChannelMask;
+    u_int ChannelIndex;
+
+    if( g_Sound_VoiceSchedulerState.ActiveChannelMask != 0 )
+    {
+        ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
+        pChannel = g_SfxSoundChannels;
+        CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
+
+        ChannelIndex = 0; 
+        while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
+        {
+            if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & 0x02000000 ) )
+            {
+                ActiveChannelMask &= ~CurrentChannelMask;
+            }
+            ChannelIndex++;
+            pChannel++;
+            CurrentChannelMask <<= 1;
+        }
+
+        CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
+        VoiceIndex = SOUND_SFX_CHANNEL_START_INDEX;
+        g_Sound_VoiceSchedulerState.unk_Flags_0x10 = ActiveChannelMask;
+        g_Sound_VoiceSchedulerState.ActiveChannelMask &= ~ActiveChannelMask;
+
+        while( ActiveChannelMask != 0 )
+        {
+            if( ActiveChannelMask & CurrentChannelMask )
+            {
+                SetVoiceVolume( VoiceIndex, 0, 0, 0 );
+                SetVoiceSampleRate( VoiceIndex, 0 );
+                SetVoiceAdsrAttackRateAndMode( VoiceIndex, 0x7F, 1 );
+                SetVoiceAdsrSustainRateAndDirection( VoiceIndex, 0x7F, 3 );
+                ActiveChannelMask &= ~CurrentChannelMask;
+            }
+            CurrentChannelMask <<= 1;
+            VoiceIndex++;
+        }
+    }
+    D_80094FFC |= 1 << 1;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_9C_80050EF0);
