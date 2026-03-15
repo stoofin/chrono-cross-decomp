@@ -96,20 +96,43 @@ void func_800526FC( FSoundChannelConfig* in_pConfig, FSoundChannel* in_pChannel 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", Sound_MainLoop);
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052DA4);
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052FB8);
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_800531E0);
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80053370);
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_800535E4);
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", Sound_ComputeSlideStep);
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", Sound_CopyInstrumentInfoToChannel);
+//----------------------------------------------------------------------------------------------------------------------
+void Sound_CopyInstrumentInfoToChannel( FSoundChannel* in_pChannel, FSoundInstrumentInfo* in_pInstrumentInfo, u32 in_StartAddress )
+{
+    in_pChannel->VoiceParams.StartAddress = in_StartAddress;
+    in_pChannel->VoiceParams.LoopAddress = in_pInstrumentInfo->LoopAddr;
+    in_pChannel->VoiceParams.AdsrLower = in_pInstrumentInfo->AdsrLower;
+    in_pChannel->VoiceParams.AdsrUpper = in_pInstrumentInfo->AdsrUpper;
+    in_pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_START_ADDR | VOICE_PARAM_ADSR_FULL  | VOICE_PARAM_LOOP_ADDR;
+}
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", Sound_SetInstrumentToChannel);
+//----------------------------------------------------------------------------------------------------------------------
+void Sound_SetInstrumentToChannel( FSoundChannel* in_Channel, u32 in_Index )
+{
+    FSoundInstrumentInfo* InstrumentInfo;
 
+    in_Channel->InstrumentIndex = in_Index;
+    InstrumentInfo = &g_InstrumentInfo[in_Index];
+    Sound_CopyInstrumentInfoToChannel( in_Channel, InstrumentInfo, InstrumentInfo->StartAddr );
+}
+
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", Sound_ClearVoiceFromSchedulerState);
