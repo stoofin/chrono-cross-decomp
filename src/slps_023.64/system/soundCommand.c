@@ -258,7 +258,8 @@ void Sound_Cmd_A0_8004FCE4( FSoundCommandParams* in_Params )
 
     if( in_Params->Param2 != 0 )
     {
-        for( ChannelIndex = 0; ChannelIndex < SOUND_SFX_CHANNEL_COUNT; ++ChannelIndex, ++pChannel, CurrentChannelMask <<= 1 )
+        ChannelIndex = 0; 
+        while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
         {
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & in_Params->Param2 ) )
             {
@@ -266,11 +267,15 @@ void Sound_Cmd_A0_8004FCE4( FSoundCommandParams* in_Params )
                 pChannel->C_StepsRemaining = 0;
                 pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
             }
+            ChannelIndex++;
+            pChannel++;
+            CurrentChannelMask <<= 1;
         }
     }
     else
     {
-        for( ChannelIndex = 0; ChannelIndex < SOUND_SFX_CHANNEL_COUNT; ++ChannelIndex, ++pChannel, CurrentChannelMask <<= 1 )
+        ChannelIndex = 0; 
+        while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
         {
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->field23_0x50 == in_Params->Param1 ) )
             {
@@ -278,6 +283,9 @@ void Sound_Cmd_A0_8004FCE4( FSoundCommandParams* in_Params )
                 pChannel->C_StepsRemaining = 0;
                 pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
             }
+            ChannelIndex++;
+            pChannel++;
+            CurrentChannelMask <<= 1;
         }
     }
 }
@@ -324,7 +332,8 @@ void Sound_Cmd_A8_8004FF4C( FSoundCommandParams* in_Params )
     s32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
     u32 ChannelIndex;
 
-    for( ChannelIndex = 0; ChannelIndex < SOUND_SFX_CHANNEL_COUNT; ++ChannelIndex, ++pChannel, CurrentChannelMask *= 2 )
+    ChannelIndex = 0; 
+    while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
     {
         if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
         {
@@ -332,6 +341,9 @@ void Sound_Cmd_A8_8004FF4C( FSoundCommandParams* in_Params )
             pChannel->C_StepsRemaining = 0;
             pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
         }
+        ChannelIndex++;
+        pChannel++;
+        CurrentChannelMask <<= 1;
     }
 }
 
@@ -343,7 +355,8 @@ void Sound_Cmd_A9_8004FFC8( FSoundCommandParams* in_Params )
     s32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
     u32 ChannelIndex;
 
-    for( ChannelIndex = 0; ChannelIndex < SOUND_SFX_CHANNEL_COUNT; ++ChannelIndex, ++pChannel, CurrentChannelMask *= 2 )
+    ChannelIndex = 0; 
+    while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
     {
         if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
         {
@@ -355,11 +368,53 @@ void Sound_Cmd_A9_8004FFC8( FSoundCommandParams* in_Params )
             pChannel->C_Step = ( (s16)( ( ( in_Params->Param2 & 0x7F ) << 8 ) - pChannel->C_Value ) / Length );
             pChannel->C_StepsRemaining = Length;
         }
+        ChannelIndex++;
+        pChannel++;
+        CurrentChannelMask <<= 1;
     }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_A2_80050090);
+void Sound_Cmd_A2_80050090( FSoundCommandParams* in_Params )
+{
+    FSoundChannel* pChannel = g_SfxSoundChannels;
+    s32 CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
+    u32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
+    u32 ChannelIndex;
+
+    if( in_Params->Param2 != 0 )
+    {
+        ChannelIndex = 0;
+        while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
+        {
+            if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & in_Params->Param2 ) )
+            {
+                pChannel->D_Volume_Value = ( (u8)in_Params->Param3 ) << 8;
+                pChannel->D_Volume_StepsRemaining = 0;
+                pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
+            }
+            ChannelIndex++;
+            pChannel++;
+            CurrentChannelMask <<= 1;
+        }
+    }
+    else
+    {
+        ChannelIndex = 0; 
+        while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
+        {
+            if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->field23_0x50 == in_Params->Param1 ) )
+            {
+                pChannel->D_Volume_Value = ( (u8)in_Params->Param3 ) << 8;
+                pChannel->D_Volume_StepsRemaining = 0;
+                pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
+            }
+            ChannelIndex++;
+            pChannel++;
+            CurrentChannelMask <<= 1;
+        }
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_A3_80050170);
