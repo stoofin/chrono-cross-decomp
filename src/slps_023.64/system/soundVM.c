@@ -952,39 +952,25 @@ void SoundVM_B7_AttackMode( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundVM", SoundVM_BB_SustainMode);
-#else
 void SoundVM_BB_SustainMode( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    u16 mode;
-    int tmp;
+    u16 Mode = *( in_pChannel->ProgramCounter++ );
+    in_pChannel->VoiceParams.AdsrUpper &= ~( (1 << 14) | (1 << 15) );
 
-    mode = *(in_pChannel->ProgramCounter++);
-    in_pChannel->VoiceParams.AdsrUpper &= ~((1 << 14) | (1 << 15));
-    tmp = 6;
-
-    if( mode != 5 )
+    switch( Mode )
     {
-        if( mode < tmp )
-        {
-            if( mode != 3 )
-            {
-                in_pChannel->VoiceParams.AdsrUpper |= 0x4000;
-            }
-        }
-        else if( mode != 7 )
-        {
+        case 3:
+            in_pChannel->VoiceParams.AdsrUpper |= 0x4000;
+            break;
+        case 5:
+            in_pChannel->VoiceParams.AdsrUpper |= 0x8000;
+            break;
+        case 7:
             in_pChannel->VoiceParams.AdsrUpper |= 0xC000;
-        }
-    }
-    else
-    {
-        in_pChannel->VoiceParams.AdsrUpper |= 0x8000;
+            break;
     }
     in_pChannel->VoiceParams.VoiceParamFlags |= 0x200;
 }
-#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_BF_ReleaseMode( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
