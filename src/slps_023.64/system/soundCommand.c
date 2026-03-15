@@ -736,7 +736,44 @@ void Sound_Cmd_90_FlagAllChannelsUpdateVolume( FSoundCommandParams* in_Params )
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_92_80050C34);
 
 //----------------------------------------------------------------------------------------------------------------------
+#ifndef NON_MATCHING
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_9B_ConsumeChannelModeFlagsAndSanitizeFreeVoices);
+#else
+void Sound_Cmd_9B_ConsumeChannelModeFlagsAndSanitizeFreeVoices( FSoundCommandParams* in_Params )
+{
+    s32 Index;
+    s32 AllVoiceMask;
+    s32 CurrentVoiceMask;
+
+    if( g_pActiveMusicConfig->ActiveChannelMask != 0 )
+    {
+        s32 v0 = ~( g_Sound_VoiceSchedulerState.ActiveChannelMask | g_Sound_Cutscene_StreamState.VoicesInUseFlags );
+        CurrentVoiceMask = 1;
+        AllVoiceMask = v0 & 0xFFFFFF;
+
+        if( AllVoiceMask != 0 )
+        {
+            Index = 0;
+            while( AllVoiceMask != 0 )
+            {
+                if( AllVoiceMask & CurrentVoiceMask )
+                {
+                    SetVoiceVolume( Index, 0, 0, 0 );
+                    SetVoiceSampleRate( Index, 0 );
+                    SetVoiceAdsrAttackRateAndMode( Index, 0x7F, 1 );
+                    SetVoiceAdsrSustainRateAndDirection( Index, 0x7F, 3 );
+                    AllVoiceMask &= ~CurrentVoiceMask;
+                }
+                CurrentVoiceMask <<= 1;
+                Index++;
+            }
+        }
+        g_pActiveMusicConfig->LastChannelModeFlags = g_pActiveMusicConfig->ActiveChannelMask;
+        g_pActiveMusicConfig->ActiveChannelMask = 0;
+    }
+    g_Sound_Cutscene_StreamState.ControlFlags |= 1 << 0;
+}
+#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_9A_80050D38);
