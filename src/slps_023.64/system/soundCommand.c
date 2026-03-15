@@ -352,10 +352,10 @@ void Sound_Cmd_A9_8004FFC8( FSoundCommandParams* in_Params )
 {
     FSoundChannel* pChannel = g_SfxSoundChannels;
     s32 CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
-    s32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
-    u32 ChannelIndex;
+    u32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
+    u32 ChannelIndex = 0;
 
-    ChannelIndex = 0; 
+
     while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
     {
         if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
@@ -463,32 +463,50 @@ void Sound_Cmd_A3_80050170( FSoundCommandParams* in_Param )
 // Hints that D is a timer for SFX Volume
 void Sound_Cmd_AA_800502E8( FSoundCommandParams* in_Params )
 {
-    s32 Mask;
-    s32 ActiveChannelMask;
-    u32 Index;
-    FSoundChannel* pChannel;
+    FSoundChannel* pChannel = g_SfxSoundChannels;
+    s32 CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
+    u32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
+    u32 ChannelIndex = 0;
 
-    Mask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
-    ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
-    pChannel = g_SfxSoundChannels;
-
-    Index = 0;
-    while( Index < SOUND_SFX_CHANNEL_COUNT )
+    while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
     {
-        if( ( ActiveChannelMask & Mask ) && !( pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25 ) )
+        if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25 ) )
         {
             pChannel->D_Volume_Value = (u8)in_Params->Param1 << 8;
             pChannel->D_Volume_StepsRemaining = 0;
             pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
         }
-        Index++;
+        ChannelIndex++;
         pChannel++;
-        Mask <<= 1;
+        CurrentChannelMask <<= 1;
     } ;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_AB_80050360);
+void Sound_Cmd_AB_80050360( FSoundCommandParams* in_Params )
+{
+    FSoundChannel* pChannel = g_SfxSoundChannels;
+    s32 CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
+    u32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
+    u32 ChannelIndex = 0;
+
+    while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
+    {
+        if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
+        {
+            s16 Length = 1;
+            if( in_Params->Param1 != 0 )
+            {
+                Length = in_Params->Param1;
+            }
+            pChannel->D_Volume_Step = (short)( ( ( (char)in_Params->Param2 ) << 8 ) - pChannel->D_Volume_Value ) / Length;
+            pChannel->D_Volume_StepsRemaining = Length;
+        }
+        ChannelIndex++;
+        pChannel++;
+        CurrentChannelMask <<= 1;
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_A4_80050424);
