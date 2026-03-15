@@ -492,7 +492,7 @@ void Sound_Cmd_AB_80050360( FSoundCommandParams* in_Params )
 
     while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
     {
-        if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
+        if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25 ) )
         {
             s16 Length = 1;
             if( in_Params->Param1 != 0 )
@@ -509,7 +509,46 @@ void Sound_Cmd_AB_80050360( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_A4_80050424);
+void Sound_Cmd_A4_80050424( FSoundCommandParams* in_Params )
+{
+    FSoundChannel* pChannel = g_SfxSoundChannels;
+    s32 CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
+    u32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
+    u32 ChannelIndex;
+
+    if( in_Params->Param2 != 0 )
+    {
+        ChannelIndex = 0; 
+        while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
+        {
+            if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & in_Params->Param2 ) )
+            {
+                pChannel->E_SampleRate_Value = ( (u8)in_Params->Param3 ) << 8;
+                pChannel->E_SampleRate_StepsRemaining = 0;
+                pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_SAMPLE_RATE;
+            }
+            ChannelIndex++;
+            pChannel++;
+            CurrentChannelMask <<= 1;
+        }
+    }
+    else
+    {
+        ChannelIndex = 0; 
+        while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
+        {
+            if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->field23_0x50 == in_Params->Param1 ) )
+            {
+                pChannel->E_SampleRate_Value = ( (char)in_Params->Param3 ) << 8;
+                pChannel->E_SampleRate_StepsRemaining = 0;
+                pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_SAMPLE_RATE;
+            }
+            ChannelIndex++;
+            pChannel++;
+            CurrentChannelMask <<= 1;
+        }
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_A5_80050504);
