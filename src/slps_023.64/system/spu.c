@@ -9,6 +9,7 @@
 #include "hw.h"
 
 #include "system/sound.h"
+#include "system/soundCommand.h"
 #include "system/soundCutscene.h"
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -148,7 +149,7 @@ void Sound_Setup()
     g_Music_LoopCounter = 0;
     g_Sound_UnkFlags_80092AFC = 0;
 
-    g_Sound_Cutscene_StreamState.ControlFlags = 0;
+    D_80094FFC = 0;
     g_Sound_Cutscene_StreamState.VolFadeStepsRemaining = 0;
     g_Sound_Cutscene_StreamState.Volume = 0x7F00;
     g_Sound_VoiceModeFlags.Fm = 0;

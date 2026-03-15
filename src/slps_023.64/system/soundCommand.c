@@ -848,7 +848,32 @@ void Sound_Cmd_9D_80050DD4( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_9C_80050EF0);
+void Sound_Cmd_9C_80050EF0( FSoundCommandParams* in_Params )
+{
+    if( g_Sound_VoiceSchedulerState.unk_Flags_0x10 != 0 )
+    {
+        FSoundChannel* pChannel = g_SfxSoundChannels;
+        s32 Flags = g_Sound_VoiceSchedulerState.unk_Flags_0x10;
+        s32 CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
+
+        while( Flags != 0 )
+        {
+            if( Flags & CurrentChannelMask )
+            {
+                Flags &= ~CurrentChannelMask;
+                pChannel->VoiceParams.VoiceParamFlags |= 0x2B13;
+            }
+            CurrentChannelMask <<= 1;
+            ++pChannel;
+        };
+
+        Flags = g_Sound_VoiceSchedulerState.unk_Flags_0x10;
+        g_Sound_VoiceSchedulerState.unk_Flags_0x10 = 0;
+        g_Sound_VoiceSchedulerState.ActiveChannelMask |= Flags;
+        g_Sound_GlobalFlags.UpdateFlags |= 0x100;
+    }
+    D_80094FFC &= ~( 1 << 1 );
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_9F_ResetGlobalVoice( FSoundCommandParams* in_Params )
