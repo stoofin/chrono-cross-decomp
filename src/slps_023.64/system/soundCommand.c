@@ -336,7 +336,27 @@ void Sound_Cmd_A8_8004FF4C( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_A9_8004FFC8);
+void Sound_Cmd_A9_8004FFC8( FSoundCommandParams* in_Params )
+{
+    FSoundChannel* pChannel = SfxSoundChannels;
+    s32 CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
+    s32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
+    u32 ChannelIndex;
+
+    for( ChannelIndex = 0; ChannelIndex < SOUND_SFX_CHANNEL_COUNT; ++ChannelIndex, ++pChannel, CurrentChannelMask *= 2 )
+    {
+        if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
+        {
+            s16 Length = 1;
+            if( in_Params->Param1 != 0 )
+            {
+                Length = in_Params->Param1;
+            }
+            pChannel->C_Step = ( (s16)( ( ( in_Params->Param2 & 0x7F ) << 8 ) - pChannel->C_Value ) / Length );
+            pChannel->C_StepsRemaining = Length;
+        }
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_A2_80050090);
