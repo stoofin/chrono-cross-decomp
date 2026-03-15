@@ -774,7 +774,7 @@ extern s16 g_Sound_StereoPanGainTableQ15[SPU_PAN_TABLE_SIZE];
 // DATA I think
 extern FSoundChannel g_ActiveMusicChannels[SOUND_CHANNEL_COUNT];
 extern u32 D_80090A34;
-extern FSoundChannel SfxSoundChannels[SOUND_SFX_CHANNEL_COUNT];
+extern FSoundChannel g_SfxSoundChannels[SOUND_SFX_CHANNEL_COUNT];
 extern FSoundChannel* g_pSecondaryMusicChannels;
 extern FSoundChannelConfig* g_pSavedMousicConfig; // What even is this used for
 extern FSpuVoiceInfo g_SpuVoiceInfo[VOICE_COUNT];

@@ -91,7 +91,7 @@ s32 func_8004A260()
         return 0;
     }
 
-    pChannel = SfxSoundChannels;
+    pChannel = g_SfxSoundChannels;
     out_UnkFlags = 0;
     Mask = 0x1000;
     AllVoiceMask = 0xFFFFFF;

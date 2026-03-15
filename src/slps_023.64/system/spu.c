@@ -173,7 +173,7 @@ void Sound_Setup()
     };
 
     VoiceIndex = SOUND_SFX_CHANNEL_COUNT;
-    pChannel = &SfxSoundChannels[0];
+    pChannel = &g_SfxSoundChannels[0];
 
     while( ( (u32)( VoiceIndex & 0xFFFF ) ) < VOICE_COUNT )
     {

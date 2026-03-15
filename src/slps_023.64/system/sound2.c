@@ -431,7 +431,7 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
     if (MaskedArg != 0)
     {
         /* PATH 1: Release voices matching the mask AND channel's unk_Flags filter */
-        pChannel = SfxSoundChannels;
+        pChannel = g_SfxSoundChannels;
         VoiceBit = SFX_FIRST_VOICE_BIT;
 
         for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
@@ -464,7 +464,7 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
     else if (in_VoiceMask < 0)
     {
         /* PATH 2A: Release stereo voice pair by index */
-        pChannel = &SfxSoundChannels[in_ChannelIndex];
+        pChannel = &g_SfxSoundChannels[in_ChannelIndex];
         VoiceBit = SFX_FIRST_VOICE_BIT << in_ChannelIndex;
 
         /* Release left voice */
@@ -489,7 +489,7 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
         /* PATH 2B: Priority-based voice stealing */
 
         /* Pass 1: Filter out voices with non-zero unk_Flags */
-        pChannel = SfxSoundChannels;
+        pChannel = g_SfxSoundChannels;
         VoiceBit = SFX_FIRST_VOICE_BIT;
 
         for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
@@ -504,7 +504,7 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
         };
 
         /* Pass 2: Find maximum priority (lowest importance = steal first) */
-        pChannel = SfxSoundChannels;
+        pChannel = g_SfxSoundChannels;
         VoiceBit = SFX_FIRST_VOICE_BIT;
         MaxPriority = 0;
 
@@ -525,7 +525,7 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
         };
 
         /* Pass 3: Release all voices with max priority value */
-        pChannel = SfxSoundChannels;
+        pChannel = g_SfxSoundChannels;
         VoiceBit = SFX_FIRST_VOICE_BIT;
 
         for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
@@ -556,7 +556,7 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
     else
     {
         /* PATH 3: Release voices by identifier match */
-        pChannel = SfxSoundChannels;
+        pChannel = g_SfxSoundChannels;
         VoiceBit = SFX_FIRST_VOICE_BIT;
 
         for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
@@ -655,7 +655,7 @@ void func_8004E7D8( FSoundChannel* in_pChannel, FSoundCommandParams* in_pCommand
     if( D_80094FFC & 2 )
     {
         Flag = (1 << 0xC);
-        pChannel = SfxSoundChannels;
+        pChannel = g_SfxSoundChannels;
         Mask = 0xC;
         do {
             if( (g_Sound_VoiceSchedulerState.ActiveChannelMask & Flag) && !(pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25) )
@@ -714,7 +714,7 @@ void Sound_PlaySfxProgram( FSoundCommandParams* in_pCommandParams, u8* in_pProgr
 
     do
     {
-        channel = &SfxSoundChannels[11];
+        channel = &g_SfxSoundChannels[11];
         voiceBit = 0x00800000;
         activeVoices = ( g_Sound_VoiceSchedulerState.ActiveChannelMask | g_Sound_VoiceSchedulerState.unk_Flags_0x10 ) | g_Sound_Cutscene_StreamState.VoicesInUseFlags;
         if( ( in_pProgramCounter1 != 0 ) && (in_pProgramCounter2 != 0 ) )
@@ -845,7 +845,7 @@ void Sound_MarkScheduledSfxChannelsVolumeDirty()
     }
 
     ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
-    pChannel = SfxSoundChannels;
+    pChannel = g_SfxSoundChannels;
     Mask = (1 << 12); // SFX Channels start at channel 12
     while( ActiveChannelMask != 0 )
     {

@@ -251,7 +251,7 @@ void Sound_Cmd_72_FadeCdVolumeFrom( FSoundCommandParams* in_Params )
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_A0_8004FCE4( FSoundCommandParams* in_Params )
 {
-    FSoundChannel* pChannel = SfxSoundChannels;
+    FSoundChannel* pChannel = g_SfxSoundChannels;
     s32 CurrentChannelMask = ( 1 << SOUND_SFX_CHANNEL_START_INDEX);
     u32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
     u32 ChannelIndex;
@@ -285,7 +285,7 @@ void Sound_Cmd_A0_8004FCE4( FSoundCommandParams* in_Params )
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_A1_8004FDCC( FSoundCommandParams* in_Params )
 {
-    FSoundChannel* pChannel = SfxSoundChannels;
+    FSoundChannel* pChannel = g_SfxSoundChannels;
     s32 CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
     s32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
     u32 ChannelIndex;
@@ -319,7 +319,7 @@ void Sound_Cmd_A1_8004FDCC( FSoundCommandParams* in_Params )
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_A8_8004FF4C( FSoundCommandParams* in_Params )
 {
-    FSoundChannel* pChannel = SfxSoundChannels;
+    FSoundChannel* pChannel = g_SfxSoundChannels;
     s32 CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
     s32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
     u32 ChannelIndex;
@@ -338,7 +338,7 @@ void Sound_Cmd_A8_8004FF4C( FSoundCommandParams* in_Params )
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_A9_8004FFC8( FSoundCommandParams* in_Params )
 {
-    FSoundChannel* pChannel = SfxSoundChannels;
+    FSoundChannel* pChannel = g_SfxSoundChannels;
     s32 CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
     s32 ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
     u32 ChannelIndex;
@@ -376,7 +376,7 @@ void Sound_Cmd_AA_800502E8( FSoundCommandParams* in_Params )
 
     Mask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
     ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
-    pChannel = SfxSoundChannels;
+    pChannel = g_SfxSoundChannels;
 
     Index = 0;
     while( Index < SOUND_SFX_CHANNEL_COUNT )
@@ -411,7 +411,7 @@ void Sound_Cmd_AC_8005068C( FSoundCommandParams* in_Params )
     FSoundChannel* pChannel;
 
     ChannelIndex = SOUND_SFX_CHANNEL_COUNT;
-    pChannel = SfxSoundChannels;
+    pChannel = g_SfxSoundChannels;
 
     do {
         if( !( pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25 ) )

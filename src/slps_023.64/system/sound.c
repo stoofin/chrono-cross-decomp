@@ -1361,7 +1361,7 @@ block_18:
     if(var_s3_3 != 0 )
     {
         Mask = 0x1000;
-        pChannel = SfxSoundChannels;
+        pChannel = g_SfxSoundChannels;
         KeyOnFlags |= g_Sound_VoiceSchedulerState.KeyOnFlags;
         do {
             if (var_s3_3 & Mask)
