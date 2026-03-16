@@ -43,8 +43,13 @@ bool Sound_BindAkaoSfxBlob( FAkaoFileBlob* in_Blob )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_80049FBC);
+void func_80049FBC( u32 in_Unk )
+{
+    g_Sound_Vm2Params.Param1 = in_Unk;
+    Sound_ExecuteSoundVm2Function( SOUND_COMMAND_UNK_10 );
+}
 
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_80049FE4);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A00C);
