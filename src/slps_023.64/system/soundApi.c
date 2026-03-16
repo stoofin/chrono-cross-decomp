@@ -184,8 +184,44 @@ s32 func_8004A260()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A2C8);
+s32 func_8004A2C8( s32 in_Flags )
+{
+    u32 CurrentChannelMask;
+    u32 ActiveChannelMask;
+    FSoundChannel* pChannel;
 
+    if( in_Flags == 0 )
+    {
+        return 0;
+    }
+
+    ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
+
+    if( ActiveChannelMask == 0 )
+    {
+        return 0;
+    }
+
+    pChannel = g_SfxSoundChannels;
+    CurrentChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
+
+    do
+    {
+        if( ActiveChannelMask & CurrentChannelMask )
+        {
+            if( in_Flags == pChannel->unk_Flags )
+            {
+                return 1;
+            }
+        }
+        CurrentChannelMask <<= 1;
+        pChannel++;
+    } while( CurrentChannelMask & VOICE_MASK_ALL );
+
+    return 0;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A334);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A3B4);
