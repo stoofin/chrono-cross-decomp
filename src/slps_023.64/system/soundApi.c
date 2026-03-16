@@ -86,10 +86,17 @@ void Sound_SetMusicLevelImmediate( u32 arg0, s32 arg1 )
 {
     g_Sound_Vm2Params.Param1 = arg0;
     g_Sound_Vm2Params.Param2 = arg1 & 0x7F;
-    Sound_ExecuteSoundVm2Function(  SOUND_CMD_19_SET_MUSIC_LEVEL_IMM );
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_19_SET_MUSIC_LEVEL_IMM );
 }
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A0B0);
+//----------------------------------------------------------------------------------------------------------------------
+void Sound_StartMasterAndMusicVolumeFade( u32 arg0, u32 arg1, s32 arg2 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1;
+    g_Sound_Vm2Params.Param3 = arg2 & 0x7F;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_1A_START_MASTER_AND_MUSIC_VOLUME_FADE );
+}
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A0E8);
 

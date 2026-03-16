@@ -408,6 +408,7 @@ Sound_Unk_80050FE4           = 0x80049FE4;
 Sound_StartBattleMusic       = 0x8004A00C;
 Sound_PushMusicState         = 0x8004A03C;
 Sound_SetMusicLevelImmediate = 0x8004A07C;
+Sound_StartMasterAndMusicVolumeFade                = 0x8004A0B0;
 
 //----------------------------------------------------------------------------------------------------------------------
 // LibSpu
