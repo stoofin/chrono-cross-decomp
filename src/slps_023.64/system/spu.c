@@ -104,7 +104,7 @@ void Sound_Setup()
     u16 i;
 
     g_pActiveMusicConfig = &g_PrimaryMusicConfig;
-    g_pSavedMousicConfig = 0;
+    g_pSavedMusicConfig = 0;
     g_Sound_pMusicSoudChannels = g_ActiveMusicChannels;
     g_pSecondaryMusicChannels = 0;
     g_Sound_LfoPhase = 0;

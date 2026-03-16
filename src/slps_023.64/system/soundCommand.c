@@ -53,9 +53,9 @@ void Sound_Cmd_40_PushMusicState( FSoundCommandParams* in_Params )
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_19_SetMusicLevelImmediate( FSoundCommandParams* in_Params )
 {
-    if( ( g_pActiveMusicConfig->ActiveChannelMask != 0 ) && ( ( g_pSavedMousicConfig == NULL ) || ( g_pSavedMousicConfig->MusicId == 0 ) ) )
+    if( ( g_pActiveMusicConfig->ActiveChannelMask != 0 ) && ( ( g_pSavedMusicConfig == NULL ) || ( g_pSavedMusicConfig->MusicId == 0 ) ) )
     {
-        g_pSavedMousicConfig = &g_PushedMusicConfig;
+        g_pSavedMusicConfig = &g_PushedMusicConfig;
         g_pSecondaryMusicChannels = g_PushedMusicChannels;
         memcpy32( (s32*)g_pActiveMusicConfig, (s32*)&g_PushedMusicConfig, sizeof(FSoundChannelConfig) );
         memcpy32( (s32*)g_ActiveMusicChannels, (s32*)g_pSecondaryMusicChannels, sizeof(FSoundChannel) * SOUND_CHANNEL_COUNT );
@@ -75,15 +75,15 @@ void Sound_Cmd_1A_StartMasterAndMusicVolumeFade( FSoundCommandParams* in_Params 
         && ( g_PushedMusicConfig.MusicId == in_Params->Param3 ) )
     {
         Sound_SetMusicSequence( (FAkaoSequence*)in_Params->Param1, 1 );
-        g_pSavedMousicConfig = &g_PushedMusicConfig;
+        g_pSavedMusicConfig = &g_PushedMusicConfig;
         g_pSecondaryMusicChannels = g_PushedMusicChannels;
     }
     else
     {
         if( ( g_pActiveMusicConfig->ActiveChannelMask != 0 )
-            && ( ( g_pSavedMousicConfig == NULL ) || ( g_pSavedMousicConfig->MusicId == MUSIC_ID_ANY ) ) )
+            && ( ( g_pSavedMusicConfig == NULL ) || ( g_pSavedMusicConfig->MusicId == MUSIC_ID_ANY ) ) )
         {
-            g_pSavedMousicConfig = &g_PushedMusicConfig;
+            g_pSavedMusicConfig = &g_PushedMusicConfig;
             g_pSecondaryMusicChannels = g_PushedMusicChannels;
             memcpy32( (s32*)g_pActiveMusicConfig, (s32*)&g_PushedMusicConfig, sizeof(FSoundChannelConfig) );
             memcpy32( (s32*)g_ActiveMusicChannels, (s32*)g_pSecondaryMusicChannels, sizeof(FSoundChannel) * SOUND_CHANNEL_COUNT );
@@ -91,7 +91,7 @@ void Sound_Cmd_1A_StartMasterAndMusicVolumeFade( FSoundCommandParams* in_Params 
         Sound_LoadAkaoSequence( (FAkaoSequence*)in_Params->Param1, -1 );
         g_pActiveMusicConfig->MusicId = in_Params->Param3;
     }
-    if( g_pSavedMousicConfig != NULL )
+    if( g_pSavedMusicConfig != NULL )
     {
         s32 Length = in_Params->ExtParam1;
         g_Sound_MasterFadeTimer.Value = 0x7F8000;
@@ -214,7 +214,7 @@ void Sound_Cmd_C0_8004F714( FSoundCommandParams* in_pCmd )
         return;
     }
 
-    pConfig = g_pSavedMousicConfig;
+    pConfig = g_pSavedMusicConfig;
 
     if ( pConfig == NULL || MusicId == 0 || MusicId != (u32)pConfig->MusicId )
     {
@@ -718,9 +718,9 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_D6_800
 void Sound_Cmd_F0_StopAllMusic( FSoundCommandParams* in_Params )
 {
     Sound_KillMusicConfig( g_pActiveMusicConfig, g_ActiveMusicChannels, MUSIC_ID_ANY );
-    if( g_pSavedMousicConfig != NULL )
+    if( g_pSavedMusicConfig != NULL )
     {
-        Sound_KillMusicConfig( g_pSavedMousicConfig, g_pSecondaryMusicChannels, MUSIC_ID_ANY );
+        Sound_KillMusicConfig( g_pSavedMusicConfig, g_pSecondaryMusicChannels, MUSIC_ID_ANY );
     }
 }
 
@@ -728,11 +728,11 @@ void Sound_Cmd_F0_StopAllMusic( FSoundCommandParams* in_Params )
 void Sound_Cmd_11_800509F0( FSoundCommandParams* in_Params )
 {
     Sound_KillMusicConfig( g_pActiveMusicConfig, g_ActiveMusicChannels, in_Params->Param1 );
-    if( g_pSavedMousicConfig != NULL )
+    if( g_pSavedMusicConfig != NULL )
     {
         if( in_Params->Param1 != 0 )
         {
-            Sound_KillMusicConfig( g_pSavedMousicConfig, g_pSecondaryMusicChannels, in_Params->Param1 );
+            Sound_KillMusicConfig( g_pSavedMusicConfig, g_pSecondaryMusicChannels, in_Params->Param1 );
         }
     }
 }
@@ -769,9 +769,9 @@ void Sound_Cmd_80_80050B34( FSoundCommandParams* in_Params )
 {
     g_Sound_GlobalFlags.MixBehavior = 1 << 0;
     Sound_MarkActiveChannelsVolumeDirty( g_pActiveMusicConfig, g_ActiveMusicChannels );
-    if( g_pSavedMousicConfig != NULL )
+    if( g_pSavedMusicConfig != NULL )
     {
-        Sound_MarkActiveChannelsVolumeDirty( g_pSavedMousicConfig, g_pSecondaryMusicChannels );
+        Sound_MarkActiveChannelsVolumeDirty( g_pSavedMusicConfig, g_pSecondaryMusicChannels );
     }
     Sound_MarkScheduledSfxChannelsVolumeDirty();
 }
@@ -781,10 +781,10 @@ void Sound_Cmd_81_80050B94( FSoundCommandParams* in_Params )
 {
     g_Sound_GlobalFlags.MixBehavior = 1 << 1;
     Sound_MarkActiveChannelsVolumeDirty( g_pActiveMusicConfig, g_ActiveMusicChannels );
-    if( g_pSavedMousicConfig != NULL )
+    if( g_pSavedMusicConfig != NULL )
     {
         Sound_MarkActiveChannelsVolumeDirty(
-            g_pSavedMousicConfig, g_pSecondaryMusicChannels );
+            g_pSavedMusicConfig, g_pSecondaryMusicChannels );
     }
     Sound_MarkScheduledSfxChannelsVolumeDirty();
 }

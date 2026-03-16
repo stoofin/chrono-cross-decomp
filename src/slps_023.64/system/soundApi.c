@@ -74,7 +74,7 @@ void Sound_PushMusicState()
 // TODO(jperos): This should be easy enough to name if I can remember what saved/pushed configs do
 s32 func_8004A05C()
 {
-    if( !g_pSavedMousicConfig )
+    if( !g_pSavedMusicConfig )
     {
         g_PushedMusicConfig.MusicId = 0;
     }

@@ -1171,7 +1171,7 @@ void UnassignVoicesFromChannels( FSoundChannel* in_pChannel, s32 arg1 )
 
     Count = 0;
 
-    if( g_pSavedMousicConfig != NULL )
+    if( g_pSavedMusicConfig != NULL )
     {
         pChannel = g_pSecondaryMusicChannels;
         do {
@@ -1194,9 +1194,9 @@ void Sound_UpdateVoiceEnvelopeStates( u32 in_ProtextedVoiceMask )
 
     CombinedMask = (g_pActiveMusicConfig->ActiveChannelMask & g_pActiveMusicConfig->AllocatedVoiceMask) | in_ProtextedVoiceMask;
 
-    if( g_pSavedMousicConfig )
+    if( g_pSavedMusicConfig )
     {
-        CombinedMask |= g_pSavedMousicConfig->ActiveChannelMask & g_pSavedMousicConfig->AllocatedVoiceMask;
+        CombinedMask |= g_pSavedMusicConfig->ActiveChannelMask & g_pSavedMusicConfig->AllocatedVoiceMask;
     }
 
     pVoiceInfo = g_SpuVoiceInfo;
@@ -1271,9 +1271,9 @@ void func_8004D3D4(void) {
     Flags = g_Sound_VoiceSchedulerState.ActiveChannelMask | g_Sound_VoiceSchedulerState.unk_Flags_0x10 | g_Sound_Cutscene_StreamState.VoicesInUseFlags;
     if (!(g_pActiveMusicConfig->ActiveChannelMask & g_pActiveMusicConfig->PendingKeyOnMask))
     {
-        if (g_pSavedMousicConfig != NULL)
+        if (g_pSavedMusicConfig != NULL)
         {
-            if (g_pSavedMousicConfig->ActiveChannelMask & g_pSavedMousicConfig->PendingKeyOnMask)
+            if (g_pSavedMusicConfig->ActiveChannelMask & g_pSavedMusicConfig->PendingKeyOnMask)
             {
                 goto block_3;
             }
@@ -1284,17 +1284,17 @@ void func_8004D3D4(void) {
 block_3:
     Sound_UpdateVoiceEnvelopeStates(Flags);
 block_4:
-    if( g_pSavedMousicConfig )
+    if( g_pSavedMusicConfig )
     {
         if( g_Sound_GlobalFlags.MixBehavior & 0x100 )
         {
-            Sound_ApplyMasterFadeToChannelVolume( g_pSavedMousicConfig );
+            Sound_ApplyMasterFadeToChannelVolume( g_pSavedMusicConfig );
         }
 
-        temp_a0 = g_pSavedMousicConfig->AllocatedVoiceMask;
-        g_pActiveMusicConfig = g_pSavedMousicConfig;
-        var_s0 = g_pSavedMousicConfig->ActiveChannelMask & g_pSavedMousicConfig->ActiveNoteMask & ~(temp_a0 & Flags);
-        temp_a1 = var_s0 & g_pSavedMousicConfig->KeyedMask;
+        temp_a0 = g_pSavedMusicConfig->AllocatedVoiceMask;
+        g_pActiveMusicConfig = g_pSavedMusicConfig;
+        var_s0 = g_pSavedMusicConfig->ActiveChannelMask & g_pSavedMusicConfig->ActiveNoteMask & ~(temp_a0 & Flags);
+        temp_a1 = var_s0 & g_pSavedMusicConfig->KeyedMask;
         temp_s1 = var_s0 & temp_a0 & ~Flags;
 
         if (temp_a1 != 0)
@@ -1318,7 +1318,7 @@ block_4:
 
         if( var_s0 != 0 )
         {
-            g_pActiveMusicConfig = g_pSavedMousicConfig;
+            g_pActiveMusicConfig = g_pSavedMusicConfig;
             func_8004CFC4(g_pSecondaryMusicChannels, var_s0, temp_s1 & ~temp_s2_2, &KeyOnFlags);
             temp_v0 = g_pActiveMusicConfig;
             g_pActiveMusicConfig = &g_PrimaryMusicConfig;
@@ -1332,7 +1332,7 @@ block_4:
         }
         if( g_Sound_GlobalFlags.MixBehavior & 0x100 )
         {
-            Sound_RestoreChannelVolumeFromMasterFade( g_pSavedMousicConfig );
+            Sound_RestoreChannelVolumeFromMasterFade( g_pSavedMusicConfig );
         }
     }
     else
@@ -1405,9 +1405,9 @@ block_18:
 
     if( temp_s3 & 0x100 )
     {
-        Sound_BuildVoiceModeMask( &g_Sound_VoiceModeFlags.Noise, (s32) g_pSavedMousicConfig->NoiseChannelFlags, (s32) g_pActiveMusicConfig->NoiseChannelFlags, (s32) g_Sound_VoiceSchedulerState.NoiseVoiceFlags );
-        Sound_BuildVoiceModeMask( &g_Sound_VoiceModeFlags.Reverb, (s32) g_pSavedMousicConfig->ReverbChannelFlags, (s32) g_pActiveMusicConfig->ReverbChannelFlags, (s32) g_Sound_VoiceSchedulerState.ReverbVoiceFlags );
-        Sound_BuildVoiceModeMask( &g_Sound_VoiceModeFlags.Fm, (s32) g_pSavedMousicConfig->FmChannelFlags, (s32) g_pActiveMusicConfig->FmChannelFlags, (s32) g_Sound_VoiceSchedulerState.FmVoiceFlags );
+        Sound_BuildVoiceModeMask( &g_Sound_VoiceModeFlags.Noise, (s32) g_pSavedMusicConfig->NoiseChannelFlags, (s32) g_pActiveMusicConfig->NoiseChannelFlags, (s32) g_Sound_VoiceSchedulerState.NoiseVoiceFlags );
+        Sound_BuildVoiceModeMask( &g_Sound_VoiceModeFlags.Reverb, (s32) g_pSavedMusicConfig->ReverbChannelFlags, (s32) g_pActiveMusicConfig->ReverbChannelFlags, (s32) g_Sound_VoiceSchedulerState.ReverbVoiceFlags );
+        Sound_BuildVoiceModeMask( &g_Sound_VoiceModeFlags.Fm, (s32) g_pSavedMusicConfig->FmChannelFlags, (s32) g_pActiveMusicConfig->FmChannelFlags, (s32) g_Sound_VoiceSchedulerState.FmVoiceFlags );
         SetVoiceReverbMode( g_Sound_VoiceModeFlags.Reverb );
         SetVoiceNoiseMode( g_Sound_VoiceModeFlags.Noise );
         SetVoiceFmMode( g_Sound_VoiceModeFlags.Fm  );
@@ -1461,16 +1461,16 @@ void Sound_ProcessKeyOffRequests()
     VoiceMask = 0;
     SavedOffMask = 0;
 
-    if( g_pSavedMousicConfig )
+    if( g_pSavedMusicConfig )
     {
-        SavedOffMask = g_pSavedMousicConfig->PendingKeyOffMask;
-        SavedConfigKeyedMask  = SavedOffMask & g_pSavedMousicConfig->KeyedMask;
+        SavedOffMask = g_pSavedMusicConfig->PendingKeyOffMask;
+        SavedConfigKeyedMask  = SavedOffMask & g_pSavedMusicConfig->KeyedMask;
 
         if( SavedConfigKeyedMask != 0 )
         {
             ChannelMaskToVoiceMaskFiltered( g_pSecondaryMusicChannels, &VoiceMask, SavedConfigKeyedMask, Filter );
-            g_pSavedMousicConfig->PendingKeyOffMask &= ~g_pSavedMousicConfig->KeyedMask;
-            SavedOffMask &= ~g_pSavedMousicConfig->KeyedMask;
+            g_pSavedMusicConfig->PendingKeyOffMask &= ~g_pSavedMusicConfig->KeyedMask;
+            SavedOffMask &= ~g_pSavedMusicConfig->KeyedMask;
         }
     }
 
@@ -1484,10 +1484,10 @@ void Sound_ProcessKeyOffRequests()
         ActiveOffMask &= ~g_pActiveMusicConfig->KeyedMask;
     }
 
-    if( g_pSavedMousicConfig && (SavedOffMask != 0))
+    if( g_pSavedMusicConfig && (SavedOffMask != 0))
     {
         ChannelMaskToVoiceMaskFiltered( g_pSecondaryMusicChannels, &VoiceMask, SavedOffMask, Filter );
-        g_pSavedMousicConfig->PendingKeyOffMask = 0;
+        g_pSavedMusicConfig->PendingKeyOffMask = 0;
     }
 
     if( ActiveOffMask != 0 )
@@ -1523,14 +1523,14 @@ void Sound_BuildVoiceModeMask( s32* out_VoiceModeMask, s32 in_SavedChannelModeMa
         | g_Sound_Cutscene_StreamState.VoicesInUseFlags
     );
 
-    if( g_pSavedMousicConfig )
+    if( g_pSavedMusicConfig )
     {
-        ChannelFlags = g_pSavedMousicConfig->ActiveChannelMask & in_SavedChannelModeMask;
-        SavedKeyedMask = ChannelFlags & g_pSavedMousicConfig->KeyedMask;
+        ChannelFlags = g_pSavedMusicConfig->ActiveChannelMask & in_SavedChannelModeMask;
+        SavedKeyedMask = ChannelFlags & g_pSavedMusicConfig->KeyedMask;
         if( SavedKeyedMask != 0 )
         {
             ChannelMaskToVoiceMaskFiltered( g_pSecondaryMusicChannels, &VoiceMask, SavedKeyedMask, Filter );
-            ChannelFlags &= ~g_pSavedMousicConfig->KeyedMask;
+            ChannelFlags &= ~g_pSavedMusicConfig->KeyedMask;
         }
     }
 
@@ -1542,7 +1542,7 @@ void Sound_BuildVoiceModeMask( s32* out_VoiceModeMask, s32 in_SavedChannelModeMa
         ChannelMaskToVoiceMaskFiltered( g_ActiveMusicChannels, &VoiceMask, temp_a2_2, Filter );
         var_s0 &= ~g_pActiveMusicConfig->KeyedMask;
     }
-    if( g_pSavedMousicConfig && (ChannelFlags != 0) )
+    if( g_pSavedMusicConfig && (ChannelFlags != 0) )
     {
         ChannelMaskToVoiceMaskFiltered( g_pSecondaryMusicChannels, &VoiceMask, ChannelFlags, Filter );
     }

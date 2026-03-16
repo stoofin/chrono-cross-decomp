@@ -62,15 +62,15 @@ void Sound_ReconcileSavedMusicVoices()
     s32 VoiceIndex;
     s32 Count;
 
-    if( !g_pSavedMousicConfig )
+    if( !g_pSavedMusicConfig )
     {
         return;
     }
 
     ActiveAlloc = g_pActiveMusicConfig->AllocatedVoiceMask;   /* +0x08 */
     ActiveKeyed = g_pActiveMusicConfig->KeyedMask;            /* +0x0C */
-    SavedAlloc  = g_pSavedMousicConfig->AllocatedVoiceMask;   /* +0x08 */
-    SavedKeyed  = g_pSavedMousicConfig->KeyedMask;            /* +0x0C */
+    SavedAlloc  = g_pSavedMusicConfig->AllocatedVoiceMask;   /* +0x08 */
+    SavedKeyed  = g_pSavedMusicConfig->KeyedMask;            /* +0x0C */
 
     VoicesToKeyOff =
         (~( SavedKeyed & ( (~(ActiveAlloc & ActiveKeyed)) | (SavedAlloc & SavedKeyed) ) ) )
@@ -219,9 +219,9 @@ void Sound_LoadAkaoSequence( FAkaoSequence* in_Sequence, s32 in_Mask )
 
     g_pActiveMusicConfig->SequenceBase = in_Sequence;
     ChannelEnableMask = in_Sequence->ChannelEnableMask;
-    if( g_pSavedMousicConfig != NULL )
+    if( g_pSavedMusicConfig != NULL )
     {
-        VoiceMask = ChannelMaskToVoiceMask(g_pSecondaryMusicChannels, g_pSavedMousicConfig->ActiveChannelMask);
+        VoiceMask = ChannelMaskToVoiceMask(g_pSecondaryMusicChannels, g_pSavedMusicConfig->ActiveChannelMask);
     }
     else
     {
@@ -929,9 +929,9 @@ void Sound_SetMusicSequence( FAkaoSequence* in_Sequence, s32 in_SwapWithSavedSta
         Mask <<= 1;
     }
     
-    if( g_pSavedMousicConfig )
+    if( g_pSavedMusicConfig )
     {
-        VoiceMask = ChannelMaskToVoiceMask( g_pSecondaryMusicChannels, g_pSavedMousicConfig->ActiveChannelMask & g_pSavedMousicConfig->KeyedMask );
+        VoiceMask = ChannelMaskToVoiceMask( g_pSecondaryMusicChannels, g_pSavedMusicConfig->ActiveChannelMask & g_pSavedMusicConfig->KeyedMask );
     }
     else
     {
