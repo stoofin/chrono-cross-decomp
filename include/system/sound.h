@@ -525,6 +525,7 @@ void Sound_StartFieldMusic( u32 in_Unk );
 void func_80049FE4( u32 arg0 );
 void Sound_StartBattleMusic( u32 arg0, u32 arg1 );
 void Sound_PushMusicState();
+void Sound_SetMusicLevelImmediate( u32 arg0, s32 arg1 );
 
 // SPU management
 void Sound_CopyAndRelocateInstruments( FSoundInstrumentInfo* in_A, FSoundInstrumentInfo* in_B, s32 in_AddrOffset, s32 in_Count);

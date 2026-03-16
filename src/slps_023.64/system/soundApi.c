@@ -82,7 +82,12 @@ s32 func_8004A05C()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A07C);
+void Sound_SetMusicLevelImmediate( u32 arg0, s32 arg1 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1 & 0x7F;
+    Sound_ExecuteSoundVm2Function(  SOUND_CMD_19_SET_MUSIC_LEVEL_IMM );
+}
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A0B0);
 

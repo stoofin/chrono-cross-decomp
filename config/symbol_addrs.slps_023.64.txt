@@ -400,13 +400,14 @@ IsSpuTransferring = 0x8004ABFC;
 
 //----------------------------------------------------------------------------------------------------------------------
 // Sound Hardware
-InitSound               = 0x80049F1C;
-TeardownSound           = 0x80049F3C;
-Sound_BindAkaoSfxBlob   = 0x80049F5C;
-Sound_StartFieldMusic   = 0x80049FBC;
-func_80049FE4           = 0x80049FE4;
-Sound_StartBattleMusic  = 0x8004A00C;
-Sound_PushMusicState    = 0x8004A03C;
+InitSound                    = 0x80049F1C;
+TeardownSound                = 0x80049F3C;
+Sound_BindAkaoSfxBlob        = 0x80049F5C;
+Sound_StartFieldMusic        = 0x80049FBC;
+Sound_Unk_80050FE4           = 0x80049FE4;
+Sound_StartBattleMusic       = 0x8004A00C;
+Sound_PushMusicState         = 0x8004A03C;
+Sound_SetMusicLevelImmediate = 0x8004A07C;
 
 //----------------------------------------------------------------------------------------------------------------------
 // LibSpu
