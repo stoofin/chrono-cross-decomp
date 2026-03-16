@@ -9,6 +9,7 @@
 #define SOUND_CMD_14_START_BATTLE_MUSIC                 ( 0x14U )
 #define SOUND_CMD_19_SET_MUSIC_LEVEL_IMM                ( 0x19U )
 #define SOUND_CMD_20_UNK                                ( 0x20U )
+#define SOUND_CMD_21_EVICT_SFX_VOICE                    ( 0x21U )
 #define SOUND_CMD_24_UNK                                ( 0x24U )
 #define SOUND_COMMAND_UNK_30                            ( 0x30U )
 #define SOUND_CMD_40_PUSH_MUSIC_STATE                   ( 0x40U )

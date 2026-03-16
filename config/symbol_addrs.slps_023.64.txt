@@ -410,6 +410,7 @@ Sound_PushMusicState                = 0x8004A03C;
 Sound_SetMusicLevelImmediate        = 0x8004A07C;
 Sound_StartMasterAndMusicVolumeFade = 0x8004A0B0;
 Sound_StartFieldMusicLooped         = 0x8004A0E8;
+Sound_EvictSfx                      = 0x8004A1F8;
 
 //----------------------------------------------------------------------------------------------------------------------
 // LibSpu
@@ -517,7 +518,7 @@ Sound_Cmd_34_8004F404	                                  = 0x8004F404;
 Sound_Cmd_30_8004F450	                                  = 0x8004F450;
 Sound_Cmd_20_8004F518                                     = 0x8004F518;
 Sound_Cmd_24_8004F5C8                                     = 0x8004F5C8;
-Sound_Cmd_21_8004F6E8                                     = 0x8004F6E8;
+Sound_Cmd_21_EvictSfxVoice                                     = 0x8004F6E8;
 Sound_Cmd_C0_8004F714                                     = 0x8004F714;
 Sound_Cmd_C1_8004F7C8                                     = 0x8004F7C8;
 Sound_Cmd_C2_8004F904                                     = 0x8004F904;

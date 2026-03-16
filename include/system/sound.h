@@ -603,7 +603,7 @@ void Sound_Cmd_34_8004F404( FSoundCommandParams* in_Params );
 void Sound_Cmd_30_8004F450( FSoundCommandParams* in_Params );
 void Sound_Cmd_20_8004F518( FSoundCommandParams* in_Params );
 void Sound_Cmd_24_8004F5C8( FSoundCommandParams* in_Params );
-void Sound_Cmd_21_8004F6E8( FSoundCommandParams* in_Params );
+void Sound_Cmd_21_EvictSfxVoice( FSoundCommandParams* in_Params );
 void Sound_Cmd_C0_8004F714( FSoundCommandParams* in_Params );
 void Sound_Cmd_C1_8004F7C8( FSoundCommandParams* in_Params );
 void Sound_Cmd_C2_8004F904( FSoundCommandParams* in_Params );

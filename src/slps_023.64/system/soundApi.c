@@ -121,6 +121,7 @@ void* func_8004A168( void* arg0, s32 arg1, s32 arg2, s32 arg3 )
 {
     if( Sound_IsNotAkaoFile( arg0 ) )
     {
+        // TODO(jperos): Is this VOICE_COUNT?
         return func_8004A234( 0x18 );
     }
     else
@@ -135,7 +136,12 @@ void* func_8004A168( void* arg0, s32 arg1, s32 arg2, s32 arg3 )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A1F8);
+void Sound_EvictSfx( u32 arg0, s32 arg1 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1 & 0xFFFFFF;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_21_EVICT_SFX_VOICE );
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A234);
