@@ -116,7 +116,7 @@ void Sound_Setup()
     g_PrimaryMusicConfig.MusicId = 0;
     g_Sound_VoiceSchedulerState.unk_Flags_0x10 = 0;
     g_PrimaryMusicConfig.LastChannelModeFlags = 0;
-    g_Sound_VoiceSchedulerState.field13_0x2c = 0;
+    g_Sound_VoiceSchedulerState.unk_Flags_0x2C = 0;
     g_PushedMusicConfig.MusicId = 0;
     g_PushedMusicConfig.ActiveChannelMask = 0;
     g_PrimaryMusicConfig.A_Volume = 0x7F0000;

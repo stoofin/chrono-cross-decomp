@@ -412,6 +412,7 @@ Sound_StartMasterAndMusicVolumeFade = 0x8004A0B0;
 Sound_StartFieldMusicLooped         = 0x8004A0E8;
 Sound_EvictSfx                      = 0x8004A1F8;
 func_8004A234                       = 0x8004A234;
+Sound_SetUnkVoiceSchedulerFlags     = 0x8004A334;
 
 //----------------------------------------------------------------------------------------------------------------------
 // LibSpu

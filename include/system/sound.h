@@ -267,7 +267,7 @@ typedef struct
     u16 NoiseClock;
     undefined field11_0x2a;
     undefined field12_0x2b;
-    undefined4 field13_0x2c;
+    undefined4 unk_Flags_0x2C;
 } FSoundVoiceSchedulerState;
 
 typedef struct
@@ -529,6 +529,7 @@ void Sound_SetMusicLevelImmediate( u32 arg0, s32 arg1 );
 void Sound_StartMasterAndMusicVolumeFade( u32 arg0, u32 arg1, s32 arg2 );
 void Sound_StartFieldMusicLooped( u32 arg0, u32 arg1 );
 void func_8004A118( s32 arg0, s32 arg1, s32 arg2, s32 arg3 );
+s32 Sound_SetUnkVoiceSchedulerFlags( s32 in_Mode );
 
 // SPU management
 void Sound_CopyAndRelocateInstruments( FSoundInstrumentInfo* in_A, FSoundInstrumentInfo* in_B, s32 in_AddrOffset, s32 in_Count);

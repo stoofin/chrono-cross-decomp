@@ -222,8 +222,36 @@ s32 func_8004A2C8( s32 in_Flags )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A334);
+s32 Sound_SetUnkVoiceSchedulerFlags( s32 in_Mode )
+{
+    u32 flags;
 
+    flags = g_Sound_VoiceSchedulerState.unk_Flags_0x2C & ~( (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) );
+    g_Sound_VoiceSchedulerState.unk_Flags_0x2C = flags;
+
+    switch ( in_Mode )
+    {
+        case -2:
+            g_Sound_VoiceSchedulerState.unk_Flags_0x2C = flags | (1 << 0);
+            break;
+        case -1:
+            g_Sound_VoiceSchedulerState.unk_Flags_0x2C = flags | (1 << 1);
+            break;
+        case 1:
+            g_Sound_VoiceSchedulerState.unk_Flags_0x2C = flags | (1 << 2);
+            break;
+        case 2:
+            g_Sound_VoiceSchedulerState.unk_Flags_0x2C = flags | (1 << 3);
+            break;
+        default:
+            in_Mode = 0;
+            break;
+    }
+
+    return in_Mode;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A3B4);
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A3E8);
