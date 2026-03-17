@@ -54,7 +54,140 @@ void memcpy32( s32* in_Src, s32* in_Dst, u32 in_Size )
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", memswap32);
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80051F7C);
+
+#include "system/soundCutscene.h"
+extern s32 D_80091938;
+extern s32 D_8009193C;
+extern s16 D_800919C0;
+extern s16 D_800919C2;
+extern s32 g_Sound_LfoPhase;
+extern s32 g_Sound_TempoMultiplier;
+
+void func_80051F7C(void) {
+    s32 nextValue;
+    s32 i;
+
+    g_Sound_LfoPhase = (g_Sound_LfoPhase + 1) & 0xFF;
+    
+    if (g_Sound_CdVolumeFadeLength != 0) {
+        --g_Sound_CdVolumeFadeLength;
+        g_CdVolume += g_Sound_CdVolumeFadeStep;
+        UpdateCdVolume();
+    }
+    
+    if ((g_Sound_Cutscene_StreamState.VoicesInUseFlags != 0) && (g_Sound_Cutscene_StreamState.VolFadeStepsRemaining != 0)) {
+        --g_Sound_Cutscene_StreamState.VolFadeStepsRemaining;
+        nextValue = g_Sound_Cutscene_StreamState.Volume + g_Sound_Cutscene_StreamState.VolFadeStepSize;
+        if ((nextValue & 0xFF00) != (g_Sound_Cutscene_StreamState.Volume & 0xFF00)) {
+            if (g_Sound_GlobalFlags.MixBehavior & 2) {
+                int temp_s0 = (s32) (g_Sound_Cutscene_StreamState.Volume * g_Sound_StereoPanGainTableQ15[0x80]) >> 0x10;
+                SetVoiceVolume(g_Sound_Cutscene_StreamState.VoiceIndex, temp_s0, temp_s0, 0);
+                SetVoiceVolume(g_Sound_Cutscene_StreamState.VoiceIndex + 1, temp_s0, temp_s0, 0);
+            } else {
+                int temp_s0 = (s32) (nextValue << 0xF) >> 0x10;
+                SetVoiceVolume(g_Sound_Cutscene_StreamState.VoiceIndex, temp_s0, 0, 0);
+                SetVoiceVolume(g_Sound_Cutscene_StreamState.VoiceIndex + 1, 0, temp_s0, 0);
+            }
+        }
+        g_Sound_Cutscene_StreamState.Volume = nextValue & 0xFFFF;
+    }
+    
+    if (D_800919C2 != 0) {
+        --D_800919C2;
+        g_Sound_TempoMultiplier += D_8009193C;
+    }
+    
+    if (D_800919C0 != 0) {
+        --D_800919C0;
+        nextValue = g_Sound_MasterPitchScaleQ16_16 + D_80091938;
+        if ((nextValue & 0xFF0000) != (g_Sound_MasterPitchScaleQ16_16 & 0xFF0000)) {
+            FSoundChannel* channel = g_ActiveMusicChannels;
+            for (i = 0x20; i != 0; --i, ++channel) {
+                channel->VoiceParams.VoiceParamFlags |= 0x10;
+            }
+        }
+        g_Sound_MasterPitchScaleQ16_16 = nextValue;
+    }
+    
+    if (g_pActiveMusicContext->ActiveChannelMask != 0) {
+        if (g_pActiveMusicContext->MasterVolumeStepsRemaining != 0) {
+            --g_pActiveMusicContext->MasterVolumeStepsRemaining;
+            nextValue = g_pActiveMusicContext->MasterVolume + g_pActiveMusicContext->MasterVolumeStep;
+            if ((nextValue & 0x7F0000) != (g_pActiveMusicContext->MasterVolume & 0x7F0000)) {
+                Sound_MarkActiveChannelsVolumeDirty(g_pActiveMusicContext, g_ActiveMusicChannels);
+            }
+            g_pActiveMusicContext->MasterVolume = nextValue;
+        }
+        if (g_pActiveMusicContext->MasterPanStepsRemaining != 0) {
+            --g_pActiveMusicContext->MasterPanStepsRemaining;
+            nextValue = g_pActiveMusicContext->MasterPanOffset + g_pActiveMusicContext->MasterPanStep;
+            if ((nextValue & 0x7F0000) != (g_pActiveMusicContext->MasterPanOffset & 0x7F0000)) {
+                Sound_MarkActiveChannelsVolumeDirty(g_pActiveMusicContext, g_ActiveMusicChannels);
+            }
+            g_pActiveMusicContext->MasterPanOffset = nextValue;
+        }
+    }
+    
+    if ((g_pSuspendedMusicContext != NULL) && (g_pSuspendedMusicContext->ActiveChannelMask != 0)) {
+        if (g_pSuspendedMusicContext->MasterVolumeStepsRemaining != 0) {
+            --g_pSuspendedMusicContext->MasterVolumeStepsRemaining;
+            nextValue = g_pSuspendedMusicContext->MasterVolume + g_pSuspendedMusicContext->MasterVolumeStep;
+            if ((nextValue & 0x7F0000) != (g_pSuspendedMusicContext->MasterVolume & 0x7F0000)) {
+                Sound_MarkActiveChannelsVolumeDirty(g_pSuspendedMusicContext, g_pSecondaryMusicChannels);
+            }
+            g_pSuspendedMusicContext->MasterVolume = nextValue;
+        }
+        if (g_pSuspendedMusicContext->MasterPanStepsRemaining != 0) {
+            --g_pSuspendedMusicContext->MasterVolumeStepsRemaining;
+            nextValue = g_pSuspendedMusicContext->MasterPanOffset + g_pSuspendedMusicContext->MasterPanStep;
+            if ((nextValue & 0x7F0000) != (g_pSuspendedMusicContext->MasterPanOffset & 0x7F0000)) {
+                Sound_MarkActiveChannelsVolumeDirty(g_pSuspendedMusicContext, g_pSecondaryMusicChannels);
+            }
+            g_pSuspendedMusicContext->MasterPanOffset = nextValue;
+        }
+    }
+    
+    if (g_Sound_SfxState.ActiveVoiceMask != 0) {
+        u32 voiceMask = g_Sound_SfxState.ActiveVoiceMask;
+        FSoundChannel* channel = g_SfxSoundChannels;
+        do{}while(0);
+        for (i = 0x1000; voiceMask != 0; i <<= 1, ++channel) {
+            if (voiceMask & i) {
+                if (channel->VolumeModStepsRemaining != 0) {
+                    --channel->VolumeModStepsRemaining;
+                    nextValue = channel->VolumeMod + channel->VolumeModStep;
+                    if ((nextValue & 0xFF00) != (channel->VolumeMod & 0xFF00)) {
+                        channel->VoiceParams.VoiceParamFlags |= 3;
+                    }
+                    channel->VolumeMod = nextValue;
+                    if ((g_Sound_GlobalFlags.ControlLatches & 0x10000) && (channel->VolumeModStepsRemaining == 0) && (voiceMask == i)) {
+                        Sound_Cmd_9D_SuspendSfx(&g_Sound_Vm2Params);
+                        g_Sound_GlobalFlags.ControlLatches &= 0xFFFEFFFF;
+                    }
+                }
+                if (channel->PanModStepsRemaining != 0) {
+                    --channel->PanModStepsRemaining;
+                    nextValue = channel->PanMod + channel->PanModStep;
+                    if ((nextValue & 0xFF00) != (channel->PanMod & 0xFF00)) {
+                        channel->VoiceParams.VoiceParamFlags |= 3;
+                    }
+                    channel->PanMod = nextValue;
+                }
+                if (channel->PitchModStepsRemaining != 0) {
+                    --channel->PitchModStepsRemaining;
+                    nextValue = channel->PitchMod + channel->PitchModStep;
+                    if ((nextValue & 0xFF00) != (channel->PitchMod & 0xFF00)) {
+                        channel->VoiceParams.VoiceParamFlags |= 0x10;
+                    }
+                    channel->PitchMod = nextValue;
+                }
+                voiceMask ^= i;
+            }
+        }
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
 
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052458);
 

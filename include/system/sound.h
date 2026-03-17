@@ -331,16 +331,16 @@ typedef struct
     /* 0x07C */ s16  Length2;
     /* 0x07E */ u16  InstrumentIndex;
     /* 0x080 */ u16  PanMod;
-    /* 0x082 */ s16  PanModStepsRemaining;
+    /* 0x082 */ u16  PanModStepsRemaining;
     /* 0x084 */ u16  OpcodeStepCounter;
     /* 0x086 */ u16  LoopIterationCount[SOUND_LOOP_STACK_SIZE];
     /* 0x08E */ s16  LoopStepCounterSnapshot[SOUND_LOOP_STACK_SIZE];
     /* 0x096 */ u16  VolumeBalance; /* Volume is set by "volume << 8" */
     /* 0x098 */ u16  VolumeBalanceSlideLength;
-    /* 0x09A */ s16  PitchModStepsRemaining;
+    /* 0x09A */ u16  PitchModStepsRemaining;
     /* 0x09C */ u16  ChannelVolumeSlideLength;
     /* 0x09E */ u16  KeyOnVolumeSlideLength;
-    /* 0x0A0 */ s16  VolumeModStepsRemaining;
+    /* 0x0A0 */ u16  VolumeModStepsRemaining;
     /* 0x0A2 */ u16  ChannelPan;
     /* 0x0A4 */ u16  ChannelPanSlideLength;
     /* 0x0A6 */ u16  PitchSlideStepsCurrent;
@@ -380,7 +380,7 @@ typedef struct
     /* 0x0EA */ u16  LengthFixed;
     /* 0x0EC */ s16  VolumeBalanceSlideStep;
     /* 0x0EE */ s16  PanModStep;
-    /* 0x0F0 */ u16  VolumeMod;
+    /* 0x0F0 */ s16  VolumeMod;
     /* 0x0F2 */ s16  VolumeModStep;
     /* 0x0F4 */ s16  PanSlideStep;
     /* 0x0F6 */ s16  Transpose;
