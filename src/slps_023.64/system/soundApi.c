@@ -352,7 +352,14 @@ void func_8004A570( u32 arg0, s32 arg1, s32 arg2 )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A5B4);
+void func_8004A5B4( u32 arg0, s32 arg1, u32 arg2, s32 arg3 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1 & 0xFFFFFF;
+    g_Sound_Vm2Params.Param3 = arg2;
+    g_Sound_Vm2Params.Param4 = arg3 & 0x7F;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_A1_UNK );
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A5FC);
