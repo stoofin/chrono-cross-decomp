@@ -710,7 +710,7 @@ void func_8004C5A4(FSoundChannel* in_pChannel)
         baseAmp += (u32)ch->TremeloVolume >> 16;
 
         /* apply master volume scalar (cfg+0x56) & 0x7F */
-        tmp32 = (baseAmp * ((cfg->A_Volume >> 0x10) & 0x7F));
+        tmp32 = (baseAmp * ((cfg->MasterVolume >> 0x10) & 0x7F));
         baseAmp = tmp32 >> 7;
 
         /* compute pan index:
@@ -718,7 +718,7 @@ void func_8004C5A4(FSoundChannel* in_pChannel)
          * then mask to 0..255.
          */
         tmp32  = ch->AutoPanVolume;
-        tmp32  += (cfg->B_Volume >> 0x10);
+        tmp32  += (cfg->MasterPanOffset >> 0x10);
         tmp32  += (ch->ChannelPan >> 8);
         tmp32  -= 0x40;
         panIndex = tmp32 & 0xFF;
@@ -911,12 +911,12 @@ void func_8004CA1C(FSoundChannel* in_pChannel )
         {
             int Temp;
             
-            Temp = (in_pChannel->ChannelPan + in_pChannel->D_Volume_Value) >> 8;
+            Temp = (in_pChannel->ChannelPan + in_pChannel->PanMod) >> 8;
             Temp += in_pChannel->AutoPanVolume;
             Temp += 0x80;
 
             Index = Temp & 0xFF;
-            BaseVolume = (BaseVolume * ((in_pChannel->C_Value << 0x10) >> 0x18)) >> 7;
+            BaseVolume = (BaseVolume * ((in_pChannel->VolumeMod << 0x10) >> 0x18)) >> 7;
         }
         else
         {
@@ -941,7 +941,7 @@ void func_8004CA1C(FSoundChannel* in_pChannel )
     if( UpdateFlags & 0x10 )
     {
         var_a1 = *((u16*)in_pChannel - 0x6) + in_pChannel->VibratoPitch + (in_pChannel->PitchSlide >> 16);
-        temp_a0_4 = in_pChannel->E_SampleRate_Value & 0xFF00;
+        temp_a0_4 = in_pChannel->PitchMod & 0xFF00;
         if (!(in_pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25))
         {
             temp_a0_5 = temp_a0_4 >> 8;
@@ -963,7 +963,7 @@ void func_8004CA1C(FSoundChannel* in_pChannel )
     else if( in_pChannel->VoiceParams.VoiceParamFlags & 0x10 )
     {
         var_a1_2 = in_pChannel->PitchBase + in_pChannel->VibratoPitch + (in_pChannel->PitchSlide >> 16);
-        temp_a0_6 = in_pChannel->E_SampleRate_Value & 0xFF00;
+        temp_a0_6 = in_pChannel->PitchMod & 0xFF00;
         if (!(in_pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25))
         {
             temp_a0_7 = temp_a0_6 >> 8;
@@ -1224,19 +1224,19 @@ void Sound_ApplyMasterFadeToChannelVolume( FSoundMusicContext* in_Context )
 {
     s32 Volume;
 
-    Volume = in_Context->A_Volume;
-    g_Sound_MasterFadeTimer.SavedValue = in_Context->A_Volume;
+    Volume = in_Context->MasterVolume;
+    g_Sound_MasterFadeTimer.SavedValue = in_Context->MasterVolume;
     Volume >>= 16;
     Volume *= g_Sound_MasterFadeTimer.Value >> 8;
     Volume /= 127;
     Volume <<= 8;
-    in_Context->A_Volume = Volume;
+    in_Context->MasterVolume = Volume;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_RestoreChannelVolumeFromMasterFade( FSoundMusicContext* in_Context )
 {
-    in_Context->A_Volume = g_Sound_MasterFadeTimer.SavedValue;
+    in_Context->MasterVolume = g_Sound_MasterFadeTimer.SavedValue;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

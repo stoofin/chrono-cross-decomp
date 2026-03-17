@@ -62,8 +62,8 @@ void Sound_Cmd_19_SetMusicLevelImmediate( FSoundCommandParams* in_Params )
     }
 
     Sound_LoadAkaoSequence( (FAkaoSequence*)in_Params->Param1, 0xFFFFFFFF );
-    g_pActiveMusicContext->A_Volume = ( in_Params->ExtParam1 & 0x7F ) << 0x10;
-    g_pActiveMusicContext->A_StepsRemaining = 0;
+    g_pActiveMusicContext->MasterVolume = ( in_Params->ExtParam1 & 0x7F ) << 0x10;
+    g_pActiveMusicContext->MasterVolumeStepsRemaining = 0;
     g_pActiveMusicContext->MusicId = in_Params->Param3;
     Sound_ReconcileSavedMusicVoices();
 }
@@ -99,9 +99,9 @@ void Sound_Cmd_1A_StartMasterAndMusicVolumeFade( FSoundCommandParams* in_Params 
         g_Sound_MasterFadeTimer.Step = (s32)0xFF808000 / Length;
         g_Sound_GlobalFlags.MixBehavior |= MIX_FLAG_MASTER_FADING;
     }
-    g_pActiveMusicContext->A_Volume = 0;
-    g_pActiveMusicContext->A_StepsRemaining = in_Params->ExtParam1;
-    g_pActiveMusicContext->A_Step = ( ( (in_Params->ExtParam2 & 0x7F ) | 0x8000) << 0x10 ) / in_Params->ExtParam1;
+    g_pActiveMusicContext->MasterVolume = 0;
+    g_pActiveMusicContext->MasterVolumeStepsRemaining = in_Params->ExtParam1;
+    g_pActiveMusicContext->MasterVolumeStep = ( ( (in_Params->ExtParam2 & 0x7F ) | 0x8000) << 0x10 ) / in_Params->ExtParam1;
     Sound_ReconcileSavedMusicVoices();
 }
 
@@ -208,8 +208,8 @@ void Sound_Cmd_C0_8004F714( FSoundCommandParams* in_pCmd )
     if ( MusicId == 0 || MusicId == (u32)g_pActiveMusicContext->MusicId )
     {
         pContext = g_pActiveMusicContext;
-        pContext->A_Volume = ( in_pCmd->Param2 & 0x7F ) << 16;
-        pContext->A_StepsRemaining = 0;
+        pContext->MasterVolume = ( in_pCmd->Param2 & 0x7F ) << 16;
+        pContext->MasterVolumeStepsRemaining = 0;
         Sound_MarkActiveChannelsVolumeDirty( pContext, g_ActiveMusicChannels );
         return;
     }
@@ -221,8 +221,8 @@ void Sound_Cmd_C0_8004F714( FSoundCommandParams* in_pCmd )
         return;
     }
 
-    pContext->A_Volume = ( in_pCmd->Param2 & 0x7F ) << 16;
-    pContext->A_StepsRemaining = 0;
+    pContext->MasterVolume = ( in_pCmd->Param2 & 0x7F ) << 16;
+    pContext->MasterVolumeStepsRemaining = 0;
     Sound_MarkActiveChannelsVolumeDirty( pContext, g_pSecondaryMusicChannels );
 }
 
@@ -297,8 +297,8 @@ void Sound_Cmd_A0_8004FCE4( FSoundCommandParams* in_Params )
         {
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & in_Params->Param2 ) )
             {
-                pChannel->C_Value = ( in_Params->Param3 & 0x7F ) << 8;
-                pChannel->C_StepsRemaining = 0;
+                pChannel->VolumeMod = ( in_Params->Param3 & 0x7F ) << 8;
+                pChannel->VolumeModStepsRemaining = 0;
                 pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
             }
             ChannelIndex++;
@@ -313,8 +313,8 @@ void Sound_Cmd_A0_8004FCE4( FSoundCommandParams* in_Params )
         {
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->field23_0x50 == in_Params->Param1 ) )
             {
-                pChannel->C_Value = ( in_Params->Param3 & 0x7F ) << 8;
-                pChannel->C_StepsRemaining = 0;
+                pChannel->VolumeMod = ( in_Params->Param3 & 0x7F ) << 8;
+                pChannel->VolumeModStepsRemaining = 0;
                 pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
             }
             ChannelIndex++;
@@ -339,8 +339,8 @@ void Sound_Cmd_A1_8004FDCC( FSoundCommandParams* in_Params )
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & in_Params->Param2 ) )
             {
                 s16 Param3 = in_Params->Param3 != 0 ? in_Params->Param3 : 1;
-                pChannel->C_Step = (s16)( ( ( in_Params->Param4 & 0x7F ) << 8 ) - pChannel->C_Value ) / Param3;
-                pChannel->C_StepsRemaining = Param3;
+                pChannel->VolumeModStep = (s16)( ( ( in_Params->Param4 & 0x7F ) << 8 ) - pChannel->VolumeMod ) / Param3;
+                pChannel->VolumeModStepsRemaining = Param3;
             }
         }
     }
@@ -351,8 +351,8 @@ void Sound_Cmd_A1_8004FDCC( FSoundCommandParams* in_Params )
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->field23_0x50 == in_Params->Param1 ) )
             {
                 s16 Param3 = in_Params->Param3 != 0 ? in_Params->Param3 : 1;
-                pChannel->C_Step = (s16)( ( ( in_Params->Param4 & 0x7F ) << 8 ) - pChannel->C_Value ) / Param3;
-                pChannel->C_StepsRemaining = Param3;
+                pChannel->VolumeModStep = (s16)( ( ( in_Params->Param4 & 0x7F ) << 8 ) - pChannel->VolumeMod ) / Param3;
+                pChannel->VolumeModStepsRemaining = Param3;
             }
         }
     }
@@ -371,8 +371,8 @@ void Sound_Cmd_A8_8004FF4C( FSoundCommandParams* in_Params )
     {
         if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
         {
-            pChannel->C_Value = ( in_Params->Param1 & 0x7F ) << 8;
-            pChannel->C_StepsRemaining = 0;
+            pChannel->VolumeMod = ( in_Params->Param1 & 0x7F ) << 8;
+            pChannel->VolumeModStepsRemaining = 0;
             pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
         }
         ChannelIndex++;
@@ -399,8 +399,8 @@ void Sound_Cmd_A9_8004FFC8( FSoundCommandParams* in_Params )
             {
                 Length = in_Params->Param1;
             }
-            pChannel->C_Step = ( (s16)( ( ( in_Params->Param2 & 0x7F ) << 8 ) - pChannel->C_Value ) / Length );
-            pChannel->C_StepsRemaining = Length;
+            pChannel->VolumeModStep = ( (s16)( ( ( in_Params->Param2 & 0x7F ) << 8 ) - pChannel->VolumeMod ) / Length );
+            pChannel->VolumeModStepsRemaining = Length;
         }
         ChannelIndex++;
         pChannel++;
@@ -423,8 +423,8 @@ void Sound_Cmd_A2_80050090( FSoundCommandParams* in_Params )
         {
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & in_Params->Param2 ) )
             {
-                pChannel->D_Volume_Value = ( (u8)in_Params->Param3 ) << 8;
-                pChannel->D_Volume_StepsRemaining = 0;
+                pChannel->PanMod = ( (u8)in_Params->Param3 ) << 8;
+                pChannel->PanModStepsRemaining = 0;
                 pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
             }
             ChannelIndex++;
@@ -439,8 +439,8 @@ void Sound_Cmd_A2_80050090( FSoundCommandParams* in_Params )
         {
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->field23_0x50 == in_Params->Param1 ) )
             {
-                pChannel->D_Volume_Value = ( (u8)in_Params->Param3 ) << 8;
-                pChannel->D_Volume_StepsRemaining = 0;
+                pChannel->PanMod = ( (u8)in_Params->Param3 ) << 8;
+                pChannel->PanModStepsRemaining = 0;
                 pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
             }
             ChannelIndex++;
@@ -466,8 +466,8 @@ void Sound_Cmd_A3_80050170( FSoundCommandParams* in_Param )
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & in_Param->Param2 ) )
             {
                 s16 Length = in_Param->Param3 != 0 ? in_Param->Param3 : 1;
-                pChannel->D_Volume_Step = (short)( ( ( (u8)in_Param->Param4 ) << 8 ) - pChannel->D_Volume_Value ) / Length;
-                pChannel->D_Volume_StepsRemaining = Length;
+                pChannel->PanModStep = (short)( ( ( (u8)in_Param->Param4 ) << 8 ) - pChannel->PanMod ) / Length;
+                pChannel->PanModStepsRemaining = Length;
             }
             ChannelIndex++;
             pChannel++;
@@ -482,8 +482,8 @@ void Sound_Cmd_A3_80050170( FSoundCommandParams* in_Param )
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->field23_0x50 == in_Param->Param1 ) )
             {
                 s16 Length = in_Param->Param3 != 0 ? in_Param->Param3 : 1;
-                pChannel->D_Volume_Step = (short)( ( ( (u8)in_Param->Param4 ) << 8 ) - pChannel->D_Volume_Value ) / Length;
-                pChannel->D_Volume_StepsRemaining = Length;
+                pChannel->PanModStep = (short)( ( ( (u8)in_Param->Param4 ) << 8 ) - pChannel->PanMod ) / Length;
+                pChannel->PanModStepsRemaining = Length;
             }
             ChannelIndex++;
             pChannel++;
@@ -506,8 +506,8 @@ void Sound_Cmd_AA_800502E8( FSoundCommandParams* in_Params )
     {
         if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25 ) )
         {
-            pChannel->D_Volume_Value = (u8)in_Params->Param1 << 8;
-            pChannel->D_Volume_StepsRemaining = 0;
+            pChannel->PanMod = (u8)in_Params->Param1 << 8;
+            pChannel->PanModStepsRemaining = 0;
             pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
         }
         ChannelIndex++;
@@ -533,8 +533,8 @@ void Sound_Cmd_AB_80050360( FSoundCommandParams* in_Params )
             {
                 Length = in_Params->Param1;
             }
-            pChannel->D_Volume_Step = (short)( ( ( (char)in_Params->Param2 ) << 8 ) - pChannel->D_Volume_Value ) / Length;
-            pChannel->D_Volume_StepsRemaining = Length;
+            pChannel->PanModStep = (short)( ( ( (char)in_Params->Param2 ) << 8 ) - pChannel->PanMod ) / Length;
+            pChannel->PanModStepsRemaining = Length;
         }
         ChannelIndex++;
         pChannel++;
@@ -557,8 +557,8 @@ void Sound_Cmd_A4_80050424( FSoundCommandParams* in_Params )
         {
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & in_Params->Param2 ) )
             {
-                pChannel->E_SampleRate_Value = ( (u8)in_Params->Param3 ) << 8;
-                pChannel->E_SampleRate_StepsRemaining = 0;
+                pChannel->PitchMod = ( (u8)in_Params->Param3 ) << 8;
+                pChannel->PitchModStepsRemaining = 0;
                 pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_SAMPLE_RATE;
             }
             ChannelIndex++;
@@ -573,8 +573,8 @@ void Sound_Cmd_A4_80050424( FSoundCommandParams* in_Params )
         {
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->field23_0x50 == in_Params->Param1 ) )
             {
-                pChannel->E_SampleRate_Value = ( (char)in_Params->Param3 ) << 8;
-                pChannel->E_SampleRate_StepsRemaining = 0;
+                pChannel->PitchMod = ( (char)in_Params->Param3 ) << 8;
+                pChannel->PitchModStepsRemaining = 0;
                 pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_SAMPLE_RATE;
             }
             ChannelIndex++;
@@ -600,8 +600,8 @@ void Sound_Cmd_A5_80050504( FSoundCommandParams* in_Params )
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & in_Params->Param2 ) )
             {
                 s16 Length = in_Params->Param3 != 0 ? in_Params->Param3 : 1;
-                pChannel->E_SampleRate_Step = (s16)( (s16)( ( ( (u8)in_Params->Param4 ) << 8 ) - pChannel->E_SampleRate_Value ) / Length );
-                pChannel->E_SampleRate_StepsRemaining = Length;
+                pChannel->PitchModStep = (s16)( (s16)( ( ( (u8)in_Params->Param4 ) << 8 ) - pChannel->PitchMod ) / Length );
+                pChannel->PitchModStepsRemaining = Length;
             }
             ChannelIndex++;
             pChannel++;
@@ -616,8 +616,8 @@ void Sound_Cmd_A5_80050504( FSoundCommandParams* in_Params )
             if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->field23_0x50 == in_Params->Param1 ) )
             {
                 s16 Length = in_Params->Param3 != 0 ? in_Params->Param3 : 1;
-                pChannel->E_SampleRate_Step = (s16)( (s16)( ( ( (u8)in_Params->Param4 ) << 8 ) - pChannel->E_SampleRate_Value ) / Length );
-                pChannel->E_SampleRate_StepsRemaining = Length;
+                pChannel->PitchModStep = (s16)( (s16)( ( ( (u8)in_Params->Param4 ) << 8 ) - pChannel->PitchMod ) / Length );
+                pChannel->PitchModStepsRemaining = Length;
             }
             ChannelIndex++;
             pChannel++;
@@ -640,8 +640,8 @@ void Sound_Cmd_AC_8005068C( FSoundCommandParams* in_Params )
     do {
         if( !( pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25 ) )
         {
-            pChannel->E_SampleRate_Value = (u8)in_Params->Param1 << 8;
-            pChannel->E_SampleRate_StepsRemaining = 0;
+            pChannel->PitchMod = (u8)in_Params->Param1 << 8;
+            pChannel->PitchModStepsRemaining = 0;
             pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_SAMPLE_RATE;
         }
         ChannelIndex--;
@@ -667,8 +667,8 @@ void Sound_Cmd_AD_800506E4( FSoundCommandParams* in_Params )
             {
                 Length = in_Params->Param1;
             }
-            pChannel->E_SampleRate_Step = (s16)( (s16)( ( ( (u8)in_Params->Param2 ) << 8 ) - pChannel->E_SampleRate_Value ) / Length );
-            pChannel->E_SampleRate_StepsRemaining = Length;
+            pChannel->PitchModStep = (s16)( (s16)( ( ( (u8)in_Params->Param2 ) << 8 ) - pChannel->PitchMod ) / Length );
+            pChannel->PitchModStepsRemaining = Length;
         }
         ChannelIndex++;
         pChannel++;
@@ -988,20 +988,20 @@ void Sound_Cmd_9E_RestoreCutsceneAudio( FSoundCommandParams* in_Params )
 void Sound_Cmd_AE_80051094( FSoundCommandParams* in_Params )
 {
     FSoundChannel* pChannel;
-    s32* C_Values;
-    u16 C_Value;
+    s32* VolumeMods;
+    u16 VolumeMod;
     u32 ChannelIndex;
 
     ChannelIndex = 0;
-    C_Values = D_80090A00;
+    VolumeMods = D_80090A00;
     pChannel = g_SfxSoundChannels;
 
     while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
     {
-        C_Value = pChannel->C_Value;
-        *C_Values = (s32)( C_Value << 0x10 ) >> 0x18;
+        VolumeMod = pChannel->VolumeMod;
+        *VolumeMods = (s32)( VolumeMod << 0x10 ) >> 0x18;
         pChannel++;
-        C_Values++;
+        VolumeMods++;
         ChannelIndex++;
     };
 
@@ -1020,7 +1020,7 @@ void Sound_Cmd_AF_80051110( FSoundCommandParams* in_Params )
     FSoundChannel* pChannel;
     s32 CurrentChannelMask;
     s16 Length;
-    s32* C_Value;
+    s32* VolumeMod;
     u32 Latches;
     u32 ChannelIndex;
     s32 ActiveChannelMask;
@@ -1046,12 +1046,12 @@ void Sound_Cmd_AF_80051110( FSoundCommandParams* in_Params )
 
         while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
         {
-            C_Value = &D_80090A00[ ChannelIndex ];
+            VolumeMod = &D_80090A00[ ChannelIndex ];
             if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
             {
-                pChannel->C_Step = (s16)( ( *C_Value << 8 ) + 0x80 ) / Length; // Q8 fixed point, +0x80 for rounding
-                pChannel->C_Value = 0;
-                pChannel->C_StepsRemaining = Length;
+                pChannel->VolumeModStep = (s16)( ( *VolumeMod << 8 ) + 0x80 ) / Length; // Q8 fixed point, +0x80 for rounding
+                pChannel->VolumeMod = 0;
+                pChannel->VolumeModStepsRemaining = Length;
             }
             ChannelIndex++;
             pChannel++;

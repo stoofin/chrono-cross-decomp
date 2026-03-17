@@ -219,7 +219,7 @@ typedef struct
 
 /* Last-active SFX channel fade completion should trigger VM command.
  * - Set when a global SFX fade starts
- * - Checked when C_StepsRemaining reaches 0 on final channel
+ * - Checked when VolumeModStepsRemaining reaches 0 on final channel
  * - Causes Sound_Cmd_80050dd4()
  */
 #define SOUND_CTL_SFX_FADE_END_CALLBACK_PENDING  (1u << 16)
@@ -317,8 +317,8 @@ typedef struct
     /* 0x048 */ u32  AutoPanRatePhase;
     /* 0x04C */ s32  AutoPanRateSlideStep;
     /* 0x050 */ s32  field23_0x50;
-    /* 0x054 */ u32  E_SampleRate_Value;
-    /* 0x058 */ s32  E_SampleRate_Step;
+    /* 0x054 */ u32  PitchMod;
+    /* 0x058 */ s32  PitchModStep;
     /* 0x05C */ s32  Volume;
     /* 0x060 */ s32  VolumeSlideStep;
     /* 0x064 */ s32  PitchSlideStep;
@@ -330,17 +330,17 @@ typedef struct
     /* 0x07A */ s16  Length1;
     /* 0x07C */ s16  Length2;
     /* 0x07E */ u16  InstrumentIndex;
-    /* 0x080 */ u16  D_Volume_Value;
-    /* 0x082 */ s16  D_Volume_StepsRemaining;
+    /* 0x080 */ u16  PanMod;
+    /* 0x082 */ s16  PanModStepsRemaining;
     /* 0x084 */ u16  OpcodeStepCounter;
     /* 0x086 */ u16  LoopIterationCount[SOUND_LOOP_STACK_SIZE];
     /* 0x08E */ s16  LoopStepCounterSnapshot[SOUND_LOOP_STACK_SIZE];
     /* 0x096 */ u16  VolumeBalance; /* Volume is set by "volume << 8" */
     /* 0x098 */ u16  VolumeBalanceSlideLength;
-    /* 0x09A */ s16  E_SampleRate_StepsRemaining;
+    /* 0x09A */ s16  PitchModStepsRemaining;
     /* 0x09C */ u16  ChannelVolumeSlideLength;
     /* 0x09E */ u16  KeyOnVolumeSlideLength;
-    /* 0x0A0 */ s16  C_StepsRemaining;
+    /* 0x0A0 */ s16  VolumeModStepsRemaining;
     /* 0x0A2 */ u16  ChannelPan;
     /* 0x0A4 */ u16  ChannelPanSlideLength;
     /* 0x0A6 */ u16  PitchSlideStepsCurrent;
@@ -379,9 +379,9 @@ typedef struct
     /* 0x0E8 */ s16  LengthStored;
     /* 0x0EA */ u16  LengthFixed;
     /* 0x0EC */ s16  VolumeBalanceSlideStep;
-    /* 0x0EE */ s16  D_Volume_Step;
-    /* 0x0F0 */ u16  C_Value;
-    /* 0x0F2 */ s16  C_Step;
+    /* 0x0EE */ s16  PanModStep;
+    /* 0x0F0 */ u16  VolumeMod;
+    /* 0x0F2 */ s16  VolumeModStep;
     /* 0x0F4 */ s16  PanSlideStep;
     /* 0x0F6 */ s16  Transpose;
     /* 0x0F8 */ s16  FineTune;
@@ -455,14 +455,14 @@ typedef struct
     /* 0x48 */ u32 FmChannelFlags;
     /* 0x4C */ s32 RevDepth;
     /* 0x50 */ s32 ReverbDepthSlideStep;
-    /* 0x54 */ u32 A_Volume;
-    /* 0x58 */ s32 A_Step;
-    /* 0x5C */ s16 A_StepsRemaining;
+    /* 0x54 */ u32 MasterVolume;
+    /* 0x58 */ s32 MasterVolumeStep;
+    /* 0x5C */ s16 MasterVolumeStepsRemaining;
     /* 0x5E */ undefined field24_0x5e;
     /* 0x5F */ undefined field25_0x5f;
-    /* 0x60 */ u32 B_Volume;
-    /* 0x64 */ s32 B_Step;
-    /* 0x68 */ s16 B_StepsRemaining;
+    /* 0x60 */ u32 MasterPanOffset;
+    /* 0x64 */ s32 MasterPanStep;
+    /* 0x68 */ s16 MasterPanStepsRemaining;
     /* 0x6A */ s16 ReverbDepthSlideLength;
     /* 0x6C */ u16 TempoSlideLength;
     /* 0x6E */ u16 MusicId;

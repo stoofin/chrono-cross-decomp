@@ -286,7 +286,7 @@ void Sound_LoadAkaoSequence( FAkaoSequence* in_Sequence, s32 in_Mask )
             pChannel->Length2 = 2;
             pChannel->VolumeBalance = 0x7F00;
             pChannel->Volume = 0x3FFF0000;
-            pChannel->C_Value = 0x4000;
+            pChannel->VolumeMod = 0x4000;
             pChannel->Length1 = ChannelLength;
             pChannel->FineTune = 0;
             pChannel->Transpose = 0;
@@ -299,7 +299,7 @@ void Sound_LoadAkaoSequence( FAkaoSequence* in_Sequence, s32 in_Mask )
             pChannel->ChannelPan = 0x8000;
             pChannel->ChannelPanSlideLength = 0;
             pChannel->PortamentoSteps = 0;
-            pChannel->C_StepsRemaining = 0;
+            pChannel->VolumeModStepsRemaining = 0;
             pChannel->ChannelVolumeSlideLength = 0;
             pChannel->FinePitchDelta = 0;
             pChannel->KeyOnVolumeSlideLength = 0;
@@ -628,17 +628,17 @@ void func_8004E7D8( FSoundChannel* in_pChannel, FSoundCommandParams* in_pCommand
     in_pChannel->field23_0x50 = in_pCommandParams->Param1;
     in_pChannel->unk_Flags = in_pCommandParams->Param2;
     in_pChannel->ChannelPan = 0x8000;
-    in_pChannel->D_Volume_StepsRemaining = 0;
+    in_pChannel->PanModStepsRemaining = 0;
     in_pChannel->ChannelPanSlideLength = 0;
-    in_pChannel->D_Volume_Value = in_pCommandParams->Param3 << 8;
+    in_pChannel->PanMod = in_pCommandParams->Param3 << 8;
     in_pChannel->Length1 = 2;
     in_pChannel->Length2 = 1;
     in_pChannel->Type = 1;
-    in_pChannel->C_StepsRemaining = 0;
+    in_pChannel->VolumeModStepsRemaining = 0;
     in_pChannel->Priority = -2;
-    in_pChannel->E_SampleRate_Value = 0;
-    in_pChannel->E_SampleRate_StepsRemaining = 0;
-    in_pChannel->C_Value = (in_pCommandParams->Param4 & 0x7F) << 8;
+    in_pChannel->PitchMod = 0;
+    in_pChannel->PitchModStepsRemaining = 0;
+    in_pChannel->VolumeMod = (in_pCommandParams->Param4 & 0x7F) << 8;
 
     Sound_ResetChannel(in_pChannel, in_ProgramCounter);
     g_Sound_VoiceOwnerContexts[in_pChannel->VoiceParams.AssignedVoiceNumber] = NULL;
