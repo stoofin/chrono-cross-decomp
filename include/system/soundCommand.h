@@ -28,6 +28,7 @@
 #define SOUND_CMD_9F_SUSPEND_CUTSCENE_AUDIO             ( 0x9FU )
 #define SOUND_CMD_A8_UNK                                ( 0xA8U )
 #define SOUND_CMD_A9_UNK                                ( 0xA9U )
+#define SOUND_CMD_A0_UNK                                ( 0xA0U )
 #define SOUND_COMMAND_UNK_F0                            ( 0xF0U )
 #define SOUND_COMMAND_UNK_F1                            ( 0xF1U )
 
