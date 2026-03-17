@@ -74,9 +74,9 @@ void Sound_PushMusicState()
 // TODO(jperos): This should be easy enough to name if I can remember what saved/pushed configs do
 s32 func_8004A05C()
 {
-    if( !g_pSavedMusicConfig )
+    if( !g_pSuspendedMusicContext )
     {
-        g_PushedMusicConfig.MusicId = 0;
+        g_SuspendedMusicContext.MusicId = 0;
     }
     return 0;
 }
@@ -158,7 +158,7 @@ s32 func_8004A260()
     FSoundChannel *pChannel;
     s32 Mask;
   
-    out_UnkFlags = g_Sound_VoiceSchedulerState.ActiveChannelMask == 0;
+    out_UnkFlags = g_Sound_SfxState.ActiveChannelMask == 0;
     if( out_UnkFlags )
     {
         return 0;
@@ -171,7 +171,7 @@ s32 func_8004A260()
 
     while( Mask & AllVoiceMask )
     {
-        if( g_Sound_VoiceSchedulerState.ActiveChannelMask & Mask )
+        if( g_Sound_SfxState.ActiveChannelMask & Mask )
         {
             out_UnkFlags |= pChannel->unk_Flags;
         }
@@ -195,7 +195,7 @@ s32 func_8004A2C8( s32 in_Flags )
         return 0;
     }
 
-    ActiveChannelMask = g_Sound_VoiceSchedulerState.ActiveChannelMask;
+    ActiveChannelMask = g_Sound_SfxState.ActiveChannelMask;
 
     if( ActiveChannelMask == 0 )
     {
@@ -226,22 +226,22 @@ s32 Sound_SetUnkVoiceSchedulerFlags( s32 in_Mode )
 {
     u32 flags;
 
-    flags = g_Sound_VoiceSchedulerState.TempoMultiplier & ~( (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) );
-    g_Sound_VoiceSchedulerState.TempoMultiplier = flags;
+    flags = g_Sound_SfxState.TempoMultiplier & ~( (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) );
+    g_Sound_SfxState.TempoMultiplier = flags;
 
     switch ( in_Mode )
     {
         case -2:
-            g_Sound_VoiceSchedulerState.TempoMultiplier = flags | (1 << 0);
+            g_Sound_SfxState.TempoMultiplier = flags | (1 << 0);
             break;
         case -1:
-            g_Sound_VoiceSchedulerState.TempoMultiplier = flags | (1 << 1);
+            g_Sound_SfxState.TempoMultiplier = flags | (1 << 1);
             break;
         case 1:
-            g_Sound_VoiceSchedulerState.TempoMultiplier = flags | (1 << 2);
+            g_Sound_SfxState.TempoMultiplier = flags | (1 << 2);
             break;
         case 2:
-            g_Sound_VoiceSchedulerState.TempoMultiplier = flags | (1 << 3);
+            g_Sound_SfxState.TempoMultiplier = flags | (1 << 3);
             break;
         default:
             in_Mode = 0;

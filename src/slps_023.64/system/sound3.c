@@ -59,7 +59,7 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80051F7C);
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052458);
 
 //----------------------------------------------------------------------------------------------------------------------
-void func_800526FC( FSoundChannelConfig* in_pConfig, FSoundChannel* in_pChannel )
+void func_800526FC( FSoundMusicContext* in_pConfig, FSoundChannel* in_pChannel )
 {
     s32 NewValue;
     s32 Ticks;
@@ -137,13 +137,13 @@ void Sound_SetInstrumentToChannel( FSoundChannel* in_Channel, u32 in_Index )
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_ClearVoiceFromSchedulerState( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    g_Sound_VoiceSchedulerState.ActiveChannelMask &= ~in_VoiceFlags;
-    g_Sound_VoiceSchedulerState.unk_Flags_0x10 &= ~in_VoiceFlags;
-    g_Sound_VoiceSchedulerState.NoiseVoiceFlags &= ~in_VoiceFlags;
-    g_Sound_VoiceSchedulerState.ReverbVoiceFlags &= ~in_VoiceFlags;
-    g_Sound_VoiceSchedulerState.FmVoiceFlags &= ~in_VoiceFlags;
-    g_Sound_VoiceSchedulerState.KeyOnFlags &= ~in_VoiceFlags;
-    g_Sound_VoiceSchedulerState.KeyedFlags &= ~in_VoiceFlags;
+    g_Sound_SfxState.ActiveChannelMask &= ~in_VoiceFlags;
+    g_Sound_SfxState.unk_Flags_0x10 &= ~in_VoiceFlags;
+    g_Sound_SfxState.NoiseVoiceFlags &= ~in_VoiceFlags;
+    g_Sound_SfxState.ReverbVoiceFlags &= ~in_VoiceFlags;
+    g_Sound_SfxState.FmVoiceFlags &= ~in_VoiceFlags;
+    g_Sound_SfxState.KeyOnFlags &= ~in_VoiceFlags;
+    g_Sound_SfxState.KeyedFlags &= ~in_VoiceFlags;
     in_pChannel->unk_Flags = 0;
     in_pChannel->field23_0x50 = 0;
 }

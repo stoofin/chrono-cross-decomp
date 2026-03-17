@@ -14,7 +14,7 @@ void Sound_Cutscene_StopStream()
         SetVoiceKeyOff( g_Sound_Cutscene_StreamState.VoicesInUseFlags );
         SetVoiceRepeatAddr( g_Sound_Cutscene_StreamState.VoiceIndex, 0x1030U );
         SetVoiceRepeatAddr( g_Sound_Cutscene_StreamState.VoiceIndex + 1, 0x1030U );
-        g_Sound_VoiceSchedulerState.ReverbVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
+        g_Sound_SfxState.ReverbVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
         g_Sound_Cutscene_StreamState.VoicesInUseFlags = 0;
         g_Sound_GlobalFlags.UpdateFlags |= 0x100;
     }
@@ -31,7 +31,7 @@ s32 Sound_Cutscene_FindFreeVoicePair()
     {
         Bit = 0x00C00000;
         VoiceIndex = 0xb;
-        BusyMask = g_Sound_VoiceSchedulerState.ActiveChannelMask | g_Sound_VoiceSchedulerState.unk_Flags_0x10;
+        BusyMask = g_Sound_SfxState.ActiveChannelMask | g_Sound_SfxState.unk_Flags_0x10;
 
         while( VoiceIndex != 0 )
         {
@@ -47,7 +47,7 @@ s32 Sound_Cutscene_FindFreeVoicePair()
 
         Sound_EvictSfxVoice( 0, 0x40000000 );
 
-    } while( BusyMask != ( g_Sound_VoiceSchedulerState.ActiveChannelMask | g_Sound_VoiceSchedulerState.unk_Flags_0x10 ) );
+    } while( BusyMask != ( g_Sound_SfxState.ActiveChannelMask | g_Sound_SfxState.unk_Flags_0x10 ) );
 
     return -1;
 }
@@ -200,9 +200,9 @@ void Sound_Cutscene_StartStream()
     Sound_Cutscene_AdvancePage( &g_Sound_Cutscene_StreamState.StreamPageIndex );
     Sound_Cutscene_AdvancePage( &g_Sound_Cutscene_StreamState.StreamPageIndex );
 
-    g_Sound_VoiceSchedulerState.ReverbVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
-    g_Sound_VoiceSchedulerState.FmVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
-    g_Sound_VoiceSchedulerState.NoiseVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
+    g_Sound_SfxState.ReverbVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
+    g_Sound_SfxState.FmVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
+    g_Sound_SfxState.NoiseVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_08;
 }
 

@@ -262,7 +262,8 @@ typedef struct
     /* 0x0E */ u16 AdsrUpper;
 } FSoundInstrumentInfo; /* size 0x10 */
 
-typedef struct
+// NOTE(jperos): I am beginning to think that this might be the SFX analogue to FSoundMusicContext
+typedef struct FSoundSfxState
 {
     /* 0x00 */ u32 ActiveChannelMask;
     /* 0x04 */ u32 KeyOnFlags;
@@ -278,7 +279,7 @@ typedef struct
     /* 0x2A */ undefined field11_0x2a;
     /* 0x2B */ undefined field12_0x2b;
     /* 0x2C */ undefined4 TempoMultiplier;
-} FSoundVoiceSchedulerState; /* size 0x30 */
+} FSoundSfxState; /* size 0x30 */
 
 typedef struct
 {
@@ -474,7 +475,7 @@ typedef struct
     /* 0x7C */ s16 TimerTopCurrent;
     /* 0x7E */ undefined field39_0x7e;
     /* 0x7F */ undefined field40_0x7f;
-} FSoundChannelConfig;
+} FSoundMusicContext;
 
 typedef struct FSoundCommandParams
 {
@@ -581,8 +582,8 @@ s32 Sound_StealQuietestVoice( s32 in_bForceFullScan );
 s32 Sound_FindFreeVoice( s32 in_bForceFullScan );
 void func_8004CFC4( FSoundChannel* in_pChannel, u32 in_Flags1, u32 in_Flags2, u32* out_KeyOnFlags );
 void Sound_UpdateVoiceEnvelopeStates( u32 in_ProtextedVoiceMask );
-void Sound_ApplyMasterFadeToChannelVolume( FSoundChannelConfig* in_Config );
-void Sound_RestoreChannelVolumeFromMasterFade ( FSoundChannelConfig* in_Config );
+void Sound_ApplyMasterFadeToChannelVolume( FSoundMusicContext* in_Context );
+void Sound_RestoreChannelVolumeFromMasterFade ( FSoundMusicContext* in_Context );
 void UnassignVoicesFromChannels( FSoundChannel* in_pChannel, s32 );
 void ChannelMaskToVoiceMaskFiltered( FSoundChannel* in_Channel, s32* io_VoiceMask, s32 in_ChannelMask, s32 in_VoiceMaskFilter );
 void Sound_ProcessKeyOffRequests();
@@ -595,13 +596,13 @@ u16 Sound_MapInstrumentToBaseSampleBank( u32 in_Flags, FSoundChannel* in_Channel
 void Sound_ReconcileSavedMusicVoices();
 void Sound_ResetChannel( FSoundChannel* in_pChannel, u8* in_pProgramCounter );
 void Sound_LoadAkaoSequence( FAkaoSequence* in_Sequence, s32 in_Mask );
-void Sound_KillMusicConfig( FSoundChannelConfig *in_Struct,FSoundChannel *in_pChannel, uint);
+void Sound_KillMusicContext( FSoundMusicContext *in_Struct,FSoundChannel *in_pChannel, uint);
 void Sound_EvictSfxVoice( u32, u32 );
 void unk_Sound_8004e7d8( FSoundChannel *in_Channel, FSoundCommandParams* in_pCommandParams, uint in_Flags, u8 *in_ProgramCounter );
 void FreeVoiceChannels( FSoundChannel* in_Channel, u32 in_Voice );
 void Sound_PlaySfxProgram( FSoundCommandParams* in_CommandParams, u8* in_ProgramCounter1, u8* in_ProgramCounter2, s32 );
 void Sound_GetProgramCounters( u8** out_ProgramCounter1, u8** out_ProgramCounter2, s32 in_SfxIndex );
-void Sound_MarkActiveChannelsVolumeDirty( FSoundChannelConfig* in_pChannelConfig, FSoundChannel* in_pChannel );
+void Sound_MarkActiveChannelsVolumeDirty( FSoundMusicContext* in_pContext, FSoundChannel* in_pChannel );
 void Sound_MarkScheduledSfxChannelsVolumeDirty();
 void Sound_SetMusicSequence( FAkaoSequence *in_Sequence, int in_SwapWithSavedState );
 
@@ -794,10 +795,10 @@ extern FSoundChannel g_ActiveMusicChannels[SOUND_CHANNEL_COUNT];
 extern u32 D_80090A34;
 extern FSoundChannel g_SfxSoundChannels[SOUND_SFX_CHANNEL_COUNT];
 extern FSoundChannel* g_pSecondaryMusicChannels;
-extern FSoundChannelConfig* g_pSavedMusicConfig; // What even is this used for
+extern FSoundMusicContext* g_pSuspendedMusicContext; // If non-null, points to a suspended music
 extern FSpuVoiceInfo g_SpuVoiceInfo[VOICE_COUNT];
-extern FSoundChannelConfig g_PrimaryMusicConfig;
-extern FSoundChannelConfig g_PushedMusicConfig;
+extern FSoundMusicContext g_PrimaryMusicContext;
+extern FSoundMusicContext g_SuspendedMusicContext;
 extern FSoundInstrumentInfo g_InstrumentInfo[256];
 extern u32 g_Music_LoopCounter;
 extern u16* g_Sound_Sfx_ProgramOffsets;
@@ -805,11 +806,11 @@ extern volatile bool g_bSpuTransferring;
 extern u16* g_Sound_Sfx_MetadataTableA;
 extern u8* g_Sound_Sfx_ProgramData;
 extern FSoundCommandParams g_Sound_CommandParams_Vm_FE08;
-extern FSoundChannelConfig* g_pActiveMusicConfig;
+extern FSoundMusicContext* g_pActiveMusicContext;
 extern FSoundFadeTimer g_Sound_MasterFadeTimer;
 extern s32 g_Sound_CdVolumeFadeStep;
 extern s16 g_Sound_CdVolumeFadeLength;
-extern FSoundVoiceSchedulerState g_Sound_VoiceSchedulerState;
+extern FSoundSfxState g_Sound_SfxState;
 extern FSoundCommandParams g_Sound_Vm2Params;
 extern s32 g_CdVolume;
 extern FSoundChannel g_PushedMusicChannels[SOUND_CHANNEL_COUNT];
@@ -818,7 +819,7 @@ extern s32 g_Sound_MasterPitchScaleQ16_16;
 extern FSoundGlobalFlags g_Sound_GlobalFlags;
 
 
-extern FSoundChannelConfig* g_Sound_VoiceChannelConfigs[VOICE_COUNT];
+extern FSoundMusicContext* g_Sound_VoiceOwnerContexts[VOICE_COUNT];
 extern FSoundVoiceModeFlags g_Sound_VoiceModeFlags;
 
 #define SPU_MALLOC_NUM_BLOCKS (4)

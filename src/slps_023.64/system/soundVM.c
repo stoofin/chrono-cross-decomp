@@ -11,19 +11,19 @@ void SoundVM_A0_FinishChannel( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     if( in_pChannel->Type == SOUND_CHANNEL_TYPE_MUSIC )
     {
-        g_pActiveMusicConfig->ActiveChannelMask &= ~in_VoiceFlags;
-        if( g_pActiveMusicConfig->ActiveChannelMask == 0 )
+        g_pActiveMusicContext->ActiveChannelMask &= ~in_VoiceFlags;
+        if( g_pActiveMusicContext->ActiveChannelMask == 0 )
         {
             g_Music_LoopCounter = 0;
-            g_pActiveMusicConfig->MusicId = 0;
-            g_pActiveMusicConfig->StatusFlags = 0;
+            g_pActiveMusicContext->MusicId = 0;
+            g_pActiveMusicContext->StatusFlags = 0;
         }
-        g_pActiveMusicConfig->ActiveNoteMask     &= ~in_VoiceFlags;
-        g_pActiveMusicConfig->KeyedMask          &= ~in_VoiceFlags;
-        g_pActiveMusicConfig->AllocatedVoiceMask &= ~in_VoiceFlags;
-        g_pActiveMusicConfig->NoiseChannelFlags  &= ~in_VoiceFlags;
-        g_pActiveMusicConfig->ReverbChannelFlags &= ~in_VoiceFlags;
-        g_pActiveMusicConfig->FmChannelFlags     &= ~in_VoiceFlags;
+        g_pActiveMusicContext->ActiveNoteMask     &= ~in_VoiceFlags;
+        g_pActiveMusicContext->KeyedMask          &= ~in_VoiceFlags;
+        g_pActiveMusicContext->AllocatedVoiceMask &= ~in_VoiceFlags;
+        g_pActiveMusicContext->NoiseChannelFlags  &= ~in_VoiceFlags;
+        g_pActiveMusicContext->ReverbChannelFlags &= ~in_VoiceFlags;
+        g_pActiveMusicContext->FmChannelFlags     &= ~in_VoiceFlags;
     }
     else
     {
@@ -36,10 +36,10 @@ void SoundVM_A0_FinishChannel( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE00_SetTempo( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    g_pActiveMusicConfig->Tempo =  in_pChannel->ProgramCounter[0] << 0x10;
-    g_pActiveMusicConfig->Tempo |= in_pChannel->ProgramCounter[1] << 0x18;
+    g_pActiveMusicContext->Tempo =  in_pChannel->ProgramCounter[0] << 0x10;
+    g_pActiveMusicContext->Tempo |= in_pChannel->ProgramCounter[1] << 0x18;
     in_pChannel->ProgramCounter += sizeof(s16);
-    g_pActiveMusicConfig->TempoSlideLength = 0;
+    g_pActiveMusicContext->TempoSlideLength = 0;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -50,18 +50,18 @@ void SoundVM_FE01_SetTempoSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     s32 Prev;
     s32 Delta;
 
-    if((g_pActiveMusicConfig->TempoSlideLength = *in_pChannel->ProgramCounter++) == 0 )
+    if((g_pActiveMusicContext->TempoSlideLength = *in_pChannel->ProgramCounter++) == 0 )
     {
-        g_pActiveMusicConfig->TempoSlideLength = 0x100;
+        g_pActiveMusicContext->TempoSlideLength = 0x100;
     }
     pc = in_pChannel->ProgramCounter;
     Dest = pc[0] << 0x10;
     Dest |= pc[1] << 0x18;
     in_pChannel->ProgramCounter += 2;
-    Prev = g_pActiveMusicConfig->Tempo & 0xFFFF0000;
+    Prev = g_pActiveMusicContext->Tempo & 0xFFFF0000;
     Delta = Dest - Prev;
-    g_pActiveMusicConfig->TempoSlideStep = Delta / g_pActiveMusicConfig->TempoSlideLength;
-    g_pActiveMusicConfig->Tempo = Prev;
+    g_pActiveMusicContext->TempoSlideStep = Delta / g_pActiveMusicContext->TempoSlideLength;
+    g_pActiveMusicContext->Tempo = Prev;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -74,9 +74,9 @@ void SoundVM_FE02_SetMasterReverbDepth( FSoundChannel* in_pChannel, u32 in_Voice
     Depth = (s8)pc[1] << 0x14;
     Depth |= pc[0] << 0xC;
     in_pChannel->ProgramCounter += sizeof(s16);
-    g_pActiveMusicConfig->ReverbDepthSlideLength = 0;
+    g_pActiveMusicContext->ReverbDepthSlideLength = 0;
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_07;
-    g_pActiveMusicConfig->RevDepth = Depth;
+    g_pActiveMusicContext->RevDepth = Depth;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -87,19 +87,19 @@ void SoundVM_FE03_SetMasterReverbSlide( FSoundChannel* in_pChannel, u32 in_Voice
     s32 Delta;
     s8* pc;
 
-    g_pActiveMusicConfig->ReverbDepthSlideLength = *in_pChannel->ProgramCounter++;
-    if( g_pActiveMusicConfig->ReverbDepthSlideLength == 0 )
+    g_pActiveMusicContext->ReverbDepthSlideLength = *in_pChannel->ProgramCounter++;
+    if( g_pActiveMusicContext->ReverbDepthSlideLength == 0 )
     {
-        g_pActiveMusicConfig->ReverbDepthSlideLength = 0x100;
+        g_pActiveMusicContext->ReverbDepthSlideLength = 0x100;
     }
     pc = in_pChannel->ProgramCounter;
     Dest = pc[1] << 0x14;
     Dest |= (u8)pc[0] << 0xC;
     in_pChannel->ProgramCounter += 2;
-    Prev = g_pActiveMusicConfig->RevDepth & ~0xFFF;
-    g_pActiveMusicConfig->RevDepth = Prev;
+    Prev = g_pActiveMusicContext->RevDepth & ~0xFFF;
+    g_pActiveMusicContext->RevDepth = Prev;
     Delta = Dest - Prev;
-    g_pActiveMusicConfig->ReverbDepthSlideStep = Delta / g_pActiveMusicConfig->ReverbDepthSlideLength;
+    g_pActiveMusicContext->ReverbDepthSlideStep = Delta / g_pActiveMusicContext->ReverbDepthSlideLength;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ void SoundVM_FE07_JumpRelativeWithThreshold( FSoundChannel* in_pChannel, u32 in_
 
     Threshold = *in_pChannel->ProgramCounter++;
 
-    if( g_pActiveMusicConfig->JumpThresholdValue >= Threshold )
+    if( g_pActiveMusicContext->JumpThresholdValue >= Threshold )
     {
         // Read signed 16-bit LE offset at current pc, jump relative to pc
         Offset = READ_16LE_PC(in_pChannel->ProgramCounter);
@@ -338,9 +338,9 @@ void SoundVM_FE0A_ClearInstrument( FSoundChannel* in_pChannel, u32 in_VoiceFlags
     u8 PatchIndex;
 
     PatchIndex = *in_pChannel->ProgramCounter++;
-    if( g_pActiveMusicConfig->SequencePatchTable != NULL )
+    if( g_pActiveMusicContext->SequencePatchTable != NULL )
     {
-        pPatchTable = g_pActiveMusicConfig->SequencePatchTable;
+        pPatchTable = g_pActiveMusicContext->SequencePatchTable;
         if( pPatchTable[PatchIndex] > 0x8000U )
         {
             in_pChannel->VoiceParams.VolumeScale = 0;
@@ -756,11 +756,11 @@ void SoundVM_C4_EnableNoiseVoices( FSoundChannel* in_pChannel, u32 in_VoiceFlags
 {
     if( in_pChannel->Type == SOUND_CHANNEL_TYPE_MUSIC )
     {
-        g_pActiveMusicConfig->NoiseChannelFlags |= in_VoiceFlags;
+        g_pActiveMusicContext->NoiseChannelFlags |= in_VoiceFlags;
     }
     else
     {
-        g_Sound_VoiceSchedulerState.NoiseVoiceFlags |= in_VoiceFlags;
+        g_Sound_SfxState.NoiseVoiceFlags |= in_VoiceFlags;
     }
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_04 | SOUND_GLOBAL_UPDATE_08;
 }
@@ -770,11 +770,11 @@ void SoundVM_C5_DisableNoiseVoices( FSoundChannel* in_pChannel, u32 in_VoiceFlag
 {
     if( in_pChannel->Type == SOUND_CHANNEL_TYPE_MUSIC )
     {
-        g_pActiveMusicConfig->NoiseChannelFlags &= ~in_VoiceFlags;
+        g_pActiveMusicContext->NoiseChannelFlags &= ~in_VoiceFlags;
     }
     else
     {
-        g_Sound_VoiceSchedulerState.NoiseVoiceFlags &= ~in_VoiceFlags;
+        g_Sound_SfxState.NoiseVoiceFlags &= ~in_VoiceFlags;
     }
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_04 | SOUND_GLOBAL_UPDATE_08;
     in_pChannel->NoiseTimer = 0;
@@ -785,11 +785,11 @@ void SoundVM_C6_EnableFmVoices( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     if( in_pChannel->Type == SOUND_CHANNEL_TYPE_MUSIC )
     {
-        g_pActiveMusicConfig->FmChannelFlags |= in_VoiceFlags;
+        g_pActiveMusicContext->FmChannelFlags |= in_VoiceFlags;
     }
     else if( in_pChannel->UpdateFlags & SOUND_UPDATE_UNKNOWN_16 )
     {
-        g_Sound_VoiceSchedulerState.FmVoiceFlags |= in_VoiceFlags;
+        g_Sound_SfxState.FmVoiceFlags |= in_VoiceFlags;
     }
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_08;
 }
@@ -799,11 +799,11 @@ void SoundVM_C7_DisableFmVoices( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     if( in_pChannel->Type == SOUND_CHANNEL_TYPE_MUSIC )
     {
-        g_pActiveMusicConfig->FmChannelFlags &= ~in_VoiceFlags;
+        g_pActiveMusicContext->FmChannelFlags &= ~in_VoiceFlags;
     }
     else
     {
-        g_Sound_VoiceSchedulerState.FmVoiceFlags &= ~in_VoiceFlags;
+        g_Sound_SfxState.FmVoiceFlags &= ~in_VoiceFlags;
     }
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_08;
     in_pChannel->FmTimer = 0;
@@ -814,11 +814,11 @@ void SoundVM_C2_EnableReverbVoices( FSoundChannel* in_pChannel, u32 in_VoiceFlag
 {
     if( in_pChannel->Type == SOUND_CHANNEL_TYPE_MUSIC )
     {
-        g_pActiveMusicConfig->ReverbChannelFlags |= in_VoiceFlags;
+        g_pActiveMusicContext->ReverbChannelFlags |= in_VoiceFlags;
     }
     else
     {
-        g_Sound_VoiceSchedulerState.ReverbVoiceFlags |= in_VoiceFlags;
+        g_Sound_SfxState.ReverbVoiceFlags |= in_VoiceFlags;
     }
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_08;
 }
@@ -828,11 +828,11 @@ void SoundVM_C3_DisableReverbVoices( FSoundChannel* in_pChannel, u32 in_VoiceFla
 {
     if( in_pChannel->Type == SOUND_CHANNEL_TYPE_MUSIC )
     {
-        g_pActiveMusicConfig->ReverbChannelFlags &= ~in_VoiceFlags;
+        g_pActiveMusicContext->ReverbChannelFlags &= ~in_VoiceFlags;
     }
     else
     {
-        g_Sound_VoiceSchedulerState.ReverbVoiceFlags &= ~in_VoiceFlags;
+        g_Sound_SfxState.ReverbVoiceFlags &= ~in_VoiceFlags;
     }
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_08;
 }
@@ -868,22 +868,22 @@ void SoundVM_AC_NoiseClockFrequency( FSoundChannel* in_pChannel, u32 in_VoiceFla
     {
         if( Frequency & 0xC0 )
         {
-            g_pActiveMusicConfig->NoiseClock = (g_pActiveMusicConfig->NoiseClock + (Frequency & 0x3F)) & 0x3F;
+            g_pActiveMusicContext->NoiseClock = (g_pActiveMusicContext->NoiseClock + (Frequency & 0x3F)) & 0x3F;
         }
         else
         {
-            g_pActiveMusicConfig->NoiseClock = Frequency;
+            g_pActiveMusicContext->NoiseClock = Frequency;
         }
     }
     else
     {
         if( Frequency & 0xC0 )
         {
-            g_Sound_VoiceSchedulerState.NoiseClock = (g_Sound_VoiceSchedulerState.NoiseClock + (Frequency & 0x3F)) & 0x3F;
+            g_Sound_SfxState.NoiseClock = (g_Sound_SfxState.NoiseClock + (Frequency & 0x3F)) & 0x3F;
         }
         else
         {
-            g_Sound_VoiceSchedulerState.NoiseClock = Frequency;
+            g_Sound_SfxState.NoiseClock = Frequency;
         }
     }
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_04;
@@ -988,13 +988,13 @@ void SoundVM_BF_ReleaseMode( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE10_8005536c( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    g_pActiveMusicConfig->SomeIndexRelatedToSpuVoiceInfo = *in_pChannel->ProgramCounter++;
+    g_pActiveMusicContext->SomeIndexRelatedToSpuVoiceInfo = *in_pChannel->ProgramCounter++;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE11_8005538c( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    g_pActiveMusicConfig->SomeIndexRelatedToSpuVoiceInfo = 0;
+    g_pActiveMusicContext->SomeIndexRelatedToSpuVoiceInfo = 0;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1133,7 +1133,7 @@ void SoundVM_DC_FixNoteLength( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE04_ClearKeymapTable( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    if( g_pActiveMusicConfig->KeymapTable != NULL )
+    if( g_pActiveMusicContext->KeymapTable != NULL )
     {
         in_pChannel->UpdateFlags &= ~(
             SOUND_UPDATE_DRUM_MODE  |
@@ -1156,17 +1156,17 @@ void SoundVM_FE05_MuteVoice( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE15_8005567c( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    g_pActiveMusicConfig->TimerLower = *in_pChannel->ProgramCounter++;
-    g_pActiveMusicConfig->TimerUpper = *in_pChannel->ProgramCounter++;
-    g_pActiveMusicConfig->TimerLowerCurrent = 0;
-    g_pActiveMusicConfig->TimerUpperCurrent = 0;
+    g_pActiveMusicContext->TimerLower = *in_pChannel->ProgramCounter++;
+    g_pActiveMusicContext->TimerUpper = *in_pChannel->ProgramCounter++;
+    g_pActiveMusicContext->TimerLowerCurrent = 0;
+    g_pActiveMusicContext->TimerUpperCurrent = 0;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE16_800556b4(FSoundChannel* in_pChannel, u32 in_VoiceFlags) {
 
-    g_pActiveMusicConfig->TimerTopCurrent = *in_pChannel->ProgramCounter++;
-    g_pActiveMusicConfig->TimerTopCurrent |= *in_pChannel->ProgramCounter++ << 8;
+    g_pActiveMusicContext->TimerTopCurrent = *in_pChannel->ProgramCounter++;
+    g_pActiveMusicContext->TimerTopCurrent |= *in_pChannel->ProgramCounter++ << 8;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1303,13 +1303,13 @@ void SoundVM_FE1C_IncrementProgramCounter( FSoundChannel* in_pChannel, u32 in_Vo
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE1D_MarkVoicesKeyed( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    g_pActiveMusicConfig->KeyedMask |= in_VoiceFlags;
+    g_pActiveMusicContext->KeyedMask |= in_VoiceFlags;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE1E_ClearVoicesKeyed( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    g_pActiveMusicConfig->KeyedMask &= ~in_VoiceFlags;
+    g_pActiveMusicContext->KeyedMask &= ~in_VoiceFlags;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1327,7 +1327,7 @@ void SoundVM_E2_ResetRandomPitchDepth( FSoundChannel* in_pChannel, u32 in_VoiceF
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE13_PreventVoicesFromRekeyingOnResume( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    g_pActiveMusicConfig->PreventRekeyOnMusicResumeMask |= in_VoiceFlags;
+    g_pActiveMusicContext->PreventRekeyOnMusicResumeMask |= in_VoiceFlags;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
