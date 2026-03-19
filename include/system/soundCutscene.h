@@ -27,6 +27,7 @@ typedef struct FAkaoHeader
     /* 0x24 */ u8  unk_0x24[0x4];
     /* 0x28 */ s32 unk_0x28;      // outgoing voice reference for volume handoff
 } FAkaoHeader; /* size 0x2C */
+static_assert( sizeof(FAkaoHeader) == 0x2C );
 
 typedef struct FSoundCutsceneStreamData
 {
@@ -35,7 +36,7 @@ typedef struct FSoundCutsceneStreamData
     /* 0xAC */ u8          unk_0xAC[0x24];
     /* 0xD0 */ DataBlob    AudioData[1];
 } FSoundCutsceneStreamData; /** size 0x80 + DataBlob */
-#define SOUND_CUTSCENE_STREAM_DATA_HEADER_SIZE ( sizeof(FSoundCutsceneStreamData) - sizeof(DataBlob*) )
+static_assert( sizeof(FSoundCutsceneStreamData) - align(sizeof(member_type(FSoundCutsceneStreamData,AudioData))) == 0xD0 );
 
 typedef struct FSoundCutsceneStreamState
 {
@@ -65,7 +66,8 @@ typedef struct FSoundCutsceneStreamState
     /* 0x50 */ s32 field23_0x50;
     /* 0x54 */ s32 field24_0x54;
     /* 0x58 */ s32 VoiceSampleRate;
-} FSoundCutsceneStreamState; /* size 0x60 */
+} FSoundCutsceneStreamState; /* size 0x5C */
+static_assert( sizeof(FSoundCutsceneStreamState) == 0x5C );
 
 void Sound_Cutscene_StopStream();
 s32 Sound_Cutscene_FindFreeVoicePair();
@@ -77,7 +79,6 @@ void Sound_Cutscene_OnInitialTransferComplete();
 u32 Sound_Cutscene_LoadNextBuffer( u32 in_RepeatAddressL, u32 in_RepeatAddressR, int in_Param3, SpuIRQCallbackProc in_IrqCallback );
 void Sound_Cutscene_OnBufferAComplete();
 void Sound_Cutscene_OnBufferBComplete();
-
 
 extern FSoundCutsceneStreamState g_Sound_Cutscene_StreamState;
 

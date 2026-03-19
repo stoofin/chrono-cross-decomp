@@ -268,7 +268,10 @@ u32 Sound_Cutscene_LoadNextBuffer( u32 in_RepeatAddressL, u32 in_RepeatAddressR,
 
     Sound_Cutscene_AdvancePage( &g_Sound_Cutscene_StreamState.StreamPageIndex );
 
-    SpuWrite( g_Sound_Cutscene_StreamState.pCurrentChunk->AudioData, in_Param3 - SOUND_CUTSCENE_STREAM_DATA_HEADER_SIZE );
+    SpuWrite( 
+        g_Sound_Cutscene_StreamState.pCurrentChunk->AudioData, 
+        in_Param3 - (sizeof(FSoundCutsceneStreamData) - align(sizeof(member_type(FSoundCutsceneStreamData,AudioData))))
+    );
 
     g_Sound_Cutscene_StreamState.field8_0x20 = pHeader->unk_0x04;
     g_Sound_Cutscene_StreamState.CurrentPage = pHeader->CurrentPage;

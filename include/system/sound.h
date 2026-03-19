@@ -188,6 +188,11 @@ typedef struct FAkaoFileBlob
     /* 0x610 */ u16  MetadataTableB[0x100];    // Some per sfx table
     /* 0x810 */ u8   ProgramData[1];           // Sfx bytecode
 } FAkaoFileBlob;
+static_assert( offsetof(FAkaoFileBlob, ProgramOffsets) == 0x010 );
+static_assert( offsetof(FAkaoFileBlob, MetadataTableA) == 0x410 );
+static_assert( offsetof(FAkaoFileBlob, MetadataTableB) == 0x610 );
+static_assert( offsetof(FAkaoFileBlob, ProgramData   ) == 0x810 );
+static_assert( sizeof(FAkaoFileBlob) - align(sizeof(member_type(FAkaoFileBlob, ProgramData))) == 0x810 );
 
 // This is very strange because this seems to be an enum stored in FSoundGlobalFlags::MixBehavior
 // But it mixes an enum for the low 2 bits with a flag at bit 8.
@@ -261,6 +266,7 @@ typedef struct
     /* 0x0C */ u16 AdsrLower;
     /* 0x0E */ u16 AdsrUpper;
 } FSoundInstrumentInfo; /* size 0x10 */
+static_assert( sizeof(FSoundInstrumentInfo) == 0x10 );
 
 // NOTE(jperos): I am beginning to think that this might be the SFX analogue to FSoundMusicContext
 typedef struct FSoundSfxState
@@ -280,6 +286,7 @@ typedef struct FSoundSfxState
     /* 0x2B */ undefined field12_0x2b;
     /* 0x2C */ undefined4 TempoMultiplier;
 } FSoundSfxState; /* size 0x30 */
+static_assert( sizeof(FSoundSfxState) == 0x30 );
 
 typedef struct
 {
@@ -293,6 +300,7 @@ typedef struct
     /* 0x16 */ u16 VolumeScale;
     /* 0x18 */ SpuVolume Volume;
 } FSoundVoiceParams; /* size 0x1C */
+static_assert( sizeof(FSoundVoiceParams) == 0x1C );
 
 #define SOUND_LOOP_STACK_SIZE (4)
 #define SOUND_LOOP_STACK_MAX_INDEX (SOUND_LOOP_STACK_SIZE - 1)
@@ -395,18 +403,20 @@ typedef struct
     /* 0x107 */ u8   field113_0x107;
     /* 0x108 */ FSoundVoiceParams VoiceParams;
 } FSoundChannel; /* size 0x124 */
+static_assert( sizeof(FSoundChannel) == 0x124 );
 
 typedef struct
 {
-    u8 InstrumentIndex;
-    u8 Note;
-    u8 AdsrAttackRate;
-    u8 AdsrSustainRate;
-    u8 SustainModeCode; /* values 3/5/7 map to 0x4000/0x8000/0xC000 */
-    u8 ReleaseRate;
-    u8 VolumeScale;
-    u8 PanAndReverb; /* low 7 bits pan, high bit reverb-enable */
+    /* 0x0 */ u8 InstrumentIndex;
+    /* 0x1 */ u8 Note;
+    /* 0x2 */ u8 AdsrAttackRate;
+    /* 0x3 */ u8 AdsrSustainRate;
+    /* 0x4 */ u8 SustainModeCode; /* values 3/5/7 map to 0x4000/0x8000/0xC000 */
+    /* 0x5 */ u8 ReleaseRate;
+    /* 0x6 */ u8 VolumeScale;
+    /* 0x7 */ u8 PanAndReverb; /* low 7 bits pan, high bit reverb-enable */
 } FSoundKeymapEntry8;
+static_assert( sizeof(FSoundKeymapEntry8) == 0x8 );
 
 typedef struct
 {
@@ -431,6 +441,7 @@ typedef struct
     /* 0x3C */ u32 unk3C;
     /* 0x40 */ u8  Payload[1];  // starts at 0x40 (variable length)
 } FAkaoSequence; // size 0x40 (header), data blob variable
+static_assert( sizeof(FAkaoSequence) - align(sizeof(member_type(FAkaoSequence,Payload))) == 0x40 );
 
 typedef struct 
 {
@@ -475,17 +486,19 @@ typedef struct
     /* 0x7C */ s16 TimerTopCurrent;
     /* 0x7E */ undefined field39_0x7e;
     /* 0x7F */ undefined field40_0x7f;
-} FSoundMusicContext;
+} FSoundMusicContext; /* size 0x80 */
+static_assert( sizeof(FSoundMusicContext) == 0x80 );
 
 typedef struct FSoundCommandParams
 {
-    u32 Param1;
-    u32 Param2;
-    u32 Param3; // Seems to be usually flags
-    u32 Param4;
-    u32 ExtParam1;
-    u32 ExtParam2;
-} FSoundCommandParams;
+    /* 0x00 */ u32 Param1;
+    /* 0x04 */ u32 Param2;
+    /* 0x08 */ u32 Param3; // Seems to be usually flags
+    /* 0x0C */ u32 Param4;
+    /* 0x10 */ u32 ExtParam1;
+    /* 0x14 */ u32 ExtParam2;
+} FSoundCommandParams; /* size 0x18 */
+static_assert( sizeof(FSoundCommandParams) == 0x18 );
 
 typedef struct
 {
@@ -493,6 +506,7 @@ typedef struct
     /* 0x4 */ s16 pEnvx;
     /* 0x6 */ s16 unk6;
 } FSpuVoiceInfo; /* size 0x8 */
+static_assert( sizeof(FSpuVoiceInfo) == 0x8 );
 
 typedef struct
 {
@@ -501,13 +515,15 @@ typedef struct
     /* 0x08 */ s32 TicksRemaining;
     /* 0x0C */ s32 SavedValue;
 } FSoundFadeTimer; /* size 0x10 */
+static_assert( sizeof(FSoundFadeTimer) == 0x10 );
 
 typedef struct
 {
-    s32 Reverb;
-    s32 Noise;
-    s32 Fm;
-} FSoundVoiceModeFlags;
+    /* 0x0 */ s32 Reverb;
+    /* 0x4 */ s32 Noise;
+    /* 0x8 */ s32 Fm;
+} FSoundVoiceModeFlags; /* size 0xC */
+static_assert( sizeof(FSoundVoiceModeFlags) == 0xC );
 
 #define SEMITONES_IN_OCTAVE (12)
 

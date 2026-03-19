@@ -3,6 +3,10 @@ CompileFlags:
     - -DNON_MATCHING=1
     - -m32
 
+Diagnostics:
+  Suppress:
+    - -Wgnu-folding-constant
+
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
