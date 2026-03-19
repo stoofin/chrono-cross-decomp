@@ -675,34 +675,31 @@ void Sound_Cmd_AD_FadeAllSfxPitchMod( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-extern s16 D_800919C2;
-extern s32 g_Sound_TempoScale;
-
 void Sound_Cmd_D0_800507B0( FSoundCommandParams* in_Params )
 {
     g_Sound_TempoScale = (s8)in_Params->Param1 << 0x10;
-    D_800919C2 = 0;
+    g_Sound_TempoScaleStepsRemaining = 0;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-extern s32 D_8009193C;
-
-void Sound_Cmd_D1_800507CC( FSoundCommandParams* in_Params )
+void Sound_Cmd_D1_FadeTempoScale( FSoundCommandParams* in_Params )
 {
     s32 Length;
+    s32 TargetTempoScale;
 
     Length = 1;
     if( in_Params->Param1 != 0 )
     {
         Length = in_Params->Param1;
     }
-    D_8009193C = (s32)( ( (s8)in_Params->Param2 << 0x10 ) - g_Sound_TempoScale ) / Length;
-    D_800919C2 = Length;
+    TargetTempoScale = (s8)in_Params->Param2 << 0x10;
+    g_Sound_TempoScaleStepsRemaining = Length;
+    g_Sound_TempoScaleStep = ( TargetTempoScale - g_Sound_TempoScale ) / Length;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // Fades from Param2 to Param3 over Param1 steps
-void Sound_Cmd_D2_FadeTempoScale( FSoundCommandParams* in_Params )
+void Sound_Cmd_D2_FadeTempoScaleFrom( FSoundCommandParams* in_Params )
 {
     s32 Length;
     s32 TargetTempoScale;
@@ -742,7 +739,21 @@ void Sound_Cmd_D5_FadeMasterPitchScale( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_D6_8005092C);
+void Sound_Cmd_D6_FadeMasterPitchScaleFrom( FSoundCommandParams* in_Params )
+{
+    s32 TargetPitch;
+    s32 Length;
+
+    Length = 1;
+    if( in_Params->Param2 != 0 )
+    {
+        Length = in_Params->Param1;
+    }
+    g_Sound_MasterPitchScaleQ16_16 = (s8)in_Params->Param2 << 0x10;
+    TargetPitch = (s8)in_Params->Param3 << 0x10;
+    g_Sound_MasterPitchScaleStepsRemaining = (s16)Length;
+    g_Sound_MasterPitchScaleStep = (s32)( TargetPitch - g_Sound_MasterPitchScaleQ16_16 ) / (s32)Length;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_F0_StopAllMusic( FSoundCommandParams* in_Params )
