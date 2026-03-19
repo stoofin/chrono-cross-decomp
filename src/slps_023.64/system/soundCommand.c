@@ -721,12 +721,25 @@ void Sound_Cmd_D2_FadeTempoScale( FSoundCommandParams* in_Params )
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_D4_SetMasterPitchScale( FSoundCommandParams* in_Params )
 {
+    g_Sound_MasterPitchScaleQ16_16 = (s8)in_Params->Param1 << 0x10;
     g_Sound_MasterPitchScaleStepsRemaining = 0;
-    g_Sound_MasterPitchScaleQ16_16 = in_Params->Param1 << 0x10;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_D5_800508C4);
+void Sound_Cmd_D5_FadeMasterPitchScale( FSoundCommandParams* in_Params )
+{
+    s32 Length;
+    s32 TargetPitchScale;
+
+    Length = 1;
+    if( in_Params->Param1 != 0 )
+    {
+        Length = in_Params->Param1;
+    }
+    TargetPitchScale = (s8)in_Params->Param2 << 0x10;
+    g_Sound_MasterPitchScaleStepsRemaining = Length;
+    g_Sound_MasterPitchScaleStep = ( TargetPitchScale - g_Sound_MasterPitchScaleQ16_16 ) / Length;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_D6_8005092C);

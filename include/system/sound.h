@@ -661,7 +661,7 @@ void Sound_Cmd_D0_800507B0( FSoundCommandParams* in_Params );
 void Sound_Cmd_D1_800507CC( FSoundCommandParams* in_Params );
 void Sound_Cmd_D2_FadeTempoScale( FSoundCommandParams* in_Params );
 void Sound_Cmd_D4_SetMasterPitchScale( FSoundCommandParams* in_Params );
-void Sound_Cmd_D5_800508C4( FSoundCommandParams* in_Params );
+void Sound_Cmd_D5_FadeMasterPitchScale( FSoundCommandParams* in_Params );
 void Sound_Cmd_D6_8005092C( FSoundCommandParams* in_Params );
 void Sound_Cmd_F0_StopAllMusic( FSoundCommandParams* in_Params );
 void Sound_Cmd_11_800509F0( FSoundCommandParams* in_Params );
