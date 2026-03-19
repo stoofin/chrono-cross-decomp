@@ -657,7 +657,7 @@ void Sound_Cmd_A4_SetSfxPitchMod( FSoundCommandParams* in_Params );
 void Sound_Cmd_A5_FadeSfxPitchMod( FSoundCommandParams* in_Params );
 void Sound_Cmd_AC_SetAllSfxPitchMod( FSoundCommandParams* in_Params );
 void Sound_Cmd_AD_FadeAllSfxPitchMod( FSoundCommandParams* in_Params );
-void Sound_Cmd_D0_800507B0( FSoundCommandParams* in_Params );
+void Sound_Cmd_D0_SetTempoScale( FSoundCommandParams* in_Params );
 void Sound_Cmd_D1_FadeTempoScale( FSoundCommandParams* in_Params );
 void Sound_Cmd_D2_FadeTempoScaleFrom( FSoundCommandParams* in_Params );
 void Sound_Cmd_D4_SetMasterPitchScale( FSoundCommandParams* in_Params );

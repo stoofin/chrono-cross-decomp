@@ -675,7 +675,7 @@ void Sound_Cmd_AD_FadeAllSfxPitchMod( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_D0_800507B0( FSoundCommandParams* in_Params )
+void Sound_Cmd_D0_SetTempoScale( FSoundCommandParams* in_Params )
 {
     g_Sound_TempoScale = (s8)in_Params->Param1 << 0x10;
     g_Sound_TempoScaleStepsRemaining = 0;
