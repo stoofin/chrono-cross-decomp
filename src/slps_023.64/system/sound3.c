@@ -2,13 +2,11 @@
 #include "hw.h"
 #include "system/sound.h"
 
-extern s16 D_80092AFA;
-
 //----------------------------------------------------------------------------------------------------------------------
-void UpdateCdVolume()
+void Sound_UpdateCdVolume()
 {
-    *CD_VOL_L = (s16*)D_80092AFA;
-    *CD_VOL_R = (s16*)D_80092AFA;
+    *CD_VOL_L = g_CdVolume >> 0x10;
+    *CD_VOL_R = g_CdVolume >> 0x10;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -67,7 +65,7 @@ void func_80051F7C(void) {
     if (g_Sound_CdVolumeFadeLength != 0) {
         --g_Sound_CdVolumeFadeLength;
         g_CdVolume += g_Sound_CdVolumeFadeStep;
-        UpdateCdVolume();
+        Sound_UpdateCdVolume();
     }
     
     if ((g_Sound_Cutscene_StreamState.VoicesInUseFlags != 0) && (g_Sound_Cutscene_StreamState.VolFadeStepsRemaining != 0)) {

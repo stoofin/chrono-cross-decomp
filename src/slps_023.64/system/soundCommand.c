@@ -243,7 +243,7 @@ void Sound_Cmd_70_SetCdVolume( FSoundCommandParams* in_pParams )
 {
     g_Sound_CdVolumeFadeLength = 0;
     g_CdVolume = (u16)in_pParams->Param1 << 0x10;
-    UpdateCdVolume();
+    Sound_UpdateCdVolume();
 }
 
 //----------------------------------------------------------------------------------------------------------------------

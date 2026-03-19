@@ -683,7 +683,7 @@ void Sound_SetReverbMode( s32 in_ReverbMode );
 void* Sound_ExecuteSoundVm2Function( u32 in_FunctionIndex );
 
 // Sound 3
-void UpdateCdVolume();
+void Sound_UpdateCdVolume();
 void memcpy32( s32* in_Src, s32* in_Dst, uint in_Size );
 void memswap32( s32* in_A, s32* in_B, uint in_Size );
 long Sound_MainLoop();

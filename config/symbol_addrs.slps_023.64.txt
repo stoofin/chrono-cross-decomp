@@ -591,7 +591,7 @@ SpuGetReverbModeType = 0x80051E54;
 
 //----------------------------------------------------------------------------------------------------------------------
 // Sound3
-UpdateCdVolume                      = 0x80051E64;
+Sound_UpdateCdVolume                      = 0x80051E64;
 memcpy32                            = 0x80051E84;
 memswap32                           = 0x80051F04;
 Sound_MainLoop                      = 0x80052790;
@@ -768,7 +768,7 @@ g_Sound_CdVolumeFadeStep          = 0x80092A60;
 g_Sound_CdVolumeFadeLength        = 0x80092A64;
 g_Sound_SfxState                  = 0x80092AA8; // type:FSoundSfxState size:0x30
 g_Sound_Vm2Params                 = 0x80092AD8; // type:FSoundCommandParams size:0x18
-g_CdVolume                        = 0x80092AF8;
+g_CdVolume                        = 0x80092AF8; // size:0x4
 g_Sound_MutedMusicChannelMask     = 0x80092AFC;
 g_PushedMusicChannels             = 0x80092B00; // type:FSoundChannel[] size:0x2480
 g_Sound_Sfx_MetadataTableB        = 0x80094F80;
