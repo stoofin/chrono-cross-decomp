@@ -88,7 +88,7 @@ extern s32 D_80090A30;
 extern s16 D_800919C0;
 extern s16 D_800919C2;
 extern s32 g_Sound_LfoPhase;
-extern s32 g_Sound_TempoMultiplier;
+extern s32 g_Sound_TempoScale;
 extern s32 g_Sound_MutedMusicChannelMask;
 extern FSoundChannel* g_Sound_pMusicSoudChannels;
 
@@ -125,7 +125,7 @@ void Sound_Setup()
     D_800919C0 = 0;
     g_Sound_MasterPitchScaleQ16_16 = 0;
     D_800919C2 = 0;
-    g_Sound_TempoMultiplier = 0;
+    g_Sound_TempoScale = 0;
     g_PrimaryMusicContext.MasterVolumeStepsRemaining = 0;
     g_PrimaryMusicContext.MasterPanStepsRemaining = 0;
     g_Sound_CdVolumeFadeLength = 0;

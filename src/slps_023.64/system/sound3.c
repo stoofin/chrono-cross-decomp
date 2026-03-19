@@ -61,7 +61,7 @@ extern s32 D_8009193C;
 extern s16 D_800919C0;
 extern s16 D_800919C2;
 extern s32 g_Sound_LfoPhase;
-extern s32 g_Sound_TempoMultiplier;
+extern s32 g_Sound_TempoScale;
 
 void func_80051F7C(void) {
     s32 nextValue;
@@ -94,7 +94,7 @@ void func_80051F7C(void) {
     
     if (D_800919C2 != 0) {
         --D_800919C2;
-        g_Sound_TempoMultiplier += D_8009193C;
+        g_Sound_TempoScale += D_8009193C;
     }
     
     if (D_800919C0 != 0) {
