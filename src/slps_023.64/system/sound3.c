@@ -56,12 +56,7 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", memswap32);
 //----------------------------------------------------------------------------------------------------------------------
 
 #include "system/soundCutscene.h"
-extern s32 D_80091938;
-extern s32 D_8009193C;
-extern s16 D_800919C0;
-extern s16 D_800919C2;
 extern s32 g_Sound_LfoPhase;
-extern s32 g_Sound_TempoScale;
 
 void func_80051F7C(void) {
     s32 nextValue;
@@ -92,14 +87,14 @@ void func_80051F7C(void) {
         g_Sound_Cutscene_StreamState.Volume = nextValue & 0xFFFF;
     }
     
-    if (D_800919C2 != 0) {
-        --D_800919C2;
-        g_Sound_TempoScale += D_8009193C;
+    if (g_Sound_TempoScaleStepsRemaining != 0) {
+        --g_Sound_TempoScaleStepsRemaining;
+        g_Sound_TempoScale += g_Sound_TempoScaleStep;
     }
     
-    if (D_800919C0 != 0) {
-        --D_800919C0;
-        nextValue = g_Sound_MasterPitchScaleQ16_16 + D_80091938;
+    if (g_Sound_MasterPitchScaleStepsRemaining != 0) {
+        --g_Sound_MasterPitchScaleStepsRemaining;
+        nextValue = g_Sound_MasterPitchScaleQ16_16 + g_Sound_MasterPitchScaleStep;
         if ((nextValue & 0xFF0000) != (g_Sound_MasterPitchScaleQ16_16 & 0xFF0000)) {
             FSoundChannel* channel = g_ActiveMusicChannels;
             for (i = 0x20; i != 0; --i, ++channel) {

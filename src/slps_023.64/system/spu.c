@@ -85,8 +85,8 @@ extern struct
     s32 unk4;
 } D_800909F8;
 extern s32 D_80090A30;
-extern s16 D_800919C0;
-extern s16 D_800919C2;
+extern s16 g_Sound_MasterPitchScaleStepsRemaining;
+extern s16 g_Sound_TempoScaleStepsRemaining;
 extern s32 g_Sound_LfoPhase;
 extern s32 g_Sound_TempoScale;
 extern s32 g_Sound_MutedMusicChannelMask;
@@ -122,9 +122,9 @@ void Sound_Setup()
     g_PrimaryMusicContext.MasterVolume = 0x7F0000;
     g_PrimaryMusicContext.MasterPanOffset = 0x400000;
     g_CdVolume = 0x7FFF0000;
-    D_800919C0 = 0;
+    g_Sound_MasterPitchScaleStepsRemaining = 0;
     g_Sound_MasterPitchScaleQ16_16 = 0;
-    D_800919C2 = 0;
+    g_Sound_TempoScaleStepsRemaining = 0;
     g_Sound_TempoScale = 0;
     g_PrimaryMusicContext.MasterVolumeStepsRemaining = 0;
     g_PrimaryMusicContext.MasterPanStepsRemaining = 0;
