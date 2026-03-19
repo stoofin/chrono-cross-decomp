@@ -335,8 +335,8 @@ typedef struct
     /* 0x070 */ s32  KeyOnVolume;
     /* 0x074 */ s32  KeyOnVolumeSlideStep;
     /* 0x078 */ u16  Type; /* Music, SFX, Menu */
-    /* 0x07A */ s16  Length1;
-    /* 0x07C */ s16  Length2;
+    /* 0x07A */ u16  Length1;
+    /* 0x07C */ u16  Length2;
     /* 0x07E */ u16  InstrumentIndex;
     /* 0x080 */ u16  PanMod;
     /* 0x082 */ u16  PanModStepsRemaining;
@@ -479,10 +479,10 @@ typedef struct
     /* 0x6E */ u16 MusicId;
     /* 0x70 */ u16 JumpThreshold;
     /* 0x72 */ u16 NoiseClock;
-    /* 0x74 */ s16 TimerUpper;
-    /* 0x76 */ s16 TimerUpperCurrent;
-    /* 0x78 */ s16 TimerLower;
-    /* 0x7A */ s16 TimerLowerCurrent;
+    /* 0x74 */ u16 TimerUpper;
+    /* 0x76 */ u16 TimerUpperCurrent;
+    /* 0x78 */ u16 TimerLower;
+    /* 0x7A */ u16 TimerLowerCurrent;
     /* 0x7C */ s16 TimerTopCurrent;
     /* 0x7E */ undefined field39_0x7e;
     /* 0x7F */ undefined field40_0x7f;

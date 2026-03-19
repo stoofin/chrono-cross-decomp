@@ -189,7 +189,99 @@ void func_80051F7C(void) {
 
 //----------------------------------------------------------------------------------------------------------------------
 
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052458);
+void func_800535E4(FSoundChannel*, u32);
+extern u8 D_80094F8E;
+extern s32 D_80094FFC;
+
+u32 func_80052458(FSoundChannel* arg0, s32 arg1) {
+    FSoundChannel* chan;
+    s32 tempoStep;
+    u32 chanMask;
+    u32 chanBit;
+    u32 tempoScale;
+    u32 updateFlags;    
+    tempoStep = (u16)(g_pActiveMusicContext->Tempo >> 16);
+
+    tempoScale = D_80094F8E;
+    if (tempoScale != 0) {
+        if (tempoScale < 0x80U) {
+            tempoStep += (tempoStep * tempoScale) >> 7;
+        } else {
+            tempoStep = (tempoStep * tempoScale) >> 8;
+        }
+    }
+
+    g_pActiveMusicContext->TempoUpdate += tempoStep;
+
+    if ((g_pActiveMusicContext->TempoUpdate & 0xFFFF0000) || (D_80094FFC & 4)) {
+        g_pActiveMusicContext->TempoUpdate &= 0xFFFF;
+
+        do {
+            do {
+                chan = arg0;
+                chanMask = g_pActiveMusicContext->ActiveChannelMask;
+                chanBit = 1;
+    
+                do {
+                    if (chanMask & chanBit) {
+                        --chan->Length1;
+                        --chan->Length2;
+    
+                        if (chan->Length1 == 0) {
+                            func_800535E4(chan, chanBit);
+                        } else if (chan->Length2 == 0) {
+                            g_pActiveMusicContext->PendingKeyOffMask |= chanBit;
+                        }
+    
+                        Sound_UpdateSlidesAndDelays(chan, chanBit, 0);
+                        chanMask &= ~chanBit;
+                    }
+    
+                    ++chan;
+                    chanBit <<= 1;
+                } while (chanMask != 0);
+    
+                if (g_pActiveMusicContext->TempoSlideLength != 0) {
+                    --g_pActiveMusicContext->TempoSlideLength;
+                    g_pActiveMusicContext->Tempo += g_pActiveMusicContext->TempoSlideStep;
+                }
+    
+                if (g_pActiveMusicContext->ReverbDepthSlideLength != 0) {
+                    --g_pActiveMusicContext->ReverbDepthSlideLength;
+                    g_pActiveMusicContext->RevDepth += g_pActiveMusicContext->ReverbDepthSlideStep;
+    
+                    updateFlags = g_Sound_GlobalFlags.UpdateFlags;
+                    if (arg1 == 0) {
+                        g_Sound_GlobalFlags.UpdateFlags = (updateFlags) | 0x80;
+                    }
+                }
+    
+                if (g_pActiveMusicContext->TimerLower == 0) {
+                    continue;
+                }
+    
+                ++g_pActiveMusicContext->TimerLowerCurrent;
+                if (g_pActiveMusicContext->TimerLowerCurrent != g_pActiveMusicContext->TimerLower) {
+                    continue;
+                }
+    
+                g_pActiveMusicContext->TimerLowerCurrent = 0;
+                ++g_pActiveMusicContext->TimerUpperCurrent;
+                if (g_pActiveMusicContext->TimerUpperCurrent != g_pActiveMusicContext->TimerUpper) {
+                    continue;
+                }
+    
+                g_pActiveMusicContext->TimerUpperCurrent = 0;
+                ++g_pActiveMusicContext->TimerTopCurrent;
+                if (arg1 == 0 && g_Music_LoopCounter != 0) {
+                    --g_Music_LoopCounter;
+                }
+            } while (arg1 == 0 && g_Music_LoopCounter != 0);
+        } while(0);
+    }
+
+    return g_pActiveMusicContext->ActiveChannelMask;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 void func_800526FC( FSoundMusicContext* in_pContext, FSoundChannel* in_pChannel )
