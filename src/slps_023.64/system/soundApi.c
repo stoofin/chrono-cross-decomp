@@ -369,7 +369,12 @@ void Sound_SetAllSfxPanMod( s32 arg0 )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A628);
+void Sound_FadeAllSfxPanMod( u32 arg0, s32 arg1 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1 & 0xFF;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_AB_FADE_ALL_SFX_PAN_MOD );
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A65C);
