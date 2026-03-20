@@ -198,7 +198,7 @@ void Sound_Cmd_21_EvictSfxVoice( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_C0_8004F714( FSoundCommandParams* in_pCmd )
+void Sound_Cmd_C0_SetMasterVolumeByMusicId( FSoundCommandParams* in_pCmd )
 {
     FSoundMusicContext* pContext;
     u32 MusicId;
@@ -227,7 +227,7 @@ void Sound_Cmd_C0_8004F714( FSoundCommandParams* in_pCmd )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_C1_8004F7C8(FSoundCommandParams* in_Params) 
+void Sound_Cmd_C1_FadeMasterVolumeByMusicId(FSoundCommandParams* in_Params) 
 {
     FSoundMusicContext* pMusicContext;
     FSoundChannel* pChannels;
@@ -272,7 +272,7 @@ void Sound_Cmd_C1_8004F7C8(FSoundCommandParams* in_Params)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_C2_FadeMasterVolumeByMusicId( FSoundCommandParams* in_Params )
+void Sound_Cmd_C2_FadeMasterVolumeFromByMusicId( FSoundCommandParams* in_Params )
 {
     FSoundMusicContext* pMusicContext;
     FSoundChannel* pChannels;

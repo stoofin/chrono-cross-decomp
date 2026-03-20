@@ -430,7 +430,12 @@ void Sound_FadeSfxPitchMod( u32 arg0, s32 arg1, u32 arg2, s32 arg3 )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A7D4);
+void Sound_SetMasterVolumeByMusicId( u32 arg0, s32 arg1 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1 & 0x7F;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_C0_SET_MASTER_VOLUME_BY_MUSIC_ID );
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A808);
