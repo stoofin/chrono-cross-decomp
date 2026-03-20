@@ -362,31 +362,38 @@ void Sound_FadeSfxVolumeMod( u32 arg0, s32 in_VoiceMask, u32 arg2, s32 in_Volume
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_SetAllSfxPanMod( s32 arg0 )
+void Sound_SetAllSfxPanMod( s32 in_Target )
 {
-    g_Sound_Vm2Params.Param1 = arg0 & 0xFF;
+    g_Sound_Vm2Params.Param1 = in_Target & 0xFF;
     Sound_ExecuteSoundVm2Function( SOUND_CMD_AA_SET_ALL_SFX_PAN_MOD );
-}
 
+}
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_FadeAllSfxPanMod( u32 arg0, s32 arg1 )
+void Sound_FadeAllSfxPanMod( u32 in_Length, s32 in_Target )
 {
-    g_Sound_Vm2Params.Param1 = arg0;
-    g_Sound_Vm2Params.Param2 = arg1 & 0xFF;
+    g_Sound_Vm2Params.Param1 = in_Length;
+    g_Sound_Vm2Params.Param2 = in_Target & 0xFF;
     Sound_ExecuteSoundVm2Function( SOUND_CMD_AB_FADE_ALL_SFX_PAN_MOD );
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_SetSfxPanMod( u32 arg0, s32 arg1, s32 arg2 )
+void Sound_SetSfxPanMod( u32 arg0, s32 in_VoiceMask, s32 in_Target )
 {
     g_Sound_Vm2Params.Param1 = arg0;
-    g_Sound_Vm2Params.Param2 = arg1 & 0xFFFFFF;
-    g_Sound_Vm2Params.Param3 = arg2 & 0xFF;
+    g_Sound_Vm2Params.Param2 = in_VoiceMask & 0xFFFFFF;
+    g_Sound_Vm2Params.Param3 = in_Target & 0xFF;
     Sound_ExecuteSoundVm2Function( SOUND_CMD_A2_SET_SFX_PAN_MOD );
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A6A0);
+void Sound_FadeSfxPanMod( u32 arg0, s32 in_VoiceMask, u32 arg2, s32 in_Target )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = in_VoiceMask & 0xFFFFFF;
+    g_Sound_Vm2Params.Param3 = arg2;
+    g_Sound_Vm2Params.Param4 = in_Target & 0xFF;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_A3_FADE_SFX_PAN_MOD );
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A6E8);
