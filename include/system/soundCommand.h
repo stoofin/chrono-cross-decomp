@@ -40,7 +40,7 @@
 #define SOUND_CMD_AD_FADE_ALL_SFX_PITCH_MOD              ( 0xADU )
 #define SOUND_CMD_C0_SET_MASTER_VOLUME_BY_MUSIC_ID       ( 0xC0U )
 #define SOUND_CMD_C1_FADE_MASTER_VOLUME_BY_MUSIC_ID      ( 0xC1U )
-#define SOUND_CMD_C2_FADE_MASTER_VOLUME_FROM_BY_MUSIC_ID ( 0xC0U )
+#define SOUND_CMD_C2_FADE_MASTER_VOLUME_FROM_BY_MUSIC_ID ( 0xC2U )
 #define SOUND_COMMAND_UNK_F0                             ( 0xF0U )
 #define SOUND_COMMAND_UNK_F1                             ( 0xF1U )
 
