@@ -433,6 +433,7 @@ Sound_FadeSfxPitchMod               = 0x8004A78C;
 Sound_SetMasterVolumeByMusicId      = 0x8004A7D4;
 Sound_FadeMasterVolumeByMusicId     = 0x8004A808;
 Sound_FadeMasterVolumeFromByMusicId = 0x8004A840;
+Sound_SetPanByMusicId               = 0x8004A880;
 
 //----------------------------------------------------------------------------------------------------------------------
 // LibSpu
