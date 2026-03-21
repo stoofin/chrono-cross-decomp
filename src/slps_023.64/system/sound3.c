@@ -318,7 +318,68 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", Sound_MainLoop);
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052DA4);
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052FB8);
+void func_80052FB8(FSoundChannel* arg0, u32 arg1) {
+    FSoundInstrumentInfo* temp_a1;
+    s32 updateFlags;
+    s32 temp_v1_2;
+    u8* keyMap;
+
+    if ((arg0->Key < arg1) || (arg0->Key == 0xFF)) {
+        keyMap = arg0->Keymap;
+        while (keyMap[13] != 0 && keyMap[2] < arg1) {
+            keyMap += 8;
+        }
+    } else {
+        if (arg1 >= arg0->Key) {
+            return;
+        }
+        keyMap = arg0->Keymap;
+        while (keyMap[13] != 0 && arg1 >= keyMap[9]) {
+            keyMap += 8;
+        }
+    }
+    
+    temp_v1_2 = keyMap[0];
+    updateFlags = arg0->UpdateFlags;
+    arg0->InstrumentIndex = temp_v1_2;
+    temp_a1 = &g_InstrumentInfo[temp_v1_2];
+    arg0->VoiceParams.StartAddress = temp_a1->StartAddr;
+    arg0->VoiceParams.LoopAddress = temp_a1->LoopAddr;
+    
+    if (!(updateFlags & 0x01000000)) {
+        arg0->VoiceParams.AdsrLower = keyMap[3] << 8;
+    } else {
+        arg0->VoiceParams.AdsrLower &= 0x7F00;
+    }
+    
+    arg0->VoiceParams.AdsrLower |= temp_a1->AdsrLower & 0x80FF;
+    
+    if (!(updateFlags & 0x08000000)) {
+        arg0->VoiceParams.AdsrUpper &= 0x201F;
+        arg0->VoiceParams.AdsrUpper |= keyMap[4] << 6;
+    } else {
+        arg0->VoiceParams.AdsrUpper &= 0x3FDF;
+    }
+
+    switch (keyMap[5]) {
+    case 3:
+        arg0->VoiceParams.AdsrUpper |= 0x4000;
+        break;
+    case 5:
+        arg0->VoiceParams.AdsrUpper |= 0x8000;
+        break;
+    case 7:
+        arg0->VoiceParams.AdsrUpper |= 0xC000;
+        break;
+    }
+    
+    if ((updateFlags & 0x10000000) == 0) {
+        arg0->VoiceParams.AdsrUpper &= 0xFFE0;
+        arg0->VoiceParams.AdsrUpper |= keyMap[6];
+    }
+    arg0->VoiceParams.AdsrUpper |= temp_a1->AdsrUpper & 0x20;
+    arg0->VoiceParams.VolumeScale = keyMap[7];
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_800531E0);
