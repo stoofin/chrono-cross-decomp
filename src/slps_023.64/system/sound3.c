@@ -744,7 +744,22 @@ void func_800535E4(FSoundChannel* in_pChannel, u32 arg1) {
 
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", Sound_ComputeSlideStep);
+s32 Sound_ComputeSlideStep(u32* arg0, s32 arg1, s32 arg2, s32 arg3) {
+    s32 temp_t0 = (1 << arg3) - 1;
+    s32 temp_v1 = *arg0 & ~temp_t0;
+    s32 temp_a1 = arg1 << arg3;
+    s32 temp_lo = temp_a1 - temp_v1;
+    temp_lo /= arg2;
+    *arg0 = temp_v1;
+    
+    if (temp_a1 < temp_v1) {
+        *arg0 = temp_v1 | temp_t0;
+        --temp_lo;
+    } else {
+        ++temp_lo;
+    }
+    return temp_lo;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_CopyInstrumentInfoToChannel( FSoundChannel* in_pChannel, FSoundInstrumentInfo* in_pInstrumentInfo, u32 in_StartAddress )
