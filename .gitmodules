@@ -3,10 +3,10 @@
 	url = https://github.com/mkst/maspsx
 [submodule "tools/m2c"]
 	path = tools/m2c
-	url = git@github.com:matt-kempster/m2c.git
+	url = https://github.com/matt-kempster/m2c
 [submodule "tools/psxlib-objdumper"]
 	path = tools/psxlib-objdumper
 	url = https://gist.github.com/7b3160f57c8855786d9cb0e9a40bf5c0.git
 [submodule "tools/decomp-permuter"]
 	path = tools/decomp-permuter
-	url = git@github.com:simonlindholm/decomp-permuter.git
+	url = https://github.com/simonlindholm/decomp-permuter
