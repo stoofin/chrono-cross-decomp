@@ -431,7 +431,74 @@ s32 func_800531E0(FSoundInstrumentInfo* in_pInstrumentInfo, s32 arg1, u32 arg2, 
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80053370);
+
+s32 func_80053370(FSoundChannel* in_pChannel, s32 arg1, s32 arg2) {
+    FSoundInstrumentInfo* instrumentInfo;
+    FSoundKeymapEntry8* keymap;
+    s32 updateFlags;
+    s32 ret;
+    s32 instrumentIndex;
+
+    keymap = g_pActiveMusicContext->KeymapTable;
+    keymap += arg2;
+    g_pActiveMusicContext->PendingKeyOnMask |= arg1;
+    
+    if (g_pActiveMusicContext->ActiveNoteMask & arg1) {
+        g_pActiveMusicContext->PendingKeyOffMask |= arg1;
+    }
+    
+    instrumentIndex = keymap->InstrumentIndex;
+    updateFlags = in_pChannel->UpdateFlags;
+    in_pChannel->InstrumentIndex = instrumentIndex;
+    instrumentInfo = &g_InstrumentInfo[instrumentIndex];
+    in_pChannel->VoiceParams.StartAddress = instrumentInfo->StartAddr;
+    in_pChannel->VoiceParams.LoopAddress = instrumentInfo->LoopAddr;
+    
+    if (!(updateFlags & 0x01000000)) {
+        in_pChannel->VoiceParams.AdsrLower = keymap->AdsrAttackRate << 8;
+    } else {
+        in_pChannel->VoiceParams.AdsrLower &= 0x7F00;
+    }
+    
+    in_pChannel->VoiceParams.AdsrLower |= instrumentInfo->AdsrLower & 0x80FF;
+    
+    if (!(updateFlags & 0x08000000)) {
+        in_pChannel->VoiceParams.AdsrUpper &= 0x201F;
+        in_pChannel->VoiceParams.AdsrUpper |= keymap->AdsrSustainRate << 6;
+    } else {
+        in_pChannel->VoiceParams.AdsrUpper &= 0x3FDF;
+    }
+
+    switch (keymap->SustainModeCode) {
+    case 3:
+        in_pChannel->VoiceParams.AdsrUpper |= 0x4000;
+        break;
+    case 5:
+        in_pChannel->VoiceParams.AdsrUpper |= 0x8000;
+        break;
+    case 7:
+        in_pChannel->VoiceParams.AdsrUpper |= 0xC000;
+        break;
+    }
+    
+    if ((updateFlags & 0x10000000) == 0) {
+        in_pChannel->VoiceParams.AdsrUpper &= 0xFFE0;
+        in_pChannel->VoiceParams.AdsrUpper |= keymap->ReleaseRate;
+    }
+    
+    in_pChannel->VoiceParams.AdsrUpper |= instrumentInfo->AdsrUpper & 0x20;
+    ret = func_800531E0(instrumentInfo, keymap->Note, in_pChannel->FineTune, &in_pChannel->FinePitchDelta);
+    in_pChannel->VoiceParams.VolumeScale = keymap->VolumeScale;
+    in_pChannel->ChannelPan = ((keymap->PanAndReverb & 0x7F) + 0x40) << 8;
+    
+    if (keymap->PanAndReverb & 0x80) {
+        g_pActiveMusicContext->ReverbChannelFlags |= arg1;
+    } else {
+        g_pActiveMusicContext->ReverbChannelFlags &= ~arg1;
+    }
+    g_Sound_GlobalFlags.UpdateFlags |= 0x100;
+    return ret;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_800535E4);
