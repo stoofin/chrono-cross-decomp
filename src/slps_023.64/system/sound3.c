@@ -318,67 +318,99 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", Sound_MainLoop);
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052DA4);
 
 //----------------------------------------------------------------------------------------------------------------------
-void func_80052FB8(FSoundChannel* arg0, u32 arg1) {
-    FSoundInstrumentInfo* temp_a1;
-    s32 updateFlags;
-    s32 temp_v1_2;
-    u8* keyMap;
+// There's something fucked up about the struct access here.
+// It's the same entry as in Sound_PlayKeymapNote but the struct accesses are all off-by-one
+// https://decomp.me/scratch/CCzkp
+void func_80052FB8( FSoundChannel* in_pChannel, u32 in_Note )
+{
+    FSoundInstrumentInfo* InstrumentInfo;
+    s32 UpdateFlags;
+    s32 InstrumentIndex;
+    u8* pEntry;
 
-    if ((arg0->Key < arg1) || (arg0->Key == 0xFF)) {
-        keyMap = arg0->Keymap;
-        while (keyMap[13] != 0 && keyMap[2] < arg1) {
-            keyMap += 8;
+    if( ( in_pChannel->Key < in_Note ) || ( in_pChannel->Key == 0xFF ) )
+    {
+        pEntry = in_pChannel->Keymap;
+        while( pEntry[13] != 0 && pEntry[2] < in_Note )
+        {
+            pEntry += sizeof(FSoundKeymapEntry8);
         }
-    } else {
-        if (arg1 >= arg0->Key) {
+    }
+    else
+    {
+        if( in_Note >= in_pChannel->Key )
+        {
             return;
         }
-        keyMap = arg0->Keymap;
-        while (keyMap[13] != 0 && arg1 >= keyMap[9]) {
-            keyMap += 8;
+        pEntry = in_pChannel->Keymap;
+        while( pEntry[13] != 0 && in_Note >= pEntry[9] )
+        {
+            pEntry += sizeof(FSoundKeymapEntry8);
         }
     }
-    
-    temp_v1_2 = keyMap[0];
-    updateFlags = arg0->UpdateFlags;
-    arg0->InstrumentIndex = temp_v1_2;
-    temp_a1 = &g_InstrumentInfo[temp_v1_2];
-    arg0->VoiceParams.StartAddress = temp_a1->StartAddr;
-    arg0->VoiceParams.LoopAddress = temp_a1->LoopAddr;
-    
-    if (!(updateFlags & 0x01000000)) {
-        arg0->VoiceParams.AdsrLower = keyMap[3] << 8;
-    } else {
-        arg0->VoiceParams.AdsrLower &= 0x7F00;
+
+    InstrumentIndex = pEntry[0]; // InstrumentIndex
+    UpdateFlags = in_pChannel->UpdateFlags;
+    in_pChannel->InstrumentIndex = InstrumentIndex;
+    InstrumentInfo = &g_InstrumentInfo[InstrumentIndex];
+    in_pChannel->VoiceParams.StartAddress = InstrumentInfo->StartAddr;
+    in_pChannel->VoiceParams.LoopAddress = InstrumentInfo->LoopAddr;
+
+    if( !( UpdateFlags & SOUND_UPDATE_LOCK_ATTACK_RATE ) )
+    {
+        in_pChannel->VoiceParams.AdsrLower = pEntry[3] << SOUND_ADSR_ATTACK_RATE_SHIFT; // AdsrAttackRate
     }
-    
-    arg0->VoiceParams.AdsrLower |= temp_a1->AdsrLower & 0x80FF;
-    
-    if (!(updateFlags & 0x08000000)) {
-        arg0->VoiceParams.AdsrUpper &= 0x201F;
-        arg0->VoiceParams.AdsrUpper |= keyMap[4] << 6;
-    } else {
-        arg0->VoiceParams.AdsrUpper &= 0x3FDF;
+    else
+    {
+        in_pChannel->VoiceParams.AdsrLower &= SOUND_ADSR_ATTACK_RATE_MASK;
     }
 
-    switch (keyMap[5]) {
-    case 3:
-        arg0->VoiceParams.AdsrUpper |= 0x4000;
-        break;
-    case 5:
-        arg0->VoiceParams.AdsrUpper |= 0x8000;
-        break;
-    case 7:
-        arg0->VoiceParams.AdsrUpper |= 0xC000;
-        break;
+    in_pChannel->VoiceParams.AdsrLower |= InstrumentInfo->AdsrLower & (
+        SOUND_ADSR_ATTACK_MODE_MASK
+        | SOUND_ADSR_DECAY_RATE_MASK
+        | SOUND_ADSR_SUS_LEVEL_MASK
+    );
+
+    if( !( UpdateFlags & SOUND_UPDATE_LOCK_SUSTAIN_RATE ) )
+    {
+        in_pChannel->VoiceParams.AdsrUpper &= ( SOUND_ADSR_UNKNOWN_MASK | SOUND_ADSR_RELEASE_RATE_MASK );
+        in_pChannel->VoiceParams.AdsrUpper |= pEntry[4] << SOUND_ADSR_SUS_RATE_SHIFT; // AdsrSustainRate
     }
-    
-    if ((updateFlags & 0x10000000) == 0) {
-        arg0->VoiceParams.AdsrUpper &= 0xFFE0;
-        arg0->VoiceParams.AdsrUpper |= keyMap[6];
+    else
+    {
+        in_pChannel->VoiceParams.AdsrUpper &= ~( SOUND_ADSR_SUS_MODE_MASK | SOUND_ADSR_SUS_DIR_MASK | SOUND_ADSR_RELEASE_MODE_MASK );
     }
-    arg0->VoiceParams.AdsrUpper |= temp_a1->AdsrUpper & 0x20;
-    arg0->VoiceParams.VolumeScale = keyMap[7];
+
+    switch( pEntry[5] ) // SustainModeCode
+    {
+        case SUS_CODE_LINEAR_DECREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= (
+                SUS_DIR_DEC << SOUND_ADSR_SUS_DIR_SHIFT
+                | SUS_MODE_LIN << SOUND_ADSR_SUS_MODE_SHIFT
+            );
+            break;
+        case SUS_CODE_EXPONENTIAL_INCREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= (
+                SUS_DIR_INC << SOUND_ADSR_SUS_DIR_SHIFT
+                | SUS_MODE_EXP << SOUND_ADSR_SUS_MODE_SHIFT
+            );
+            break;
+        case SUS_CODE_EXPONENTIAL_DECREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= (
+                SUS_DIR_DEC << SOUND_ADSR_SUS_DIR_SHIFT
+                | SUS_MODE_EXP << SOUND_ADSR_SUS_MODE_SHIFT
+            );
+            break;
+    }
+
+    if( ( UpdateFlags & SOUND_UPDATE_LOCK_RELEASE_RATE ) == 0 )
+    {
+        in_pChannel->VoiceParams.AdsrUpper &= ~SOUND_ADSR_RELEASE_RATE_MASK;
+        in_pChannel->VoiceParams.AdsrUpper |= pEntry[6]; // ReleaseRate
+    }
+
+    in_pChannel->VoiceParams.AdsrUpper |= InstrumentInfo->AdsrUpper & SOUND_ADSR_RELEASE_MODE_MASK;
+    in_pChannel->VoiceParams.VolumeScale = pEntry[7]; // VolumeScale
 }
 
 #define FINE_TUNE_CENTER (0x80)
