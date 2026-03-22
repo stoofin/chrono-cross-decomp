@@ -558,7 +558,7 @@ void Sound_PushMusicState();
 void Sound_SetMusicLevelImmediate( u32 arg0, s32 arg1 );
 void Sound_StartMasterAndMusicVolumeFade( u32 arg0, u32 arg1, s32 arg2 );
 void Sound_StartFieldMusicLooped( u32 arg0, u32 arg1 );
-void func_8004A118( s32 arg0, s32 arg1, s32 arg2, s32 arg3 );
+void Sound_PlaySfx( s32 arg0, s32 arg1, s32 arg2, s32 arg3 );
 s32 Sound_SetUnkVoiceSchedulerFlags( s32 in_Mode );
 // void Sound_SetSpeakerMode( s32 in_Mode ); // When you copy this, copy ESpeakerMode from the source
 void Sound_SetMutedMusicChannelMask( u32 in_ChannelMask );
@@ -635,10 +635,10 @@ void Sound_Cmd_40_PushMusicState( FSoundCommandParams* in_Params );
 void Sound_Cmd_19_SetMusicLevelImmediate( FSoundCommandParams* in_Params );
 void Sound_Cmd_1A_StartMasterAndMusicVolumeFade( FSoundCommandParams* in_Params );
 void Sound_Cmd_12_PlayFieldMusicLooped( FSoundCommandParams* in_Params );
-void Sound_Cmd_34_8004F404( FSoundCommandParams* in_Params );
-void Sound_Cmd_30_8004F450( FSoundCommandParams* in_Params );
-void Sound_Cmd_20_8004F518( FSoundCommandParams* in_Params );
-void Sound_Cmd_24_8004F5C8( FSoundCommandParams* in_Params );
+void Sound_Cmd_34_PlaySfxDirect( FSoundCommandParams* in_Params );
+void Sound_Cmd_30_PlaySfxProtected( FSoundCommandParams* in_Params );
+void Sound_Cmd_20_PlaySfx( FSoundCommandParams* in_Params );
+void Sound_Cmd_24_PlaySfxFromPointer( FSoundCommandParams* in_Params );
 void Sound_Cmd_21_EvictSfxVoice( FSoundCommandParams* in_Params );
 void Sound_Cmd_C0_SetMasterVolumeByMusicId( FSoundCommandParams* in_Params );
 void Sound_Cmd_C1_FadeMasterVolumeByMusicId( FSoundCommandParams* in_Params );
@@ -666,9 +666,9 @@ void Sound_Cmd_D2_FadeTempoScaleFrom( FSoundCommandParams* in_Params );
 void Sound_Cmd_D4_SetMasterPitchScale( FSoundCommandParams* in_Params );
 void Sound_Cmd_D5_FadeMasterPitchScale( FSoundCommandParams* in_Params );
 void Sound_Cmd_D6_FadeMasterPitchScaleFrom( FSoundCommandParams* in_Params );
-void Sound_Cmd_F0_StopAllMusic( FSoundCommandParams* in_Params );
-void Sound_Cmd_11_800509F0( FSoundCommandParams* in_Params );
-void Sound_Cmd_F1_80050A58( FSoundCommandParams* in_Params );
+void Sound_Cmd_F0_StopMusic( FSoundCommandParams* in_Params );
+void Sound_Cmd_11_StopMusicById( FSoundCommandParams* in_Params );
+void Sound_Cmd_F1_StopSfx( FSoundCommandParams* in_Params );
 void Sound_Cmd_80_SetModeStereo( FSoundCommandParams* in_Params );
 void Sound_Cmd_81_SetModeMono( FSoundCommandParams* in_Params );
 void Sound_Cmd_90_SetMutedMusicChannelMask( FSoundCommandParams* in_Params );
@@ -679,8 +679,8 @@ void Sound_Cmd_9D_SuspendSfx( FSoundCommandParams* in_Params );
 void Sound_Cmd_9C_RestoreSfx( FSoundCommandParams* in_Params );
 void Sound_Cmd_9F_SuspendCutsceneAudio( FSoundCommandParams* in_Params );
 void Sound_Cmd_9E_RestoreCutsceneAudio( FSoundCommandParams* in_Params );
-void Sound_Cmd_AE_80051094( FSoundCommandParams* in_Params );
-void Sound_Cmd_AF_80051110( FSoundCommandParams* in_Params );
+void Sound_Cmd_AE_MuteSfx( FSoundCommandParams* in_Params );
+void Sound_Cmd_AF_UnmuteSfx( FSoundCommandParams* in_Params );
 void Sound_Cmd_XX_Null( FSoundCommandParams* in_Params );
 void Sound_SetReverbMode( s32 in_ReverbMode );
 void* Sound_ExecuteSoundVm2Function( u32 in_FunctionIndex );
@@ -795,7 +795,7 @@ void SoundVM_E2_ResetRandomPitchDepth( FSoundChannel* in_pChannel, u32 in_VoiceF
 void SoundVM_FE13_PreventVoicesFromRekeyingOnResume( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 void SoundVM_XX_Unimplemented( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 
-void* func_8004A234( s32 in_VoiceIndex ); // TODO(jperos): Returns some sort of Akao file
+void* Sound_PlaySfxProtected( s32 in_VoiceIndex ); // TODO(jperos): Returns some sort of Akao file
 
 
 

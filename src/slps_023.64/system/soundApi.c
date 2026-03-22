@@ -50,10 +50,10 @@ void Sound_StartFieldMusic( u32 in_Unk )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Unk_80050FE4( u32 arg0 )
+void Sound_StopMusicById( u32 arg0 )
 {
     g_Sound_Vm2Params.Param1 = arg0;
-    Sound_ExecuteSoundVm2Function( SOUND_COMMAND_UNK_11 );
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_11_STOP_MUSIC_BY_ID );
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -107,22 +107,22 @@ void Sound_StartFieldMusicLooped( u32 arg0, u32 arg1 )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void func_8004A118( s32 arg0, s32 arg1, s32 arg2, s32 arg3 )
+void Sound_PlaySfx( s32 arg0, s32 arg1, s32 arg2, s32 arg3 )
 {
     g_Sound_Vm2Params.Param1 = arg0 & 0x3FF;
     g_Sound_Vm2Params.Param2 = arg1 & 0xFFFFFF;
     g_Sound_Vm2Params.Param3 = arg2 & 0xFF;
     g_Sound_Vm2Params.Param4 = arg3 & 0x7F;
-    Sound_ExecuteSoundVm2Function( SOUND_CMD_20_UNK );
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_20_PLAY_SFX );
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void* func_8004A168( void* arg0, s32 arg1, s32 arg2, s32 arg3 )
+void* Sound_PlaySfxFromPointer( void* arg0, s32 arg1, s32 arg2, s32 arg3 )
 {
     if( Sound_IsNotAkaoFile( arg0 ) )
     {
         // TODO(jperos): Is this VOICE_COUNT?
-        return func_8004A234( 0x18 );
+        return Sound_PlaySfxProtected( 0x18 );
     }
     else
     {
@@ -130,7 +130,7 @@ void* func_8004A168( void* arg0, s32 arg1, s32 arg2, s32 arg3 )
         g_Sound_Vm2Params.Param2 = arg1 & 0xFFFFFF;
         g_Sound_Vm2Params.Param3 = arg2 & 0xFF;
         g_Sound_Vm2Params.Param4 = arg3 & 0x7F;
-        Sound_ExecuteSoundVm2Function( SOUND_CMD_24_UNK );
+        Sound_ExecuteSoundVm2Function( SOUND_CMD_24_PLAY_SFX_FROM_POINTER );
         return arg0;
     }
 }
@@ -144,10 +144,10 @@ void Sound_EvictSfx( u32 arg0, s32 arg1 )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void* func_8004A234( s32 in_VoiceIndex )
+void* Sound_PlaySfxProtected( s32 in_VoiceIndex )
 {
     g_Sound_Vm2Params.Param1 = in_VoiceIndex & 0x3FF;
-    return Sound_ExecuteSoundVm2Function( SOUND_CMD_30_UNK );
+    return Sound_ExecuteSoundVm2Function( SOUND_CMD_30_PROTECTED );
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -570,15 +570,15 @@ void func_8004AB10( u32 arg0, s32 arg1, s32 arg2 )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void func_8004AB4C()
+void Sound_StopMusic()
 {
-    Sound_ExecuteSoundVm2Function( SOUND_COMMAND_UNK_F0 );
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_F0_STOP_MUSIC );
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void func_8004AB6C()
+void Sound_StopSfx()
 {
-    Sound_ExecuteSoundVm2Function( SOUND_COMMAND_UNK_F1 );
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_F1_STOP_SFX );
 }
 
 //----------------------------------------------------------------------------------------------------------------------

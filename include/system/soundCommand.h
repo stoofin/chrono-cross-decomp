@@ -7,15 +7,16 @@
 typedef enum ESoundCommand
 {
     SOUND_CMD_10_START_FIELD_MUSIC                   = 0x10,
-    SOUND_COMMAND_UNK_11                             = 0x11,
+    SOUND_CMD_11_STOP_MUSIC_BY_ID                    = 0x11,
     SOUND_CMD_12_START_FIELD_MUSIC_LOOPED            = 0x12,
     SOUND_CMD_14_START_BATTLE_MUSIC                  = 0x14,
     SOUND_CMD_19_SET_MUSIC_LEVEL_IMM                 = 0x19,
     SOUND_CMD_1A_START_MASTER_AND_MUSIC_VOLUME_FADE  = 0x1A,
-    SOUND_CMD_20_UNK                                 = 0x20,
+    SOUND_CMD_20_PLAY_SFX                            = 0x20,
     SOUND_CMD_21_EVICT_SFX_VOICE                     = 0x21,
-    SOUND_CMD_24_UNK                                 = 0x24,
-    SOUND_CMD_30_UNK                                 = 0x30,
+    SOUND_CMD_24_PLAY_SFX_FROM_POINTER               = 0x24,
+    SOUND_CMD_30_PROTECTED                           = 0x30,
+    SOUND_CMD_34_DIRECT                              = 0x34,
     SOUND_CMD_40_PUSH_MUSIC_STATE                    = 0x40,
     SOUND_CMD_70_SET_CD_VOLUME                       = 0x70,
     SOUND_CMD_71_FADE_CD_VOLUME                      = 0x71,
@@ -44,6 +45,8 @@ typedef enum ESoundCommand
     SOUND_CMD_AB_FADE_ALL_SFX_PAN_MOD                = 0xAB,
     SOUND_CMD_AC_SET_ALL_SFX_PITCH_MOD               = 0xAC,
     SOUND_CMD_AD_FADE_ALL_SFX_PITCH_MOD              = 0xAD,
+    SOUND_CMD_AE_MUTE_SFX                            = 0xAE,
+    SOUND_CMD_AF_UNMUTE_SFX                          = 0xAF,
     SOUND_CMD_C0_SET_MASTER_VOLUME_BY_MUSIC_ID       = 0xC0,
     SOUND_CMD_C1_FADE_MASTER_VOLUME_BY_MUSIC_ID      = 0xC1,
     SOUND_CMD_C2_FADE_MASTER_VOLUME_FROM_BY_MUSIC_ID = 0xC2,
@@ -58,12 +61,12 @@ typedef enum ESoundCommand
     SOUND_CMD_D8_UNK                                 = 0xD8,
     SOUND_CMD_D9_UNK                                 = 0xD9,
     SOUND_CMD_DA_UNK                                 = 0xDA,
-    SOUND_COMMAND_UNK_F0                             = 0xF0,
-    SOUND_COMMAND_UNK_F1                             = 0xF1
+    SOUND_CMD_F0_STOP_MUSIC                          = 0xF0,
+    SOUND_CMD_F1_STOP_SFX                            = 0xF1
 
 } ESoundCommand;
 
-extern s32 g_Sound_SavedSfxVolumeMods[ SOUND_SFX_CHANNEL_COUNT ]; // num == SOUND_CHANNEL_COUNT or SOUND_SFX_CHANNEL_COUNT???
+extern s32 g_Sound_MutedSfxVolumes[ SOUND_SFX_CHANNEL_COUNT ]; // num == SOUND_CHANNEL_COUNT or SOUND_SFX_CHANNEL_COUNT???
 extern s32 g_Sound_MutedMusicChannelMask ;
 extern s32 D_80094FFC;
 

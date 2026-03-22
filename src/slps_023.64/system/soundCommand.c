@@ -120,7 +120,7 @@ void Sound_Cmd_12_PlayFieldMusicLooped( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_34_8004F404( FSoundCommandParams* in_Params )
+void Sound_Cmd_34_PlaySfxDirect( FSoundCommandParams* in_Params )
 {
     u32 Pc1;
     u32 Pc2;
@@ -136,7 +136,7 @@ void Sound_Cmd_34_8004F404( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_30_8004F450( FSoundCommandParams* in_Params )
+void Sound_Cmd_30_PlaySfxProtected( FSoundCommandParams* in_Params )
 {
     u8* Pc1;
     u8* Pc2;
@@ -164,7 +164,7 @@ void Sound_Cmd_30_8004F450( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_20_8004F518( FSoundCommandParams* in_Params )
+void Sound_Cmd_20_PlaySfx( FSoundCommandParams* in_Params )
 {
     u8* Pc1;
     u8* Pc2;
@@ -189,7 +189,7 @@ void Sound_Cmd_20_8004F518( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_24_8004F5C8);
+INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_24_PlaySfxFromPointer);
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_21_EvictSfxVoice( FSoundCommandParams* in_Params )
@@ -912,7 +912,7 @@ void Sound_Cmd_D6_FadeMasterPitchScaleFrom( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_F0_StopAllMusic( FSoundCommandParams* in_Params )
+void Sound_Cmd_F0_StopMusic( FSoundCommandParams* in_Params )
 {
     Sound_KillMusicContext( g_pActiveMusicContext, g_ActiveMusicChannels, MUSIC_ID_ANY );
     if( g_pSuspendedMusicContext != NULL )
@@ -922,7 +922,7 @@ void Sound_Cmd_F0_StopAllMusic( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_11_800509F0( FSoundCommandParams* in_Params )
+void Sound_Cmd_11_StopMusicById( FSoundCommandParams* in_Params )
 {
     Sound_KillMusicContext( g_pActiveMusicContext, g_ActiveMusicChannels, in_Params->Param1 );
     if( g_pSuspendedMusicContext != NULL )
@@ -935,7 +935,7 @@ void Sound_Cmd_11_800509F0( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_F1_80050A58( FSoundCommandParams* in_Params )
+void Sound_Cmd_F1_StopSfx( FSoundCommandParams* in_Params )
 {
     FSoundChannel* pChannel;
     u32 CurrentChannelMask;
@@ -1182,7 +1182,7 @@ void Sound_Cmd_9E_RestoreCutsceneAudio( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_AE_80051094( FSoundCommandParams* in_Params )
+void Sound_Cmd_AE_MuteSfx( FSoundCommandParams* in_Params )
 {
     FSoundChannel* pChannel;
     s32* VolumeMods;
@@ -1190,7 +1190,7 @@ void Sound_Cmd_AE_80051094( FSoundCommandParams* in_Params )
     u32 ChannelIndex;
 
     ChannelIndex = 0;
-    VolumeMods = g_Sound_SavedSfxVolumeMods;
+    VolumeMods = g_Sound_MutedSfxVolumes;
     pChannel = g_SfxSoundChannels;
 
     while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
@@ -1212,7 +1212,7 @@ void Sound_Cmd_AE_80051094( FSoundCommandParams* in_Params )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_AF_80051110( FSoundCommandParams* in_Params )
+void Sound_Cmd_AF_UnmuteSfx( FSoundCommandParams* in_Params )
 {
     FSoundChannel* pChannel;
     s32 CurrentChannelMask;
@@ -1243,7 +1243,7 @@ void Sound_Cmd_AF_80051110( FSoundCommandParams* in_Params )
 
         while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
         {
-            VolumeMod = &g_Sound_SavedSfxVolumeMods[ ChannelIndex ];
+            VolumeMod = &g_Sound_MutedSfxVolumes[ ChannelIndex ];
             if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
             {
                 pChannel->VolumeModStep = (s16)( ( *VolumeMod << 8 ) + 0x80 ) / Length; // Q8 fixed point, +0x80 for rounding
