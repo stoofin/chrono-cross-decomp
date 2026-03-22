@@ -48,6 +48,15 @@ typedef enum ESoundCommand
     SOUND_CMD_C2_FADE_MASTER_VOLUME_FROM_BY_MUSIC_ID = 0xC2,
     SOUND_CMD_C4_SET_PAN_BY_MUSIC_ID                 = 0xC4,
     SOUND_CMD_C5_FADE_PAN_BY_MUSIC_ID                = 0xC5,
+    SOUND_CMD_D0_SET_TEMPO_SCALE                     = 0xD0,
+    SOUND_CMD_D1_FADE_TEMPO_SCALE                    = 0xD1,
+    SOUND_CMD_D2_FADE_TEMPO_SCALE_FROM               = 0xD2,
+    SOUND_CMD_D4_SET_MASTER_PITCH_SCALE              = 0xD4,
+    SOUND_CMD_D5_FADE_MASTER_PITCH_SCALE             = 0xD5,
+    SOUND_CMD_D6_FADE_MASTER_PITCH_SCALE_FROM        = 0xD6,
+    SOUND_CMD_D8_UNK                                 = 0xD8,
+    SOUND_CMD_D9_UNK                                 = 0xD9,
+    SOUND_CMD_DA_UNK                                 = 0xDA,
     SOUND_COMMAND_UNK_F0                             = 0xF0,
     SOUND_COMMAND_UNK_F1                             = 0xF1
 

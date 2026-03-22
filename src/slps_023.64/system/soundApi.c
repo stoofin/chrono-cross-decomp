@@ -498,35 +498,76 @@ void Sound_FadeCdVolumeFrom( u32 arg0, u32 arg1, u32 arg2 )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void func_8004A978( s32 arg0 )
+void Sound_SetTempoScale( s32 arg0 )
 {
     g_Sound_Vm2Params.Param1 = arg0 & 0xFF;
-    Sound_ExecuteSoundVm2Function( 0xD0U );
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_D0_SET_TEMPO_SCALE );
 }
-
+ 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A9A4);
-
+void Sound_FadeTempoScale( u32 arg0, s32 arg1 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1 & 0xFF;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_D1_FADE_TEMPO_SCALE );
+}
+ 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004A9D8);
-
+void Sound_FadeTempoScaleFrom( u32 arg0, s32 arg1, s32 arg2 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1 & 0xFF;
+    g_Sound_Vm2Params.Param3 = arg2 & 0xFF;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_D2_FADE_TEMPO_SCALE_FROM );
+}
+ 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004AA14);
-
+void Sound_SetMasterPitchScale( s32 arg0 )
+{
+    g_Sound_Vm2Params.Param1 = arg0 & 0xFF;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_D4_SET_MASTER_PITCH_SCALE );
+}
+ 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004AA40);
-
+void Sound_FadeMasterPitchScale( u32 arg0, s32 arg1 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1 & 0xFF;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_D5_FADE_MASTER_PITCH_SCALE );
+}
+ 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004AA74);
-
+void Sound_FadeMasterPitchScaleFrom( u32 arg0, s32 arg1, s32 arg2 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1 & 0xFF;
+    g_Sound_Vm2Params.Param3 = arg2 & 0xFF;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_D6_FADE_MASTER_PITCH_SCALE_FROM );
+}
+ 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004AAB0);
-
+void func_8004AAB0( s32 arg0 )
+{
+    g_Sound_Vm2Params.Param1 = arg0 & 0xFF;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_D8_UNK );
+}
+ 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004AADC);
-
+void func_8004AADC( u32 arg0, s32 arg1 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1 & 0xFF;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_D9_UNK );
+}
+ 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundApi", func_8004AB10);
+void func_8004AB10( u32 arg0, s32 arg1, s32 arg2 )
+{
+    g_Sound_Vm2Params.Param1 = arg0;
+    g_Sound_Vm2Params.Param2 = arg1 & 0xFF;
+    g_Sound_Vm2Params.Param3 = arg2 & 0xFF;
+    Sound_ExecuteSoundVm2Function( SOUND_CMD_DA_UNK );
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 void func_8004AB4C()
