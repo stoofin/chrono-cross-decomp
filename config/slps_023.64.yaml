@@ -324,7 +324,7 @@ segments:
       - [0x273F4, o, ../lib/450/libspu/s_q, .text]
       - [0x27474, o, ../lib/450/libapi/a13, .text]
 
-      - [0x27484, asm]  # gap: 0xB4E4
+      - [0x27484, c, system/meshInstance]  # gap: 0xB4E4
 
       - [0x32968, o, ../lib/450/libgte/mtx_004, .text]
 
