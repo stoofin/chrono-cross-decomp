@@ -143,7 +143,7 @@ void Sound_Cmd_30_8004F450( FSoundCommandParams* in_Params )
     s32 MetadataB;
     s32 SfxIndex;
 
-    MetadataB = g_Sound_Sfx_MetadataTableB[in_Params->Param1];
+    MetadataB = g_Sound_Sfx_AdditionalProgramCounts[in_Params->Param1];
     in_Params->Param2 = 0x02000000;
     in_Params->Param3 = 0x80;
     in_Params->Param4 = 0x7F;
@@ -168,23 +168,23 @@ void Sound_Cmd_20_8004F518( FSoundCommandParams* in_Params )
 {
     u8* Pc1;
     u8* Pc2;
-    s32 MetadataB;
+    s32 AdditionalProgramCount;
     s32 SfxIndex;
 
-    MetadataB = g_Sound_Sfx_MetadataTableB[in_Params->Param1];
+    AdditionalProgramCount = g_Sound_Sfx_AdditionalProgramCounts[in_Params->Param1];
     in_Params->ExtParam1 = 0;
-    Sound_GetProgramCounters( &Pc1, &Pc2, (s32)in_Params->Param1 );
+    Sound_GetProgramCounters( &Pc1, &Pc2, in_Params->Param1 );
     Sound_PlaySfxProgram( in_Params, Pc1, Pc2, false );
 
-    if( MetadataB != 0 )
+    if( AdditionalProgramCount != 0 )
     {
         SfxIndex = 1;
         do {
             Sound_GetProgramCounters( &Pc1, &Pc2, in_Params->Param1 + SfxIndex );
             Sound_PlaySfxProgram( in_Params, Pc1, Pc2, true );
-            MetadataB--;
+            AdditionalProgramCount--;
             SfxIndex++;
-        } while( MetadataB != 0 );
+        } while( AdditionalProgramCount != 0 );
     }
 }
 

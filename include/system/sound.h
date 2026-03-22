@@ -181,16 +181,16 @@ typedef enum EPanMode {
 
 typedef struct FAkaoFileBlob
 {
-    /* 0x000 */ s32  Magic;                    // AKAO
-    /* 0x004 */ u8   unk_0x4[0xC];             // Padding? Version? Counts? Music Akao blobs have a different flag in here...
-    /* 0x010 */ u16  ProgramOffsets[0x100][2]; // Offsets into bytecode - indexed by Sfx ID
-    /* 0x410 */ u16  MetadataTableA[0x100];    // Some per sfx table
-    /* 0x610 */ u16  MetadataTableB[0x100];    // Some per sfx table
-    /* 0x810 */ u8   ProgramData[1];           // Sfx bytecode
+    /* 0x000 */ s32  Magic;                          // AKAO
+    /* 0x004 */ u8   unk_0x4[0xC];                   // Padding? Version? Counts? Music Akao blobs have a different flag in here...
+    /* 0x010 */ u16  ProgramOffsets[0x100][2];       // Offsets into bytecode - indexed by Sfx ID
+    /* 0x410 */ u16  MetadataTableA[0x100];          // Some per sfx table
+    /* 0x610 */ u16  AdditionalProgramCounts[0x100]; // Per Sfx, how many additional programs to trigger after the given Sfx index
+    /* 0x810 */ u8   ProgramData[1];                 // Sfx bytecode
 } FAkaoFileBlob;
 static_assert( offsetof(FAkaoFileBlob, ProgramOffsets) == 0x010 );
 static_assert( offsetof(FAkaoFileBlob, MetadataTableA) == 0x410 );
-static_assert( offsetof(FAkaoFileBlob, MetadataTableB) == 0x610 );
+static_assert( offsetof(FAkaoFileBlob, AdditionalProgramCounts) == 0x610 );
 static_assert( offsetof(FAkaoFileBlob, ProgramData   ) == 0x810 );
 static_assert( sizeof(FAkaoFileBlob) - align(sizeof(member_type(FAkaoFileBlob, ProgramData))) == 0x810 );
 
@@ -837,7 +837,7 @@ extern FSoundSfxState g_Sound_SfxState;
 extern FSoundCommandParams g_Sound_Vm2Params;
 extern s32 g_CdVolume;
 extern FSoundChannel g_PushedMusicChannels[SOUND_CHANNEL_COUNT];
-extern u16* g_Sound_Sfx_MetadataTableB;
+extern u16* g_Sound_Sfx_AdditionalProgramCounts;
 extern s32 g_Sound_TempoScale;
 extern s32 g_Sound_MasterPitchScaleQ16_16;
 extern FSoundGlobalFlags g_Sound_GlobalFlags;

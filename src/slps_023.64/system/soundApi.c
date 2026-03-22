@@ -32,8 +32,8 @@ bool Sound_BindAkaoSfxBlob( FAkaoFileBlob* in_Blob )
         p = (u8*)in_Blob->MetadataTableA;
         g_Sound_Sfx_MetadataTableA = (u16*)p;
 
-        p = (u8*)in_Blob->MetadataTableB;
-        g_Sound_Sfx_MetadataTableB = (u16*)p;
+        p = (u8*)in_Blob->AdditionalProgramCounts;
+        g_Sound_Sfx_AdditionalProgramCounts = (u16*)p;
 
         p = (u8*)in_Blob->ProgramData;
         g_Sound_Sfx_ProgramData = (u8*)p;
