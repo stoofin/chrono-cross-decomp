@@ -151,7 +151,7 @@ void* Sound_PlaySfxProtected( s32 in_VoiceIndex )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-s32 func_8004A260()
+s32 Sound_GetAllSfxUnkFlags()
 {
     s32 out_UnkFlags;
     s32 AllVoiceMask;
@@ -166,7 +166,7 @@ s32 func_8004A260()
 
     pChannel = g_SfxSoundChannels;
     out_UnkFlags = 0;
-    Mask = 0x1000;
+    Mask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
     AllVoiceMask = 0xFFFFFF;
 
     while( Mask & AllVoiceMask )
@@ -184,7 +184,7 @@ s32 func_8004A260()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-s32 func_8004A2C8( s32 in_Flags )
+s32 Sound_IsSfxActiveWithUnkFlags( s32 in_Flags )
 {
     u32 CurrentChannelMask;
     u32 ActiveChannelMask;
@@ -222,26 +222,26 @@ s32 func_8004A2C8( s32 in_Flags )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-s32 Sound_SetUnkVoiceSchedulerFlags( s32 in_Mode )
+s32 Sound_SetTempoMultiplier( s32 in_Mode )
 {
-    u32 flags;
+    u32 Flags;
 
-    flags = g_Sound_SfxState.TempoMultiplier & ~( (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) );
-    g_Sound_SfxState.TempoMultiplier = flags;
+    Flags = g_Sound_SfxState.TempoMultiplier & ~( (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) );
+    g_Sound_SfxState.TempoMultiplier = Flags;
 
     switch ( in_Mode )
     {
         case -2:
-            g_Sound_SfxState.TempoMultiplier = flags | (1 << 0);
+            g_Sound_SfxState.TempoMultiplier = Flags | (1 << 0);
             break;
         case -1:
-            g_Sound_SfxState.TempoMultiplier = flags | (1 << 1);
+            g_Sound_SfxState.TempoMultiplier = Flags | (1 << 1);
             break;
         case 1:
-            g_Sound_SfxState.TempoMultiplier = flags | (1 << 2);
+            g_Sound_SfxState.TempoMultiplier = Flags | (1 << 2);
             break;
         case 2:
-            g_Sound_SfxState.TempoMultiplier = flags | (1 << 3);
+            g_Sound_SfxState.TempoMultiplier = Flags | (1 << 3);
             break;
         default:
             in_Mode = 0;

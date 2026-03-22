@@ -559,7 +559,7 @@ void Sound_SetMusicLevelImmediate( u32 arg0, s32 arg1 );
 void Sound_StartMasterAndMusicVolumeFade( u32 arg0, u32 arg1, s32 arg2 );
 void Sound_StartFieldMusicLooped( u32 arg0, u32 arg1 );
 void Sound_PlaySfx( s32 arg0, s32 arg1, s32 arg2, s32 arg3 );
-s32 Sound_SetUnkVoiceSchedulerFlags( s32 in_Mode );
+s32 Sound_SetTempoMultiplier( s32 in_Mode );
 // void Sound_SetSpeakerMode( s32 in_Mode ); // When you copy this, copy ESpeakerMode from the source
 void Sound_SetMutedMusicChannelMask( u32 in_ChannelMask );
 void Sound_SetMusicJumpThreshold( u32 arg0 );
