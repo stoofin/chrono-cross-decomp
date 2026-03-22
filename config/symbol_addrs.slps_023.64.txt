@@ -462,7 +462,6 @@ Sound_Setup                      = 0x8004B398;
 Sound_Start                      = 0x8004B660;
 Sound_Stop                       = 0x8004B750;
 
-
 //----------------------------------------------------------------------------------------------------------------------
 // LibApi
 //----------------------------------------------------------------------------------------------------------------------
@@ -617,10 +616,13 @@ Sound_UpdateCdVolume                      = 0x80051E64;
 memcpy32                            = 0x80051E84;
 memswap32                           = 0x80051F04;
 Sound_MainLoop                      = 0x80052790;
+Sound_CalculatePitch                = 0x800531E0;
 Sound_ComputeSlideStep              = 0x80053D1C;
 Sound_CopyInstrumentInfoToChannel   = 0x80053D90;
 Sound_SetInstrumentToChannel        = 0x80053DC4;
 Sound_ClearVoiceFromSfxState  = 0x80053DFC;
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // SoundVM

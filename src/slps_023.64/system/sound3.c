@@ -381,53 +381,79 @@ void func_80052FB8(FSoundChannel* arg0, u32 arg1) {
     arg0->VoiceParams.VolumeScale = keyMap[7];
 }
 
+#define FINE_TUNE_CENTER (0x80)
 //----------------------------------------------------------------------------------------------------------------------
-s32 func_800531E0(FSoundInstrumentInfo* in_pInstrumentInfo, s32 arg1, u32 arg2, s32* arg3) {
-    s32 pitchIndex;
-    s32 pitch;
+s32 Sound_CalculatePitch( FSoundInstrumentInfo* in_pInstrumentInfo, s32 in_Note, u32 in_FineTune, s32* out_pPitchDelta )
+{
+#define SemitoneOffset (Offset)
+#define OctaveOffset (Offset)
+#define INC_OCTAVE_BY(Note, Offset) (Note = Note << Offset)
+#define DEC_OCTAVE_BY(Note, Offset) (Note = Note >> Offset)
+    s32 Offset;
+    s32 Pitch;
 
-    pitchIndex = arg1 - in_pInstrumentInfo->SampleNote;
-    
-    while (pitchIndex < 0) {
-        pitchIndex += 0xC;
+    SemitoneOffset = in_Note - in_pInstrumentInfo->SampleNote;
+
+    while( SemitoneOffset < 0 )
+    {
+        SemitoneOffset += SEMITONES_IN_OCTAVE;
     }
-    
-    pitchIndex %= 12;
-    
-    if (in_pInstrumentInfo->FineTune == 0) {
-        pitch = g_SemitonePitchTable[pitchIndex] << 8;
-    } else if (in_pInstrumentInfo->FineTune < 0) {
-        pitch = (u32) (g_SemitonePitchTable[pitchIndex] * (u16) in_pInstrumentInfo->FineTune) >> 8;
-    } else {
-        pitch = (g_SemitonePitchTable[pitchIndex] * in_pInstrumentInfo->FineTune) >> 7;
-        pitch += g_SemitonePitchTable[pitchIndex] << 8;
+
+    SemitoneOffset %= SEMITONES_IN_OCTAVE;
+
+    if( in_pInstrumentInfo->FineTune == 0 )
+    {
+        Pitch = g_SemitonePitchTable[Offset] << 8;
     }
-    
-    arg2 &= 0xFF;
-    
-    if (arg2 != 0) {
-        if (arg2 < 0x80U) {
-            *arg3 = (pitch * arg2) >> 7;
-        } else {
-            *arg3 = ((pitch * arg2) >> 8) - pitch;
+    else if( in_pInstrumentInfo->FineTune < 0 )
+    {
+        Pitch = (u32)( g_SemitonePitchTable[SemitoneOffset] * (u16)in_pInstrumentInfo->FineTune ) >> 8;
+    }
+    else
+    {
+        Pitch = ( g_SemitonePitchTable[SemitoneOffset] * in_pInstrumentInfo->FineTune ) >> 7;
+        Pitch += g_SemitonePitchTable[SemitoneOffset] << 8;
+    }
+
+    in_FineTune &= 0xFF;
+
+    if( in_FineTune != 0 )
+    {
+        if( in_FineTune < FINE_TUNE_CENTER )
+        {
+            *out_pPitchDelta = ( Pitch * in_FineTune ) >> 7;
+        }
+        else
+        {
+            *out_pPitchDelta = ( ( Pitch * in_FineTune ) >> 8 ) - Pitch;
         }
     }
-    
-    if (arg1 < in_pInstrumentInfo->SampleNote) {
-        for (; arg1 < in_pInstrumentInfo->SampleNote; arg1 += 0xC) {
-            *arg3 = *arg3 >> 1;
-            pitch = (pitch >> 1);
-        }
-    } else {
-        pitchIndex = (arg1 - in_pInstrumentInfo->SampleNote) / 12;
-        if (pitchIndex != 0) {
-            pitch <<= pitchIndex;
-            *arg3 <<= pitchIndex;
+
+    if( in_Note < in_pInstrumentInfo->SampleNote )
+    {
+        while( in_Note < in_pInstrumentInfo->SampleNote )
+        {
+            DEC_OCTAVE_BY(*out_pPitchDelta, 1);
+            DEC_OCTAVE_BY(Pitch, 1);
+            in_Note += SEMITONES_IN_OCTAVE;
         }
     }
-    pitch >>= 8;
-    *arg3 >>= 8;
-    return (u_short)pitch;
+    else
+    {
+        OctaveOffset = ( in_Note - in_pInstrumentInfo->SampleNote ) / SEMITONES_IN_OCTAVE;
+        if( OctaveOffset != 0 )
+        {
+            INC_OCTAVE_BY(Pitch, OctaveOffset);
+            INC_OCTAVE_BY(*out_pPitchDelta, OctaveOffset);
+        }
+    }
+    Pitch >>= 8;
+    *out_pPitchDelta >>= 8;
+    return (u16)Pitch;
+#undef SemitoneOffset
+#undef OctaveOffset
+#undef INC_OCTAVE_BY
+#undef DEC_OCTAVE_BY
 }
 
 //----------------------------------------------------------------------------------------------------------------------
