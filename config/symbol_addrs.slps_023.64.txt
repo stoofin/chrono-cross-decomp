@@ -434,6 +434,7 @@ Sound_SetMasterVolumeByMusicId      = 0x8004A7D4;
 Sound_FadeMasterVolumeByMusicId     = 0x8004A808;
 Sound_FadeMasterVolumeFromByMusicId = 0x8004A840;
 Sound_SetPanByMusicId               = 0x8004A880;
+Sound_FadePanByMusicId              = 0x8004A8B4;
 
 //----------------------------------------------------------------------------------------------------------------------
 // LibSpu
@@ -546,7 +547,7 @@ Sound_Cmd_C0_SetMasterVolumeByMusicId                                     = 0x80
 Sound_Cmd_C1_FadeMasterVolumeByMusicId                                     = 0x8004F7C8;
 Sound_Cmd_C2_FadeMasterVolumeFromByMusicId                                     = 0x8004F904;
 Sound_Cmd_C4_SetPanByMusicId                                     = 0x8004FA04;
-Sound_Cmd_C5_8004FAB8                                     = 0x8004FAB8;
+Sound_Cmd_C5_FadePanByMusicId                                     = 0x8004FAB8;
 Sound_Cmd_70_SetCdVolume                                  = 0x8004FBD8;
 Sound_Cmd_71_FadeCdVolume                                 = 0x8004FC0C;
 Sound_Cmd_72_FadeCdVolumeFrom                                     = 0x8004FC74;

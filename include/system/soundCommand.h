@@ -42,6 +42,7 @@
 #define SOUND_CMD_C1_FADE_MASTER_VOLUME_BY_MUSIC_ID      ( 0xC1U )
 #define SOUND_CMD_C2_FADE_MASTER_VOLUME_FROM_BY_MUSIC_ID ( 0xC2U )
 #define SOUND_CMD_C4_SET_PAN_BY_MUSIC_ID                 ( 0xC4U )
+#define SOUND_CMD_C5_FADE_PAN_BY_MUSIC_ID                ( 0xC5U )
 #define SOUND_COMMAND_UNK_F0                             ( 0xF0U )
 #define SOUND_COMMAND_UNK_F1                             ( 0xF1U )
 

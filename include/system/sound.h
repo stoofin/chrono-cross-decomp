@@ -641,7 +641,7 @@ void Sound_Cmd_C0_SetMasterVolumeByMusicId( FSoundCommandParams* in_Params );
 void Sound_Cmd_C1_FadeMasterVolumeByMusicId( FSoundCommandParams* in_Params );
 void Sound_Cmd_C2_FadeMasterVolumeFromByMusicId( FSoundCommandParams* in_Params );
 void Sound_Cmd_C4_SetPanByMusicId( FSoundCommandParams* in_Params );
-void Sound_Cmd_C5_8004FAB8( FSoundCommandParams* in_Params );
+void Sound_Cmd_C5_FadePanByMusicId( FSoundCommandParams* in_Params );
 void Sound_Cmd_70_SetCdVolume( FSoundCommandParams* in_Params );
 void Sound_Cmd_71_FadeCdVolume( FSoundCommandParams* in_Params );
 void Sound_Cmd_72_FadeCdVolumeFrom( FSoundCommandParams* in_Params );

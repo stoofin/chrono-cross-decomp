@@ -348,7 +348,7 @@ void Sound_Cmd_C4_SetPanByMusicId( FSoundCommandParams* in_pCmd )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_Cmd_C5_8004FAB8( FSoundCommandParams* in_Params )
+void Sound_Cmd_C5_FadePanByMusicId( FSoundCommandParams* in_Params )
 {
     FSoundMusicContext* pMusicContext;
     FSoundChannel* pChannels;
