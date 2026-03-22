@@ -457,73 +457,98 @@ s32 Sound_CalculatePitch( FSoundInstrumentInfo* in_pInstrumentInfo, s32 in_Note,
 }
 
 //----------------------------------------------------------------------------------------------------------------------
+s32 Sound_PlayKeymapNote( FSoundChannel* in_pChannel, s32 in_ChannelMask, s32 in_KeymapIndex )
+{
+    FSoundInstrumentInfo* InstrumentInfo;
+    FSoundKeymapEntry8* Keymap;
+    s32 UpdateFlags;
+    s32 out_Pitch;
+    s32 InstrumentIndex;
 
-s32 func_80053370(FSoundChannel* in_pChannel, s32 arg1, s32 arg2) {
-    FSoundInstrumentInfo* instrumentInfo;
-    FSoundKeymapEntry8* keymap;
-    s32 updateFlags;
-    s32 ret;
-    s32 instrumentIndex;
+    Keymap = g_pActiveMusicContext->KeymapTable;
+    Keymap += in_KeymapIndex;
+    g_pActiveMusicContext->PendingKeyOnMask |= in_ChannelMask;
 
-    keymap = g_pActiveMusicContext->KeymapTable;
-    keymap += arg2;
-    g_pActiveMusicContext->PendingKeyOnMask |= arg1;
-    
-    if (g_pActiveMusicContext->ActiveNoteMask & arg1) {
-        g_pActiveMusicContext->PendingKeyOffMask |= arg1;
-    }
-    
-    instrumentIndex = keymap->InstrumentIndex;
-    updateFlags = in_pChannel->UpdateFlags;
-    in_pChannel->InstrumentIndex = instrumentIndex;
-    instrumentInfo = &g_InstrumentInfo[instrumentIndex];
-    in_pChannel->VoiceParams.StartAddress = instrumentInfo->StartAddr;
-    in_pChannel->VoiceParams.LoopAddress = instrumentInfo->LoopAddr;
-    
-    if (!(updateFlags & 0x01000000)) {
-        in_pChannel->VoiceParams.AdsrLower = keymap->AdsrAttackRate << 8;
-    } else {
-        in_pChannel->VoiceParams.AdsrLower &= 0x7F00;
-    }
-    
-    in_pChannel->VoiceParams.AdsrLower |= instrumentInfo->AdsrLower & 0x80FF;
-    
-    if (!(updateFlags & 0x08000000)) {
-        in_pChannel->VoiceParams.AdsrUpper &= 0x201F;
-        in_pChannel->VoiceParams.AdsrUpper |= keymap->AdsrSustainRate << 6;
-    } else {
-        in_pChannel->VoiceParams.AdsrUpper &= 0x3FDF;
+    if( g_pActiveMusicContext->ActiveNoteMask & in_ChannelMask )
+    {
+        g_pActiveMusicContext->PendingKeyOffMask |= in_ChannelMask;
     }
 
-    switch (keymap->SustainModeCode) {
-    case 3:
-        in_pChannel->VoiceParams.AdsrUpper |= 0x4000;
-        break;
-    case 5:
-        in_pChannel->VoiceParams.AdsrUpper |= 0x8000;
-        break;
-    case 7:
-        in_pChannel->VoiceParams.AdsrUpper |= 0xC000;
-        break;
+    InstrumentIndex = Keymap->InstrumentIndex;
+    UpdateFlags = in_pChannel->UpdateFlags;
+    in_pChannel->InstrumentIndex = InstrumentIndex;
+    InstrumentInfo = &g_InstrumentInfo[InstrumentIndex];
+    in_pChannel->VoiceParams.StartAddress = InstrumentInfo->StartAddr;
+    in_pChannel->VoiceParams.LoopAddress = InstrumentInfo->LoopAddr;
+
+    if( !( UpdateFlags & SOUND_UPDATE_LOCK_ATTACK_RATE ) )
+    {
+        in_pChannel->VoiceParams.AdsrLower = Keymap->AdsrAttackRate << SOUND_ADSR_ATTACK_RATE_SHIFT;
     }
-    
-    if ((updateFlags & 0x10000000) == 0) {
-        in_pChannel->VoiceParams.AdsrUpper &= 0xFFE0;
-        in_pChannel->VoiceParams.AdsrUpper |= keymap->ReleaseRate;
+    else
+    {
+        in_pChannel->VoiceParams.AdsrLower &= SOUND_ADSR_ATTACK_RATE_MASK;
     }
-    
-    in_pChannel->VoiceParams.AdsrUpper |= instrumentInfo->AdsrUpper & 0x20;
-    ret = Sound_CalculatePitch(instrumentInfo, keymap->Note, in_pChannel->FineTune, &in_pChannel->FinePitchDelta);
-    in_pChannel->VoiceParams.VolumeScale = keymap->VolumeScale;
-    in_pChannel->ChannelPan = ((keymap->PanAndReverb & 0x7F) + 0x40) << 8;
-    
-    if (keymap->PanAndReverb & 0x80) {
-        g_pActiveMusicContext->ReverbChannelFlags |= arg1;
-    } else {
-        g_pActiveMusicContext->ReverbChannelFlags &= ~arg1;
+
+    in_pChannel->VoiceParams.AdsrLower |= InstrumentInfo->AdsrLower & (
+        SOUND_ADSR_ATTACK_MODE_MASK 
+        | SOUND_ADSR_DECAY_RATE_MASK 
+        | SOUND_ADSR_SUS_LEVEL_MASK 
+    );
+
+    if( !( UpdateFlags & SOUND_UPDATE_LOCK_SUSTAIN_RATE ) )
+    {
+        in_pChannel->VoiceParams.AdsrUpper &= (SOUND_ADSR_UNKNOWN_MASK | SOUND_ADSR_RELEASE_RATE_MASK);
+        in_pChannel->VoiceParams.AdsrUpper |= Keymap->AdsrSustainRate << SOUND_ADSR_SUS_RATE_SHIFT;
     }
-    g_Sound_GlobalFlags.UpdateFlags |= 0x100;
-    return ret;
+    else
+    {
+        in_pChannel->VoiceParams.AdsrUpper &= ~( SOUND_ADSR_SUS_MODE_MASK | SOUND_ADSR_SUS_DIR_MASK | SOUND_ADSR_RELEASE_MODE_MASK );
+    }
+
+    switch( Keymap->SustainModeCode )
+    {
+        case SUS_CODE_LINEAR_DECREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= ( 
+                SUS_DIR_DEC << SOUND_ADSR_SUS_DIR_SHIFT 
+                | SUS_MODE_LIN << SOUND_ADSR_SUS_MODE_SHIFT 
+            );
+            break;
+        case SUS_CODE_EXPONENTIAL_INCREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= ( 
+                SUS_DIR_INC << SOUND_ADSR_SUS_DIR_SHIFT 
+                | SUS_MODE_EXP << SOUND_ADSR_SUS_MODE_SHIFT 
+            );
+            break;
+        case SUS_CODE_EXPONENTIAL_DECREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= ( 
+                SUS_DIR_DEC << SOUND_ADSR_SUS_DIR_SHIFT 
+                | SUS_MODE_EXP << SOUND_ADSR_SUS_MODE_SHIFT 
+            );
+            break;
+    }
+
+    if( !( UpdateFlags & SOUND_UPDATE_LOCK_RELEASE_RATE ) )
+    {
+        in_pChannel->VoiceParams.AdsrUpper &= ~SOUND_ADSR_RELEASE_RATE_MASK;
+        in_pChannel->VoiceParams.AdsrUpper |= Keymap->ReleaseRate;
+    }
+
+    in_pChannel->VoiceParams.AdsrUpper |= InstrumentInfo->AdsrUpper & SOUND_ADSR_RELEASE_MODE_MASK;
+    out_Pitch = Sound_CalculatePitch( InstrumentInfo, Keymap->Note, in_pChannel->FineTune, &in_pChannel->FinePitchDelta );
+    in_pChannel->VoiceParams.VolumeScale = Keymap->VolumeScale;
+    in_pChannel->ChannelPan = ( ( Keymap->PanAndReverb & KEYMAP_ENTRY_PAN_MASK ) + 0x40 ) << 8;
+
+    if( Keymap->PanAndReverb & KEYMAP_ENTRY_REV_ENABLE )
+    {
+        g_pActiveMusicContext->ReverbChannelFlags |= in_ChannelMask;
+    }
+    else
+    {
+        g_pActiveMusicContext->ReverbChannelFlags &= ~in_ChannelMask;
+    }
+    g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_08;
+    return out_Pitch;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

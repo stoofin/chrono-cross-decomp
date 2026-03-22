@@ -617,10 +617,11 @@ memcpy32                            = 0x80051E84;
 memswap32                           = 0x80051F04;
 Sound_MainLoop                      = 0x80052790;
 Sound_CalculatePitch                = 0x800531E0;
+Sound_PlayKeymapNote                = 0x80053370;
 Sound_ComputeSlideStep              = 0x80053D1C;
 Sound_CopyInstrumentInfoToChannel   = 0x80053D90;
 Sound_SetInstrumentToChannel        = 0x80053DC4;
-Sound_ClearVoiceFromSfxState  = 0x80053DFC;
+Sound_ClearVoiceFromSfxState        = 0x80053DFC;
 
 
 

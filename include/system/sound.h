@@ -61,71 +61,83 @@
 #define SOUND_UPDATE_SPU_BASE     (SOUND_UPDATE_SPU_BASE_WOR | SPU_VOICE_ADSR_RMODE | SPU_VOICE_ADSR_RR)
 #define SOUND_UPDATE_SPU_ALL      (SOUND_UPDATE_SPU_BASE     | SOUND_UPDATE_SPU_VOICE    | SPU_VOICE_PITCH)
 
-#define SOUND_UPDATE_VIBRATO          ( 1 <<  0 )
-#define SOUND_UPDATE_TREMOLO          ( 1 <<  1 )
-#define SOUND_UPDATE_PAN_LFO          ( 1 <<  2 )
-#define SOUND_UPDATE_DRUM_MODE        ( 1 <<  3 )
-#define SOUND_UPDATE_SIDE_CHAIN_PITCH ( 1 <<  4 )
-#define SOUND_UPDATE_SIDE_CHAIN_VOL   ( 1 <<  5 )
-#define SOUND_UPDATE_UNKNOWN_01       ( 1 <<  6 )
-#define SOUND_UPDATE_OVERLAY          ( 1 <<  8 )
-#define SOUND_UPDATE_ALTERNATIVE      ( 1 <<  9 )
-#define SOUND_UPDATE_UNKNOWN_12       ( 1 << 12 )
-#define SOUND_UPDATE_UNKNOWN_16       ( 1 << 16 )
-#define SOUND_UPDATE_UNKNOWN_17       ( 1 << 17 )
-#define SOUND_UPDATE_UNKNOWN_20       ( 1 << 20 )
-#define SOUND_UPDATE_UNKNOWN_24       ( 1 << 24 )
-#define SOUND_UPDATE_UNKNOWN_27       ( 1 << 27 )
-#define SOUND_UPDATE_UNKNOWN_28       ( 1 << 28 )
+typedef enum ESoundUpdateFlags
+{
+    SOUND_UPDATE_VIBRATO           = ( 1 <<  0 ),
+    SOUND_UPDATE_TREMOLO           = ( 1 <<  1 ),
+    SOUND_UPDATE_PAN_LFO           = ( 1 <<  2 ),
+    SOUND_UPDATE_DRUM_MODE         = ( 1 <<  3 ),
+    SOUND_UPDATE_SIDE_CHAIN_PITCH  = ( 1 <<  4 ),
+    SOUND_UPDATE_SIDE_CHAIN_VOL    = ( 1 <<  5 ),
+    SOUND_UPDATE_UNKNOWN_01        = ( 1 <<  6 ),
+    SOUND_UPDATE_OVERLAY           = ( 1 <<  8 ),
+    SOUND_UPDATE_ALTERNATIVE       = ( 1 <<  9 ),
+    SOUND_UPDATE_UNKNOWN_12        = ( 1 << 12 ),
+    SOUND_UPDATE_UNKNOWN_16        = ( 1 << 16 ),
+    SOUND_UPDATE_UNKNOWN_17        = ( 1 << 17 ),
+    SOUND_UPDATE_UNKNOWN_20        = ( 1 << 20 ),
+    SOUND_UPDATE_LOCK_ATTACK_RATE  = ( 1 << 24 ),
+    SOUND_UPDATE_LOCK_SUSTAIN_RATE = ( 1 << 27 ),
+    SOUND_UPDATE_LOCK_RELEASE_RATE = ( 1 << 28 )
+} ESoundUpdateFlags;
 
 
 #define SOUND_CHANNEL_UNK_FLAGS_25 (1 << 25)
 
 
-#define SOUND_GLOBAL_UPDATE_00              ( 1 <<  0 )
-#define SOUND_GLOBAL_UPDATE_01              ( 1 <<  1 )
-#define SOUND_GLOBAL_UPDATE_02              ( 1 <<  2 )
-#define SOUND_GLOBAL_UPDATE_03              ( 1 <<  3 )
-#define SOUND_GLOBAL_UPDATE_04              ( 1 <<  4 )
-#define SOUND_GLOBAL_UPDATE_05              ( 1 <<  5 )
-#define SOUND_GLOBAL_UPDATE_06              ( 1 <<  6 )
-#define SOUND_GLOBAL_UPDATE_07              ( 1 <<  7 )
-#define SOUND_GLOBAL_UPDATE_08              ( 1 <<  8 )
-#define SOUND_GLOBAL_UPDATE_09              ( 1 <<  9 )
-#define SOUND_GLOBAL_UPDATE_10              ( 1 << 10 )
-#define SOUND_GLOBAL_UPDATE_11              ( 1 << 11 )
-#define SOUND_GLOBAL_UPDATE_12              ( 1 << 12 )
-#define SOUND_GLOBAL_UPDATE_13              ( 1 << 13 )
-#define SOUND_GLOBAL_UPDATE_14              ( 1 << 14 )
-#define SOUND_GLOBAL_UPDATE_15              ( 1 << 15 )
-#define SOUND_GLOBAL_UPDATE_16              ( 1 << 16 )
-#define SOUND_GLOBAL_UPDATE_17              ( 1 << 17 )
-#define SOUND_GLOBAL_UPDATE_18              ( 1 << 18 )
-#define SOUND_GLOBAL_UPDATE_19              ( 1 << 19 )
-#define SOUND_GLOBAL_UPDATE_20              ( 1 << 20 )
-#define SOUND_GLOBAL_UPDATE_21              ( 1 << 21 )
-#define SOUND_GLOBAL_UPDATE_22              ( 1 << 22 )
-#define SOUND_GLOBAL_UPDATE_23              ( 1 << 23 )
-#define SOUND_GLOBAL_UPDATE_24              ( 1 << 24 )
-#define SOUND_GLOBAL_UPDATE_25              ( 1 << 25 )
-#define SOUND_GLOBAL_UPDATE_26              ( 1 << 26 )
-#define SOUND_GLOBAL_UPDATE_27              ( 1 << 27 )
-#define SOUND_GLOBAL_UPDATE_28              ( 1 << 28 )
-#define SOUND_GLOBAL_UPDATE_29              ( 1 << 29 )
-#define SOUND_GLOBAL_UPDATE_30              ( 1 << 30 )
-#define SOUND_GLOBAL_UPDATE_31              ( 1 << 31 )
-#define SOUND_GLOBAL_UPDATE_32              ( 1 << 32 )
-#define SOUND_GLOBAL_UPDATE_VOICES_CHANGED  (0x110)
+typedef enum ESoundGlobalUpdateFlags
+{
+    SOUND_GLOBAL_UPDATE_00              = ( 1 <<  0 ),
+    SOUND_GLOBAL_UPDATE_01              = ( 1 <<  1 ),
+    SOUND_GLOBAL_UPDATE_02              = ( 1 <<  2 ),
+    SOUND_GLOBAL_UPDATE_03              = ( 1 <<  3 ),
+    SOUND_GLOBAL_UPDATE_04              = ( 1 <<  4 ),
+    SOUND_GLOBAL_UPDATE_05              = ( 1 <<  5 ),
+    SOUND_GLOBAL_UPDATE_06              = ( 1 <<  6 ),
+    SOUND_GLOBAL_UPDATE_07              = ( 1 <<  7 ),
+    SOUND_GLOBAL_UPDATE_08              = ( 1 <<  8 ),
+    SOUND_GLOBAL_UPDATE_09              = ( 1 <<  9 ),
+    SOUND_GLOBAL_UPDATE_10              = ( 1 << 10 ),
+    SOUND_GLOBAL_UPDATE_11              = ( 1 << 11 ),
+    SOUND_GLOBAL_UPDATE_12              = ( 1 << 12 ),
+    SOUND_GLOBAL_UPDATE_13              = ( 1 << 13 ),
+    SOUND_GLOBAL_UPDATE_14              = ( 1 << 14 ),
+    SOUND_GLOBAL_UPDATE_15              = ( 1 << 15 ),
+    SOUND_GLOBAL_UPDATE_16              = ( 1 << 16 ),
+    SOUND_GLOBAL_UPDATE_17              = ( 1 << 17 ),
+    SOUND_GLOBAL_UPDATE_18              = ( 1 << 18 ),
+    SOUND_GLOBAL_UPDATE_19              = ( 1 << 19 ),
+    SOUND_GLOBAL_UPDATE_20              = ( 1 << 20 ),
+    SOUND_GLOBAL_UPDATE_21              = ( 1 << 21 ),
+    SOUND_GLOBAL_UPDATE_22              = ( 1 << 22 ),
+    SOUND_GLOBAL_UPDATE_23              = ( 1 << 23 ),
+    SOUND_GLOBAL_UPDATE_24              = ( 1 << 24 ),
+    SOUND_GLOBAL_UPDATE_25              = ( 1 << 25 ),
+    SOUND_GLOBAL_UPDATE_26              = ( 1 << 26 ),
+    SOUND_GLOBAL_UPDATE_27              = ( 1 << 27 ),
+    SOUND_GLOBAL_UPDATE_28              = ( 1 << 28 ),
+    SOUND_GLOBAL_UPDATE_29              = ( 1 << 29 ),
+    SOUND_GLOBAL_UPDATE_30              = ( 1 << 30 ),
+    SOUND_GLOBAL_UPDATE_31              = ( 1 << 31 ),
+    SOUND_GLOBAL_UPDATE_32              = ( 1 << 32 ),
+    SOUND_GLOBAL_UPDATE_VOICES_CHANGED  = (0x110)
+} ESoundGlobalUpdateFlags;
 
 
 #define BIT_MASK(width)               ((1u << (width)) - 1u)
 #define FIELD_MASK(width, shift)      (BIT_MASK(width) << (shift))
 
 /*
- * ADSR1 (Lower)
- * 15 14 13 12 11 10 9 8 | 7 6 5 4 | 3 2 1 0
- *  ---------------------+---------+--------
- *   Attack Rate / Mode  | Decay   | Sustain Level
+  ____lower 16bit (at 1F801C08h+N*10h)___________________________________
+  15    Attack Mode       (0=Linear, 1=Exponential)
+  -     Attack Direction  (Fixed, always Increase) (until Level 7FFFh)
+  14-10 Attack Shift      (0..1Fh = Fast..Slow)
+  9-8   Attack Step       (0..3 = "+7,+6,+5,+4")
+  -     Decay Mode        (Fixed, always Exponential)
+  -     Decay Direction   (Fixed, always Decrease) (until Sustain Level)
+  7-4   Decay Shift       (0..0Fh = Fast..Slow)
+  -     Decay Step        (Fixed, always "-8")
+  3-0   Sustain Level     (0..0Fh)  ;Level=(N+1)*800h
  */
 #define SOUND_ADSR_ATTACK_MODE_MASK    (BIT_MASK(SOUND_ADSR_ATTACK_MODE_WIDTH) << SOUND_ADSR_ATTACK_MODE_SHIFT) // 0x8000  // bit 15
 #define SOUND_ADSR_ATTACK_RATE_MASK    (BIT_MASK(SOUND_ADSR_ATTACK_RATE_WIDTH) << SOUND_ADSR_ATTACK_RATE_SHIFT) // 0x7F00  // bits 14–8
@@ -143,23 +155,44 @@
 #define SOUND_ADSR_SUS_LEVEL_WIDTH      4
 
 /*
- * ADSR2 (Upper)
- TODO(jperos) THESE GRAPHS ARE WRONG
- * 15 14 | 13 12 11 10 9 8 | 7 6 5 4 | 3 2 1 0
- * ------+-----------------+---------+---------
- * SMode | Sustain Rate    | Rel.    | RR
+  ____lower 16bit (at 1F801C08h+N*10h)___________________________________
+  15    Attack Mode       (0=Linear, 1=Exponential)
+  -     Attack Direction  (Fixed, always Increase) (until Level 7FFFh)
+  14-10 Attack Shift      (0..1Fh = Fast..Slow)
+  9-8   Attack Step       (0..3 = "+7,+6,+5,+4")
+  -     Decay Mode        (Fixed, always Exponential)
+  -     Decay Direction   (Fixed, always Decrease) (until Sustain Level)
+  7-4   Decay Shift       (0..0Fh = Fast..Slow)
+  -     Decay Step        (Fixed, always "-8")
+  3-0   Sustain Level     (0..0Fh)  ;Level=(N+1)*800h
+  ____upper 16bit (at 1F801C0Ah+N*10h)___________________________________
+  31    Sustain Mode      (0=Linear, 1=Exponential)
+  30    Sustain Direction (0=Increase, 1=Decrease) (until Key OFF flag)
+  29    Not used?         (should be zero)
+  28-24 Sustain Shift     (0..1Fh = Fast..Slow)
+  23-22 Sustain Step      (0..3 = "+7,+6,+5,+4" or "-8,-7,-6,-5") (inc/dec)
+  21    Release Mode      (0=Linear, 1=Exponential)
+  -     Release Direction (Fixed, always Decrease) (until Level 0000h)
+  20-16 Release Shift     (0..1Fh = Fast..Slow)
+  -     Release Step      (Fixed, always "-8")
  */
-#define SOUND_ADSR_SUS_MODE_MASK     (BIT_MASK(SOUND_ADSR_SUS_MODE_WIDTH    ) << SOUND_ADSR_SUS_MODE_SHIFT    ) //   0xC000
-#define SOUND_ADSR_SUS_RATE_MASK     (BIT_MASK(SOUND_ADSR_SUS_RATE_WIDTH    ) << SOUND_ADSR_SUS_RATE_SHIFT    ) //   0x3F00
-#define SOUND_ADSR_RELEASE_MODE_MASK (BIT_MASK(SOUND_ADSR_RELEASE_MODE_WIDTH) << SOUND_ADSR_RELEASE_MODE_SHIFT) //   0x00E0
-#define SOUND_ADSR_RELEASE_RATE_MASK (BIT_MASK(SOUND_ADSR_RELEASE_RATE_WIDTH) << SOUND_ADSR_RELEASE_RATE_SHIFT) //   0x00E0
+#define SOUND_ADSR_SUS_MODE_MASK     (BIT_MASK(SOUND_ADSR_SUS_MODE_WIDTH    ) << SOUND_ADSR_SUS_MODE_SHIFT    ) //   0x8000
+#define SOUND_ADSR_SUS_DIR_MASK      (BIT_MASK(SOUND_ADSR_SUS_DIR_WIDTH     ) << SOUND_ADSR_SUS_DIR_SHIFT     ) //   0x4000
+#define SOUND_ADSR_UNKNOWN_MASK      (BIT_MASK(SOUND_ADSR_UNKNOWN_WIDTH     ) << SOUND_ADSR_UNKNOWN_SHIFT     ) //   0x2000
+#define SOUND_ADSR_SUS_RATE_MASK     (BIT_MASK(SOUND_ADSR_SUS_RATE_WIDTH    ) << SOUND_ADSR_SUS_RATE_SHIFT    ) //   0x1FC0
+#define SOUND_ADSR_RELEASE_MODE_MASK (BIT_MASK(SOUND_ADSR_RELEASE_MODE_WIDTH) << SOUND_ADSR_RELEASE_MODE_SHIFT) //   0x0020
+#define SOUND_ADSR_RELEASE_RATE_MASK (BIT_MASK(SOUND_ADSR_RELEASE_RATE_WIDTH) << SOUND_ADSR_RELEASE_RATE_SHIFT) //   0x001F
 
-#define SOUND_ADSR_SUS_MODE_SHIFT      14
+#define SOUND_ADSR_SUS_MODE_SHIFT      15
+#define SOUND_ADSR_SUS_DIR_SHIFT       14
+#define SOUND_ADSR_UNKNOWN_SHIFT       13
 #define SOUND_ADSR_SUS_RATE_SHIFT       6
 #define SOUND_ADSR_RELEASE_MODE_SHIFT   5
 #define SOUND_ADSR_RELEASE_RATE_SHIFT   0
 
-#define SOUND_ADSR_SUS_MODE_WIDTH       2
+#define SOUND_ADSR_SUS_MODE_WIDTH       1
+#define SOUND_ADSR_SUS_DIR_WIDTH        1
+#define SOUND_ADSR_UNKNOWN_WIDTH        1
 #define SOUND_ADSR_SUS_RATE_WIDTH       7
 #define SOUND_ADSR_RELEASE_MODE_WIDTH   1
 #define SOUND_ADSR_RELEASE_RATE_WIDTH   5
@@ -174,6 +207,43 @@
 #define SOUND_UPDATE_REVERB      0x80
 
 #define AKAO_FILE_MAGIC                    (0x4F414B41U) // AKAO in ASCII
+
+
+typedef enum ESustainMode
+{
+    SUS_MODE_LIN = 0,
+    SUS_MODE_EXP = 1,
+} ESustainMode;
+
+typedef enum ESustainDir
+{
+    SUS_DIR_INC = 0,
+    SUS_DIR_DEC = 1,
+} ESustainDir;
+
+typedef enum ESustainUnk
+{
+    SUS_UNK_0 = 0,
+    SUS_UNK_1 = 1,
+} ESustainUnk;
+
+typedef enum ESustainModeShifts
+{
+    SUS_MODE_SHIFT_UNK  = 0,
+    SUS_MODE_SHIFT_DIR  = 1,
+    SUS_MODE_SHIFT_MODE = 2,
+} ESustainModeShifts;
+
+#define SUSTAIN_MODE_CODE(Mode, Dir, Unk) \
+    ((Mode << SUS_MODE_SHIFT_MODE) | (Dir << SUS_MODE_SHIFT_DIR) | (Unk << SUS_MODE_SHIFT_UNK))
+
+typedef enum ESustainModeCode
+{
+    SUS_CODE_LINEAR_INCREASE       = SUSTAIN_MODE_CODE(SUS_MODE_LIN, SUS_DIR_INC, SUS_UNK_1),  // 1
+    SUS_CODE_LINEAR_DECREASE       = SUSTAIN_MODE_CODE(SUS_MODE_LIN, SUS_DIR_DEC, SUS_UNK_1),  // 3
+    SUS_CODE_EXPONENTIAL_INCREASE  = SUSTAIN_MODE_CODE(SUS_MODE_EXP, SUS_DIR_INC, SUS_UNK_1),  // 5
+    SUS_CODE_EXPONENTIAL_DECREASE  = SUSTAIN_MODE_CODE(SUS_MODE_EXP, SUS_DIR_DEC, SUS_UNK_1),  // 7
+} ESustainModeCode;
 
 typedef enum EPanMode {
     PAN_MODE_STEREO = 0,  // use PanPosition field with gain table
@@ -408,6 +478,9 @@ typedef struct
 } FSoundChannel; /* size 0x124 */
 static_assert( sizeof(FSoundChannel) == 0x124 );
 
+#define KEYMAP_ENTRY_REV_MASK    (BIT_MASK(1) << 7)
+#define KEYMAP_ENTRY_PAN_MASK    (BIT_MASK(7) << 0)
+#define KEYMAP_ENTRY_REV_ENABLE  ((1 << 7) & KEYMAP_ENTRY_REV_MASK )
 typedef struct
 {
     /* 0x0 */ u8 InstrumentIndex;
