@@ -403,7 +403,7 @@ s32 Sound_CalculatePitch( FSoundInstrumentInfo* in_pInstrumentInfo, s32 in_Note,
 
     if( in_pInstrumentInfo->FineTune == 0 )
     {
-        Pitch = g_SemitonePitchTable[Offset] << 8;
+        Pitch = g_SemitonePitchTable[SemitoneOffset] << 8;
     }
     else if( in_pInstrumentInfo->FineTune < 0 )
     {
