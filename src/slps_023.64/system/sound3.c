@@ -382,7 +382,53 @@ void func_80052FB8(FSoundChannel* arg0, u32 arg1) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_800531E0);
+s32 func_800531E0(FSoundInstrumentInfo* in_pInstrumentInfo, s32 arg1, u32 arg2, s32* arg3) {
+    s32 pitchIndex;
+    s32 pitch;
+
+    pitchIndex = arg1 - in_pInstrumentInfo->SampleNote;
+    
+    while (pitchIndex < 0) {
+        pitchIndex += 0xC;
+    }
+    
+    pitchIndex %= 12;
+    
+    if (in_pInstrumentInfo->FineTune == 0) {
+        pitch = g_SemitonePitchTable[pitchIndex] << 8;
+    } else if (in_pInstrumentInfo->FineTune < 0) {
+        pitch = (u32) (g_SemitonePitchTable[pitchIndex] * (u16) in_pInstrumentInfo->FineTune) >> 8;
+    } else {
+        pitch = (g_SemitonePitchTable[pitchIndex] * in_pInstrumentInfo->FineTune) >> 7;
+        pitch += g_SemitonePitchTable[pitchIndex] << 8;
+    }
+    
+    arg2 &= 0xFF;
+    
+    if (arg2 != 0) {
+        if (arg2 < 0x80U) {
+            *arg3 = (pitch * arg2) >> 7;
+        } else {
+            *arg3 = ((pitch * arg2) >> 8) - pitch;
+        }
+    }
+    
+    if (arg1 < in_pInstrumentInfo->SampleNote) {
+        for (; arg1 < in_pInstrumentInfo->SampleNote; arg1 += 0xC) {
+            *arg3 = *arg3 >> 1;
+            pitch = (pitch >> 1);
+        }
+    } else {
+        pitchIndex = (arg1 - in_pInstrumentInfo->SampleNote) / 12;
+        if (pitchIndex != 0) {
+            pitch <<= pitchIndex;
+            *arg3 <<= pitchIndex;
+        }
+    }
+    pitch >>= 8;
+    *arg3 >>= 8;
+    return (u_short)pitch;
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80053370);
