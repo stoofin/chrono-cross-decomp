@@ -352,9 +352,6 @@ void Sound_Cmd_C4_SetPanByMusicId( FSoundCommandParams* in_pCmd )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_C5_FadePanByMusicId);
-#else
 void Sound_Cmd_C5_FadePanByMusicId( FSoundCommandParams* in_Params )
 {
     FSoundMusicContext* pMusicContext;
@@ -362,9 +359,10 @@ void Sound_Cmd_C5_FadePanByMusicId( FSoundCommandParams* in_Params )
     s32 Length;
     s32 TargetPan;
     s32 MusicId;
+    s32 PanStep;
 
     Length = 1;
-    if ( in_Params->Param2 != 0 )
+    if( in_Params->Param2 != 0 )
     {
         Length = in_Params->Param2;
     }
@@ -375,24 +373,30 @@ void Sound_Cmd_C5_FadePanByMusicId( FSoundCommandParams* in_Params )
     if ( MusicId == 0 || MusicId == g_pActiveMusicContext->MusicId )
     {
         pMusicContext = g_pActiveMusicContext;
-        pMusicContext->MasterPanStep = (s32)( TargetPan - pMusicContext->MasterPanOffset ) / Length;
+        pChannels = g_ActiveMusicChannels;
+        
+        TargetPan -= pMusicContext->MasterPanOffset;
+        PanStep = TargetPan / Length;
+        pMusicContext->MasterPanStep = PanStep;
         pMusicContext->MasterPanStepsRemaining = Length;
-        Sound_MarkActiveChannelsVolumeDirty( pMusicContext, g_ActiveMusicChannels );
-        return;
+        Sound_MarkActiveChannelsVolumeDirty( pMusicContext, pChannels );
     }
-
-    pMusicContext = g_pSuspendedMusicContext;
-
-    if ( pMusicContext == NULL || MusicId == 0 || MusicId != pMusicContext->MusicId )
+    else
     {
-        return;
+        if ( g_pSuspendedMusicContext == NULL || MusicId == 0 || MusicId != g_pSuspendedMusicContext->MusicId )
+        {
+            return;
+        }
+        pMusicContext = g_pSuspendedMusicContext;
+        pChannels = g_pSecondaryMusicChannels;
+        
+        TargetPan -= pMusicContext->MasterPanOffset;
+        PanStep = TargetPan / Length;
+        pMusicContext->MasterPanStep = PanStep;
+        pMusicContext->MasterPanStepsRemaining = Length;
+        Sound_MarkActiveChannelsVolumeDirty( pMusicContext, pChannels );
     }
-
-    pMusicContext->MasterPanStep = (s32)( TargetPan - pMusicContext->MasterPanOffset ) / Length;
-    pMusicContext->MasterPanStepsRemaining = Length;
-    Sound_MarkActiveChannelsVolumeDirty( pMusicContext, g_pSecondaryMusicChannels );
 }
-#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_70_SetCdVolume( FSoundCommandParams* in_pParams )
