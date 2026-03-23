@@ -16,34 +16,39 @@
 
 #define MUSIC_ID_ANY (0)
 
-// Voice parameter update flags
-#define VOICE_PARAM_VOLUME_L      (1 << 0) /* volume (left) */
-#define VOICE_PARAM_VOLUME_R      (1 << 1) /* volume (right) */
-#define VOICE_PARAM_VOLUME        (VOICE_PARAM_VOLUME_L | VOICE_PARAM_VOLUME_R)
-#define	VOICE_PARAM_VOLMODE_L     (1 <<  2) /* volume mode (left) */
-#define	VOICE_PARAM_VOLMODE_R     (1 <<  3) /* volume mode (right) */
-#define VOICE_PARAM_SAMPLE_RATE   (1 <<  4) /* tone (pitch setting)  */
-#define	VOICE_PARAM_NOTE          (1 <<  5) /* tone (note setting)  */
-#define	VOICE_PARAM_SAMPLE_NOTE   (1 <<  6) /* waveform data sample note */
-#define VOICE_PARAM_START_ADDR    (1 <<  7) /* waveform data start address */
-#define	VOICE_PARAM_ADSR_AMODE    (1 <<  8) /* ADSR Attack rate mode */
-#define	VOICE_PARAM_ADSR_SMODE    (1 <<  9) /* ADSR Sustain rate mode */
-#define	VOICE_PARAM_ADSR_RMODE    (1 << 10) /* ADSR Release rate mode */
-#define	VOICE_PARAM_ADSR_AR       (1 << 11) /* ADSR Attack rate */
-#define	VOICE_PARAM_ADSR_DR       (1 << 12) /* ADSR Decay rate */
-#define	VOICE_PARAM_ADSR_SR       (1 << 13) /* ADSR Sustain rate */
-#define	VOICE_PARAM_ADSR_RR       (1 << 14) /* ADSR Release rate */
-#define	VOICE_PARAM_ADSR_SL       (1 << 15) /* ADSR Sustain level */
-#define VOICE_PARAM_ADSR_LOWER    (VOICE_PARAM_ADSR_AMODE | VOICE_PARAM_ADSR_AR | VOICE_PARAM_ADSR_DR | VOICE_PARAM_ADSR_SL)
-#define VOICE_PARAM_ADSR_UPPER    (VOICE_PARAM_ADSR_SMODE | VOICE_PARAM_ADSR_RMODE | VOICE_PARAM_ADSR_SR | VOICE_PARAM_ADSR_RR)
-#define VOICE_PARAM_ADSR_FULL     (VOICE_PARAM_ADSR_LOWER | VOICE_PARAM_ADSR_UPPER)
-#define VOICE_PARAM_LOOP_ADDR     (1 << 16) /* start address for loop */
-#define	VOICE_PARAM_ADSR_ADSR1    (1 << 17) /* ADSR adsr1 for `VagAtr'  */
-#define	VOICE_PARAM_ADSR_ADSR2    (1 << 18) /* ADSR adsr2 for `VagAtr'  */
+typedef enum EVoiceParamFlags
+{
+    VOICE_PARAM_VOLUME_L      = (1 <<  0), /* volume (left) */
+    VOICE_PARAM_VOLUME_R      = (1 <<  1), /* volume (right) */
+    VOICE_PARAM_VOLUME        = VOICE_PARAM_VOLUME_L | VOICE_PARAM_VOLUME_R,
+    VOICE_PARAM_VOLMODE_L     = (1 <<  2), /* volume mode (left) */
+    VOICE_PARAM_VOLMODE_R     = (1 <<  3), /* volume mode (right) */
+    VOICE_PARAM_SAMPLE_RATE   = (1 <<  4), /* tone (pitch setting) */
+    VOICE_PARAM_NOTE          = (1 <<  5), /* tone (note setting) */
+    VOICE_PARAM_SAMPLE_NOTE   = (1 <<  6), /* waveform data sample note */
+    VOICE_PARAM_START_ADDR    = (1 <<  7), /* waveform data start address */
+    VOICE_PARAM_ADSR_AMODE    = (1 <<  8), /* ADSR Attack rate mode */
+    VOICE_PARAM_ADSR_SMODE    = (1 <<  9), /* ADSR Sustain rate mode */
+    VOICE_PARAM_ADSR_RMODE    = (1 << 10), /* ADSR Release rate mode */
+    VOICE_PARAM_ADSR_AR       = (1 << 11), /* ADSR Attack rate */
+    VOICE_PARAM_ADSR_DR       = (1 << 12), /* ADSR Decay rate */
+    VOICE_PARAM_ADSR_SR       = (1 << 13), /* ADSR Sustain rate */
+    VOICE_PARAM_ADSR_RR       = (1 << 14), /* ADSR Release rate */
+    VOICE_PARAM_ADSR_SL       = (1 << 15), /* ADSR Sustain level */
+    VOICE_PARAM_ADSR_LOWER    = VOICE_PARAM_ADSR_AMODE | VOICE_PARAM_ADSR_AR | VOICE_PARAM_ADSR_DR | VOICE_PARAM_ADSR_SL,
+    VOICE_PARAM_ADSR_UPPER    = VOICE_PARAM_ADSR_SMODE | VOICE_PARAM_ADSR_RMODE | VOICE_PARAM_ADSR_SR | VOICE_PARAM_ADSR_RR,
+    VOICE_PARAM_ADSR_FULL     = VOICE_PARAM_ADSR_LOWER | VOICE_PARAM_ADSR_UPPER,
+    VOICE_PARAM_LOOP_ADDR     = (1 << 16), /* start address for loop */
+    VOICE_PARAM_ADSR_ADSR1    = (1 << 17), /* ADSR adsr1 for `VagAtr' */
+    VOICE_PARAM_ADSR_ADSR2    = (1 << 18), /* ADSR adsr2 for `VagAtr' */
+} EVoiceParamFlags;
 
-#define SOUND_CHANNEL_TYPE_MUSIC 0x0
-#define SOUND_CHANNEL_TYPE_SOUND 0x1
-#define SOUND_CHANNEL_TYPE_MENU  0x2
+typedef enum ESoundChannelTypes
+{
+    SOUND_CHANNEL_TYPE_MUSIC = 0x0,
+    SOUND_CHANNEL_TYPE_SOUND = 0x1,
+    SOUND_CHANNEL_TYPE_MENU  = 0x2
+} ESoundChannelTypes;
 
 #define SOUND_CHANNEL_CONFIG_STEREO          ( 1 << 0 )
 #define SOUND_CHANNEL_CONFIG_MONO            ( 1 << 1 )
