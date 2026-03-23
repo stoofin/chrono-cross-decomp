@@ -481,7 +481,7 @@ s32 Sound_PlayKeymapNote( FSoundChannel* in_pChannel, s32 in_ChannelMask, s32 in
     in_pChannel->VoiceParams.StartAddress = InstrumentInfo->StartAddr;
     in_pChannel->VoiceParams.LoopAddress = InstrumentInfo->LoopAddr;
 
-    if( !( UpdateFlags & SOUND_UPDATE_LOCK_ATTACK_RATE ) )
+    if( !( UpdateFlags & SOUND_UPDATE_LOCK_ATTACK_MODE ) )
     {
         in_pChannel->VoiceParams.AdsrLower = Keymap->AdsrAttackRate << SOUND_ADSR_ATTACK_RATE_SHIFT;
     }

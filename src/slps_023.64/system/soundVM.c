@@ -307,7 +307,7 @@ void SoundVM_A1_LoadInstrument( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     in_pChannel->UpdateFlags &= ~( 
         SOUND_UPDATE_DRUM_MODE  | 
         SOUND_UPDATE_UNKNOWN_12 | 
-        SOUND_UPDATE_LOCK_ATTACK_RATE | 
+        SOUND_UPDATE_LOCK_ATTACK_MODE | 
         SOUND_UPDATE_LOCK_SUSTAIN_RATE | 
         SOUND_UPDATE_LOCK_RELEASE_RATE 
     );
@@ -325,7 +325,7 @@ void SoundVM_FE0A_ClearInstrument( FSoundChannel* in_pChannel, u32 in_VoiceFlags
     in_pChannel->UpdateFlags &= ~(
         SOUND_UPDATE_DRUM_MODE  |
         SOUND_UPDATE_UNKNOWN_12 |
-        SOUND_UPDATE_LOCK_ATTACK_RATE |
+        SOUND_UPDATE_LOCK_ATTACK_MODE |
         SOUND_UPDATE_LOCK_SUSTAIN_RATE |
         SOUND_UPDATE_LOCK_RELEASE_RATE
     );
@@ -351,7 +351,7 @@ void SoundVM_FE0A_ClearInstrument( FSoundChannel* in_pChannel, u32 in_VoiceFlags
         in_pChannel->UpdateFlags &= ~(
             SOUND_UPDATE_DRUM_MODE  |
             SOUND_UPDATE_UNKNOWN_12 |
-            SOUND_UPDATE_LOCK_ATTACK_RATE |
+            SOUND_UPDATE_LOCK_ATTACK_MODE |
             SOUND_UPDATE_LOCK_SUSTAIN_RATE |
             SOUND_UPDATE_LOCK_RELEASE_RATE
         );
@@ -367,7 +367,7 @@ void SoundVM_B3_ResetAdsr( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     in_pChannel->VoiceParams.AdsrLower = InstrumentInfo->AdsrLower;
     in_pChannel->VoiceParams.AdsrUpper = InstrumentInfo->AdsrUpper;
     in_pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_ADSR_FULL;
-    in_pChannel->UpdateFlags &= ~(SOUND_UPDATE_LOCK_ATTACK_RATE | SOUND_UPDATE_LOCK_SUSTAIN_RATE | SOUND_UPDATE_LOCK_RELEASE_RATE);
+    in_pChannel->UpdateFlags &= ~(SOUND_UPDATE_LOCK_ATTACK_MODE | SOUND_UPDATE_LOCK_SUSTAIN_RATE | SOUND_UPDATE_LOCK_RELEASE_RATE);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -896,7 +896,7 @@ void SoundVM_AD_AttackRate( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     in_pChannel->VoiceParams.AdsrLower &= ~SOUND_ADSR_ATTACK_RATE_MASK;
     in_pChannel->VoiceParams.AdsrLower |= AttackRate << SOUND_ADSR_ATTACK_RATE_SHIFT;
     in_pChannel->VoiceParams.VoiceParamFlags |= (VOICE_PARAM_ADSR_AMODE | VOICE_PARAM_ADSR_AR);
-    in_pChannel->UpdateFlags |= SOUND_UPDATE_LOCK_ATTACK_RATE;
+    in_pChannel->UpdateFlags |= SOUND_UPDATE_LOCK_ATTACK_MODE;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1138,7 +1138,7 @@ void SoundVM_FE04_ClearKeymapTable( FSoundChannel* in_pChannel, u32 in_VoiceFlag
         in_pChannel->UpdateFlags &= ~(
             SOUND_UPDATE_DRUM_MODE  |
             SOUND_UPDATE_UNKNOWN_12 |
-            SOUND_UPDATE_LOCK_ATTACK_RATE |
+            SOUND_UPDATE_LOCK_ATTACK_MODE |
             SOUND_UPDATE_LOCK_SUSTAIN_RATE |
             SOUND_UPDATE_LOCK_RELEASE_RATE
         );
