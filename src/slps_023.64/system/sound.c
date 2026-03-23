@@ -1024,42 +1024,29 @@ s32 Sound_StealQuietestVoice( s32 in_bForceFullScan )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-#ifndef NON_MATCHING
-INCLUDE_ASM( "asm/slps_023.64/nonmatchings/system/sound", Sound_FindFreeVoice );
-#else
-s32 Sound_FindFreeVoice( s32 in_bForceFullScan  )
+s32 Sound_FindFreeVoice( s32 in_bForceFullScan )
 {
     FSpuVoiceInfo* pVoiceInfo;
-    s32 i;
 
-    i = 0;
-    if( in_bForceFullScan == 0 )
+    if ( in_bForceFullScan != 0 ) 
     {
-        i = g_pActiveMusicContext->SomeIndexRelatedToSpuVoiceInfo;
+        in_bForceFullScan = 0;
+    } 
+    else 
+    {
+        in_bForceFullScan = g_pActiveMusicContext->SomeIndexRelatedToSpuVoiceInfo;
     }
 
-    pVoiceInfo = &g_SpuVoiceInfo[i];
-
-    if (pVoiceInfo->pEnvx != 0)
+    pVoiceInfo = &g_SpuVoiceInfo[in_bForceFullScan];
+    
+    while (pVoiceInfo->pEnvx != 0 && ++in_bForceFullScan < VOICE_COUNT)
     {
-        i++;
-
-        while (i < VOICE_COUNT)
-        {
-            pVoiceInfo++;
-            i++;
-
-            if (pVoiceInfo->pEnvx == 0)
-            {
-                i--;
-                break;
-            }
-        }
+        pVoiceInfo++;
     }
 
-    return i;
+    return in_bForceFullScan;
 }
-#endif
+
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_AssignAndUpdateMusicVoice( FSoundChannel* in_pChannel, u32 in_ChannelMask, u32 in_AllocatedVoiceMask, u32* out_KeyOnFlags )
