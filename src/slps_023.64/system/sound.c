@@ -1024,27 +1024,28 @@ s32 Sound_StealQuietestVoice( s32 in_bForceFullScan )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-s32 Sound_FindFreeVoice( s32 in_bForceFullScan )
+s32 Sound_FindFreeVoice( s32 in_bScanFromStart )
 {
+    s32 Index;
     FSpuVoiceInfo* pVoiceInfo;
 
-    if ( in_bForceFullScan != 0 ) 
+    if( in_bScanFromStart )
     {
-        in_bForceFullScan = 0;
-    } 
-    else 
+        Index = 0;
+    }
+    else
     {
-        in_bForceFullScan = g_pActiveMusicContext->SomeIndexRelatedToSpuVoiceInfo;
+        Index = g_pActiveMusicContext->SomeIndexRelatedToSpuVoiceInfo;
     }
 
-    pVoiceInfo = &g_SpuVoiceInfo[in_bForceFullScan];
-    
-    while (pVoiceInfo->pEnvx != 0 && ++in_bForceFullScan < VOICE_COUNT)
+    pVoiceInfo = &g_SpuVoiceInfo[Index];
+
+    while( pVoiceInfo->pEnvx != 0 && ++Index < VOICE_COUNT )
     {
         pVoiceInfo++;
     }
 
-    return in_bForceFullScan;
+    return Index;
 }
 
 
