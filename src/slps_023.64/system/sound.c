@@ -268,7 +268,7 @@ void SetVoiceParams( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 i
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceParamsByFlags( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams )
+void SetVoiceParamsByFlags( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, int arg2 )
 {
     s32 flags;
 
@@ -544,7 +544,7 @@ void Sound_UpdateSlidesAndDelays( FSoundChannel* in_pChannel, u32 in_VoiceFlags,
 #ifndef NON_MATCHING
 INCLUDE_ASM( "asm/slps_023.64/nonmatchings/system/sound", func_8004C5A4 );
 #else
-void func_8004C5A4(FSoundChannel* in_pChannel)
+void func_8004C5A4(FSoundChannel* in_pChannel,int arg1)
 {
     /* locals declared up-front (old C style) */
     FSoundChannel* ch;
@@ -1062,94 +1062,57 @@ s32 Sound_FindFreeVoice( s32 in_bForceFullScan  )
 #endif
 
 //----------------------------------------------------------------------------------------------------------------------
-#ifndef NON_MATCHING
-INCLUDE_ASM( "asm/slps_023.64/nonmatchings/system/sound", func_8004CFC4 );
-#else
-extern s32 D_80092AFC;
 
-void func_8004CFC4( FSoundChannel* in_pChannel, u32 in_Flags1, u32 in_Flags2, u32* out_KeyOnFlags )
-{
-    FSoundChannel* pChannel;
-    int Mask;
-    s32 Flags;
-    s32 ChannelMask;
-    u32 VoiceIndex;
+extern s32 g_Sound_MutedMusicChannelMask;
 
-    Flags = in_Flags1 & g_pActiveMusicContext->PendingKeyOnMask;
-    VoiceIndex = 0;
-    pChannel = in_pChannel;
-    ChannelMask = 1;
+void func_8004CFC4(FSoundChannel* in_pChannel, u32 in_Flags1, u32 in_Flags2, u32* out_KeyOnFlags) {
+    u32 *new_var = out_KeyOnFlags;
+    s32 mask = 1;
+    s32 voice = 0;
+    s32 flags = in_Flags1 & g_pActiveMusicContext->PendingKeyOnMask;
     
     do {
-        Mask = ChannelMask;
-        if( in_Flags1 & Mask )
-        {
-            func_8004C5A4( pChannel );
-
-
-            if( pChannel->VoiceParams.VoiceParamFlags != 0 )
-            {
-                if( D_80092AFC & Mask )
-                {
-                    pChannel->VoiceParams.Volume.right = 0;
-                    pChannel->VoiceParams.Volume.left = 0;
+        if (in_Flags1 & mask) {
+            func_8004C5A4(in_pChannel, mask);
+            if (in_pChannel->VoiceParams.VoiceParamFlags != 0) {
+                if (g_Sound_MutedMusicChannelMask & mask) {
+                    in_pChannel->VoiceParams.Volume.right = 0;
+                    in_pChannel->VoiceParams.Volume.left = 0;
                 }
-
-                if( Flags & Mask )
-                {
-                    if( in_Flags2 & Mask )
-                    {
-                        *out_KeyOnFlags |= 1 << VoiceIndex;
-                        pChannel->VoiceParams.AssignedVoiceNumber = VoiceIndex;
-                    }
-                    else
-                    {
-                        s32 bForceFullScan = (g_pActiveMusicContext->KeyedMask & Mask) != 0;
-                        u32 FreeVoiceIndex = Sound_FindFreeVoice( bForceFullScan );
-
-                        if( FreeVoiceIndex == VOICE_COUNT )
-                        {
-                            g_pActiveMusicContext->StatusFlags |= 2;
-                            FreeVoiceIndex = Sound_StealQuietestVoice(bForceFullScan);
-
-                            if( FreeVoiceIndex == VOICE_COUNT )
-                            {
-                                pChannel->VoiceParams.AssignedVoiceNumber = FreeVoiceIndex;
-                                g_pActiveMusicContext->StatusFlags |= 1;
-                            }
-                        }
-                        else
-                        {
-                            *out_KeyOnFlags |= 1 << FreeVoiceIndex;
-                            pChannel->VoiceParams.AssignedVoiceNumber = FreeVoiceIndex;
-                            g_SpuVoiceInfo[FreeVoiceIndex].pEnvx = 0x7FFF;
+                if (flags & mask) {
+                    if (in_Flags2 & mask) {
+                        *new_var |= 1 << voice;
+                        in_pChannel->VoiceParams.AssignedVoiceNumber = voice;
+                    } else {
+                        s32 force = (g_pActiveMusicContext->KeyedMask & mask) != 0;
+                        s32 availableVoice = Sound_FindFreeVoice(force);
+                        if ((availableVoice == 0x18) && (g_pActiveMusicContext->StatusFlags |= 2, availableVoice = Sound_StealQuietestVoice(force), (availableVoice == 0x18))) {
+                            in_pChannel->VoiceParams.AssignedVoiceNumber = availableVoice;
+                            g_pActiveMusicContext->StatusFlags |= 1;
+                        } else {
+                            *new_var |= 1 << availableVoice;
+                            in_pChannel->VoiceParams.AssignedVoiceNumber = availableVoice;
+                            g_SpuVoiceInfo[availableVoice].pEnvx = 0x7FFF;
                         }
                     }
-
-                    if( pChannel->VoiceParams.AssignedVoiceNumber < VOICE_COUNT )
-                    {
-                        SetVoiceParams( pChannel->VoiceParams.AssignedVoiceNumber, &pChannel->VoiceParams, pChannel->VoiceParams.VolumeScale );
-                        g_Sound_VoiceOwnerContexts[ pChannel->VoiceParams.AssignedVoiceNumber ] = g_pActiveMusicContext;
+                    if (in_pChannel->VoiceParams.AssignedVoiceNumber < 0x18) {
+                        SetVoiceParams(in_pChannel->VoiceParams.AssignedVoiceNumber, &in_pChannel->VoiceParams, in_pChannel->VoiceParams.VolumeScale);
+                        g_Sound_VoiceOwnerContexts[in_pChannel->VoiceParams.AssignedVoiceNumber] = g_pActiveMusicContext;
                         g_Sound_GlobalFlags.UpdateFlags |= 0x100;
                     }
-                }
-                else
-                {    
-
-                    if( pChannel->VoiceParams.AssignedVoiceNumber < VOICE_COUNT )
-                    {
-                        SetVoiceParamsByFlags( pChannel->VoiceParams.AssignedVoiceNumber, &pChannel->VoiceParams );
+                } else {
+                    if (in_pChannel->VoiceParams.AssignedVoiceNumber < 0x18) {
+                        SetVoiceParamsByFlags(in_pChannel->VoiceParams.AssignedVoiceNumber, &in_pChannel->VoiceParams, in_pChannel->UpdateFlags);
                     }
                 }
             }
-            in_Flags1 &= ~Mask;
+            in_Flags1 &= ~mask;
         }
-        ChannelMask <<= 1;
-        pChannel++;
-        VoiceIndex++;
-    } while( in_Flags1 != 0 );
+        mask *= 2;
+        ++in_pChannel;
+        ++voice;
+    } while (in_Flags1 != 0);
 }
-#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 void UnassignVoicesFromChannels( FSoundChannel* in_pChannel, s32 arg1 )
