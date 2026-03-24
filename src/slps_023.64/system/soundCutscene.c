@@ -82,7 +82,7 @@ void Sound_Cutscene_InitVoice( u32 in_Voice, s32 in_PanMode, u32 in_StartAddr, u
             VolR = ( VolHalfQ16 >> 0x11 ) + ( VolHalfQ16 >> 0x12 );
             VolL = VolR;
         }
-        else
+        else // PAN_MODE_STEREO
         {
             u8 Mask = 0xFF;
             VolL = ( ( g_Sound_Cutscene_StreamState.Volume * g_Sound_StereoPanGainTableQ15[g_Sound_Cutscene_StreamState.PanPosition] ) >> 0x10 );

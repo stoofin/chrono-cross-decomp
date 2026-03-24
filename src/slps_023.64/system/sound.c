@@ -571,7 +571,7 @@ void Sound_UpdateModulation(FSoundChannel* in_pChannel,int arg1)
     /* ---------------------------
      * Vibrato (UpdateFlags & 1)
      * --------------------------- */
-    if (updateFlags & SOUND_UPDATE_VIBRATO)
+    if (updateFlags & SOUND_CHANNEL_UPDATE_VIBRATO)
     {
         /* if VibratoDelayCurrent != 0, skip stepping */
         if (ch->VibratoDelayCurrent == 0)
@@ -614,7 +614,7 @@ void Sound_UpdateModulation(FSoundChannel* in_pChannel,int arg1)
     /* ---------------------------
      * Tremolo (UpdateFlags & 2)
      * --------------------------- */
-    if (updateFlags & SOUND_UPDATE_TREMOLO)
+    if (updateFlags & SOUND_CHANNEL_UPDATE_TREMOLO)
     {
         if (ch->TremeloDelayCurrent == 0)
         {
@@ -655,7 +655,7 @@ void Sound_UpdateModulation(FSoundChannel* in_pChannel,int arg1)
     /* ---------------------------
      * Auto-pan (UpdateFlags & 4)
      * --------------------------- */
-    if (updateFlags & SOUND_UPDATE_PAN_LFO)
+    if (updateFlags & SOUND_CHANNEL_UPDATE_PAN_LFO)
     {
         utmp16 = ch->AutoPanRateCurrent;
         utmp16 = (u16)(utmp16 - 1);
@@ -686,7 +686,7 @@ void Sound_UpdateModulation(FSoundChannel* in_pChannel,int arg1)
     /* ---------------------------
      * Side-chain volume update (UpdateFlags & 0x20)
      * --------------------------- */
-    if (updateFlags & SOUND_UPDATE_SIDE_CHAIN_VOL)
+    if (updateFlags & SOUND_CHANNEL_UPDATE_SIDE_CHAIN_VOL)
     {
         /* external value at (channel - 0xC), treated as (s16)(u16<<1) */
         utmp16 = *(u16*)(((u8*)ch) - 0x0C);
@@ -741,7 +741,7 @@ void Sound_UpdateModulation(FSoundChannel* in_pChannel,int arg1)
     /* ---------------------------
      * Pitch update A: UpdateFlags & 0x10 (side-chain pitch)
      * --------------------------- */
-    if (updateFlags & SOUND_UPDATE_SIDE_CHAIN_PITCH)
+    if (updateFlags & SOUND_CHANNEL_UPDATE_SIDE_CHAIN_PITCH)
     {
         u16 Pitch;
         /* base = *(u16*)(channel-0xC) + VibratoPitch + (PitchSlide>>16) */

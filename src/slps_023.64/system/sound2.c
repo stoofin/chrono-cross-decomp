@@ -404,13 +404,9 @@ void Sound_KillMusicContext( FSoundMusicContext* in_Context, FSoundChannel* in_p
 #ifndef NON_MATCHING
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound2", Sound_EvictSfxVoice);
 #else
-#define SOUND_UPDATE_VOICE_ACTIVE         ( 1 << 20 )  // Voice is actively processing  
-#define SOUND_UPDATE_PENDING_RELEASE      ( 1 << 21 )  // Voice marked for release
+#define SOUND_CHANNEL_UPDATE_VOICE_ACTIVE         ( 1 << 20 )  // Voice is actively processing  
+#define SOUND_CHANNEL_UPDATE_PENDING_RELEASE      ( 1 << 21 )  // Voice marked for release
 
-#define SFX_CHANNEL_COUNT       12
-#define SFX_FIRST_VOICE_BIT     0x1000      // Voice 12 (first SFX voice)
-
-#define VOICE_MASK_24BIT        0x00FFFFFF
 #define RELEASE_MODE_PRIORITY   0x40000000
 #define RELEASE_MODE_PAIR       0x80000000  // Negative value check
 
@@ -427,15 +423,15 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
     u32 i;
 
     ActiveVoices = g_Sound_SfxState.ActiveVoiceMask | g_Sound_SfxState.SuspendedVoiceMask;
-    MaskedArg = in_VoiceMask & VOICE_MASK_24BIT;
+    MaskedArg = in_VoiceMask & VOICE_MASK_ALL;
 
     if (MaskedArg != 0)
     {
         /* PATH 1: Release voices matching the mask AND channel's unk_Flags filter */
         pChannel = g_SfxSoundChannels;
-        VoiceBit = SFX_FIRST_VOICE_BIT;
+        VoiceBit = 1 << SOUND_SFX_CHANNEL_START_INDEX;
 
-        for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
+        for( i = 0; i < SOUND_SFX_CHANNEL_COUNT; i++ )
         {
             if (ActiveVoices & VoiceBit)
             {
@@ -443,10 +439,10 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
                 {
                     UpdateFlags = pChannel->UpdateFlags;
 
-                    if (UpdateFlags & SOUND_UPDATE_VOICE_ACTIVE)
+                    if (UpdateFlags & SOUND_CHANNEL_UPDATE_VOICE_ACTIVE)
                     {
                         /* Voice is busy - mark for deferred release */
-                        pChannel->UpdateFlags = UpdateFlags | SOUND_UPDATE_PENDING_RELEASE;
+                        pChannel->UpdateFlags = UpdateFlags | SOUND_CHANNEL_UPDATE_PENDING_RELEASE;
                     }
                     else
                     {
@@ -466,7 +462,7 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
     {
         /* PATH 2A: Release stereo voice pair by index */
         pChannel = &g_SfxSoundChannels[in_ChannelIndex];
-        VoiceBit = SFX_FIRST_VOICE_BIT << in_ChannelIndex;
+        VoiceBit = (1 << SOUND_SFX_CHANNEL_START_INDEX) << in_ChannelIndex;
 
         /* Release left voice */
         if (ActiveVoices & VoiceBit)
@@ -491,9 +487,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
 
         /* Pass 1: Filter out voices with non-zero unk_Flags */
         pChannel = g_SfxSoundChannels;
-        VoiceBit = SFX_FIRST_VOICE_BIT;
+        VoiceBit = (1 << SOUND_SFX_CHANNEL_START_INDEX);
 
-        for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
+        for( i = 0; i < SOUND_SFX_CHANNEL_COUNT; i++ )
         {
             if (pChannel->unk_Flags != 0)
             {
@@ -506,10 +502,10 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
 
         /* Pass 2: Find maximum priority (lowest importance = steal first) */
         pChannel = g_SfxSoundChannels;
-        VoiceBit = SFX_FIRST_VOICE_BIT;
+        VoiceBit = 1 << SOUND_SFX_CHANNEL_START_INDEX;
         MaxPriority = 0;
 
-        for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
+        for( i = 0; i < SOUND_SFX_CHANNEL_COUNT; i++ )
         {
             if (ActiveVoices & VoiceBit)
             {
@@ -527,9 +523,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
 
         /* Pass 3: Release all voices with max priority value */
         pChannel = g_SfxSoundChannels;
-        VoiceBit = SFX_FIRST_VOICE_BIT;
+        VoiceBit = 1 << SOUND_SFX_CHANNEL_START_INDEX;
 
-        for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
+        for( i = 0; i < SOUND_SFX_CHANNEL_COUNT; i++ )
         {
             if (ActiveVoices & VoiceBit)
             {
@@ -537,9 +533,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
                 {
                     UpdateFlags = pChannel->UpdateFlags;
 
-                    if (UpdateFlags & SOUND_UPDATE_VOICE_ACTIVE)
+                    if (UpdateFlags & SOUND_CHANNEL_UPDATE_VOICE_ACTIVE)
                     {
-                        pChannel->UpdateFlags = UpdateFlags | SOUND_UPDATE_PENDING_RELEASE;
+                        pChannel->UpdateFlags = UpdateFlags | SOUND_CHANNEL_UPDATE_PENDING_RELEASE;
                     }
                     else
                     {
@@ -558,9 +554,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
     {
         /* PATH 3: Release voices by identifier match */
         pChannel = g_SfxSoundChannels;
-        VoiceBit = SFX_FIRST_VOICE_BIT;
+        VoiceBit = 1 << SOUND_SFX_CHANNEL_START_INDEX;
 
-        for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
+        for( i = 0; i < SOUND_SFX_CHANNEL_COUNT; i++ )
         {
             if (ActiveVoices & VoiceBit)
             {
@@ -573,9 +569,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
                     {
                         UpdateFlags = pChannel->UpdateFlags;
 
-                        if (UpdateFlags & SOUND_UPDATE_VOICE_ACTIVE)
+                        if (UpdateFlags & SOUND_CHANNEL_UPDATE_VOICE_ACTIVE)
                         {
-                            pChannel->UpdateFlags = UpdateFlags | SOUND_UPDATE_PENDING_RELEASE;
+                            pChannel->UpdateFlags = UpdateFlags | SOUND_CHANNEL_UPDATE_PENDING_RELEASE;
                         }
                         else
                         {
@@ -592,9 +588,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
                     {
                         UpdateFlags = pChannel->UpdateFlags;
 
-                        if (UpdateFlags & SOUND_UPDATE_VOICE_ACTIVE)
+                        if (UpdateFlags & SOUND_CHANNEL_UPDATE_VOICE_ACTIVE)
                         {
-                            pChannel->UpdateFlags = UpdateFlags | SOUND_UPDATE_PENDING_RELEASE;
+                            pChannel->UpdateFlags = UpdateFlags | SOUND_CHANNEL_UPDATE_PENDING_RELEASE;
                         }
                         else
                         {
@@ -694,8 +690,6 @@ void FreeVoiceChannels( FSoundChannel* in_Channel, u32 in_Voice )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-#define SOUND_UPDATE_STEREO_LINKED ( 1 << 16 )    // Second channel of stereo pair
-
 void Sound_PlaySfxProgram( FSoundCommandParams* in_pCommandParams, u8* in_pProgramCounter1, u8* in_pProgramCounter2, s32 in_NoEvict )
 {
     FSoundChannel* channel;
@@ -716,13 +710,13 @@ void Sound_PlaySfxProgram( FSoundCommandParams* in_pCommandParams, u8* in_pProgr
     do
     {
         channel = &g_SfxSoundChannels[11];
-        voiceBit = 0x00800000;
+        voiceBit = 1 << (VOICE_COUNT - 1);
         activeVoices = ( g_Sound_SfxState.ActiveVoiceMask | g_Sound_SfxState.SuspendedVoiceMask ) | g_Sound_Cutscene_StreamState.VoicesInUseFlags;
         if( ( in_pProgramCounter1 != 0 ) && (in_pProgramCounter2 != 0 ) )
         {
             slotsRemaining = 11; 
             channel--;
-            voiceBit = 0x00400000;
+            voiceBit = 1 << (VOICE_COUNT - 2);
             while( slotsRemaining != 0 )
             {
                 if( !( activeVoices & ( voiceBit | ( voiceBit << 1 ) ) ) )
@@ -781,7 +775,7 @@ void Sound_PlaySfxProgram( FSoundCommandParams* in_pCommandParams, u8* in_pProgr
         FreeVoiceChannels( g_ActiveMusicChannels, channel->VoiceParams.AssignedVoiceNumber );
         if( in_pProgramCounter1 != 0 )
         {
-            channel->UpdateFlags |= SOUND_UPDATE_STEREO_LINKED;
+            channel->UpdateFlags |= SOUND_CHANNEL_UPDATE_STEREO_LINKED;
         }
     }
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_04 | SOUND_GLOBAL_UPDATE_08;
