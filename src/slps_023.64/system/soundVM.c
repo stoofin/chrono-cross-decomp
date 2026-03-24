@@ -1291,7 +1291,7 @@ void SoundVM_FE0B_800558cc( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_E0_80055944( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_UNKNOWN_20;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_VOICE_ACTIVE;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

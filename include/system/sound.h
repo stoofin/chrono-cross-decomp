@@ -8,7 +8,7 @@
 #define VOICE_INVALID_INDEX VOICE_COUNT
 #define VOICE_MASK_ALL ( 0xFFFFFFU )
 
-#define SOUND_CHANNEL_COUNT 0x20
+#define SOUND_CHANNEL_COUNT (0x20)
 #define SOUND_LFO_COUNT     (0x10)
 
 #define SOUND_SFX_CHANNEL_COUNT       (12) // Number of FSoundChannels assigned to SFX
@@ -61,15 +61,6 @@ typedef enum ESoundChannelConfigs
 #define SOUND_SFX_LEGATO      0x1
 #define SOUND_SFX_FULL_LENGTH 0x4
 
-#define SOUND_CHANNEL_UPDATE_SPU_VOICE    (SPU_VOICE_VOLL       | SPU_VOICE_VOLR)
-#define SOUND_CHANNEL_UPDATE_SPU_ADSR     (SPU_VOICE_ADSR_AMODE | SPU_VOICE_ADSR_SMODE | SPU_VOICE_ADSR_RMODE | \
-                                   SPU_VOICE_ADSR_AR    | SPU_VOICE_ADSR_DR    | SPU_VOICE_ADSR_SR | SPU_VOICE_ADSR_RR | SPU_VOICE_ADSR_SL)
-#define SOUND_CHANNEL_UPDATE_SPU_BASE_WOR (SPU_VOICE_WDSA       | SPU_VOICE_ADSR_AMODE | SPU_VOICE_ADSR_SMODE | \
-                                   SPU_VOICE_ADSR_AR    | SPU_VOICE_ADSR_DR    | SPU_VOICE_ADSR_SR | \
-                                   SPU_VOICE_ADSR_SL    | SPU_VOICE_LSAX)
-#define SOUND_CHANNEL_UPDATE_SPU_BASE     (SOUND_CHANNEL_UPDATE_SPU_BASE_WOR | SPU_VOICE_ADSR_RMODE | SPU_VOICE_ADSR_RR)
-#define SOUND_CHANNEL_UPDATE_SPU_ALL      (SOUND_CHANNEL_UPDATE_SPU_BASE     | SOUND_CHANNEL_UPDATE_SPU_VOICE    | SPU_VOICE_PITCH)
-
 typedef enum ESoundUpdateFlags
 {
     SOUND_CHANNEL_UPDATE_VIBRATO           = 1U <<  0,
@@ -82,9 +73,10 @@ typedef enum ESoundUpdateFlags
     SOUND_CHANNEL_UPDATE_OVERLAY           = 1U <<  8,
     SOUND_CHANNEL_UPDATE_ALTERNATIVE       = 1U <<  9,
     SOUND_CHANNEL_UPDATE_UNKNOWN_12        = 1U << 12,
-    SOUND_CHANNEL_UPDATE_STEREO_LINKED     = 1U << 16,
+    SOUND_CHANNEL_UPDATE_STEREO_LINKED     = 1U << 16, // I do not think this means what I think it means
     SOUND_CHANNEL_UPDATE_UNKNOWN_17        = 1U << 17,
-    SOUND_CHANNEL_UPDATE_UNKNOWN_20        = 1U << 20,
+    SOUND_CHANNEL_UPDATE_VOICE_ACTIVE      = 1U << 20,  // Voice is actively processing  
+    SOUND_CHANNEL_UPDATE_PENDING_RELEASE   = 1U << 21,  // Voice marked for release
     SOUND_CHANNEL_UPDATE_LOCK_ATTACK_MODE  = 1U << 24,
     SOUND_CHANNEL_UPDATE_LOCK_SUSTAIN_RATE = 1U << 27,
     SOUND_CHANNEL_UPDATE_LOCK_RELEASE_RATE = 1U << 28
@@ -259,14 +251,15 @@ typedef enum EPanMode {
     PAN_MODE_CENTER = 3,
 } EPanMode;
 
+#define AKAO_NUM_PROGRAMS (0x100)
 typedef struct FAkaoFileBlob
 {
-    /* 0x000 */ s32  Magic;                          // AKAO
-    /* 0x004 */ u8   unk_0x4[0xC];                   // Padding? Version? Counts? Music Akao blobs have a different flag in here...
-    /* 0x010 */ u16  ProgramOffsets[0x100][2];       // Offsets into bytecode - indexed by Sfx ID
-    /* 0x410 */ u16  MetadataTableA[0x100];          // Some per sfx table
-    /* 0x610 */ u16  AdditionalProgramCounts[0x100]; // Per Sfx, how many additional programs to trigger after the given Sfx index
-    /* 0x810 */ u8   ProgramData[1];                 // Sfx bytecode
+    /* 0x000 */ s32  Magic;                                      // AKAO
+    /* 0x004 */ u8   unk_0x4[0xC];                               // Padding? Version? Counts? Music Akao blobs have a different flag in here...
+    /* 0x010 */ u16  ProgramOffsets[2][AKAO_NUM_PROGRAMS];       // Offsets into bytecode - indexed by Sfx ID
+    /* 0x410 */ u16  MetadataTableA[AKAO_NUM_PROGRAMS];          // Some per sfx table
+    /* 0x610 */ u16  AdditionalProgramCounts[AKAO_NUM_PROGRAMS]; // Per Sfx, how many additional programs to trigger after the given Sfx index
+    /* 0x810 */ u8   ProgramData[1];                             // Sfx bytecode
 } FAkaoFileBlob;
 static_assert( offsetof(FAkaoFileBlob, ProgramOffsets) == 0x010 );
 static_assert( offsetof(FAkaoFileBlob, MetadataTableA) == 0x410 );
@@ -279,10 +272,10 @@ static_assert( sizeof(FAkaoFileBlob) - align(sizeof(member_type(FAkaoFileBlob, P
 // Maybe they are both u8?
 typedef enum EMixMode
 {
-    MIX_MODE_STEREO        = 1,       /* written at init; not meaningfully read in observed paths - likely historical or reserved */
-    MIX_MODE_MONO          = 2,       /* force dual-mono: bypasses pan law, L=R via 0x440a scale; affects music, SFX, and CD audio */
+    MIX_MODE_STEREO         = 1,       /* written at init; not meaningfully read in observed paths - likely historical or reserved */
+    MIX_MODE_MONO           = 2,       /* force dual-mono: bypasses pan law, L=R via 0x440a scale; affects music, SFX, and CD audio */
+    MIX_FLAG_MASTER_FADING  = 1U << 8  /* secondary music fade/teardown in progress; enables periodic fade processing, cleared when channels die */
 } EMixMode;
-#define MIX_FLAG_MASTER_FADING  (1U << 8) /* secondary music fade/teardown in progress; enables periodic fade processing, cleared when channels die */
 
 typedef enum EControlLatches
 {
@@ -488,11 +481,12 @@ typedef struct
 static_assert( sizeof(FAkaoSequence) - align(sizeof(member_type(FAkaoSequence,Payload))) == 0x40 );
 
 
-typedef enum ESoundChannelStatusFlags
+typedef enum EMusicContextStatusFlags
 {
-    VOICE_ALLOC_FLAG_EXHAUSTED  = 1U << 0, // No voice available even after stealing
-    VOICE_ALLOC_FLAG_STOLE      = 1U << 1  // Voice stealing occurred
-} ESoundChannelStatusFlags;
+    VOICE_ALLOC_FLAG_EXHAUSTED      = 1U << 0, // No voice available even after stealing
+    VOICE_ALLOC_FLAG_STOLE          = 1U << 1, // Voice stealing occurred
+    SOUND_BANK_FLAG_ALT_SAMPLE_BANK = 1U << 5  // 0x20 toggles whether we use the alternate sample bank
+} EMusicContextStatusFlags;
 
 typedef struct 
 {

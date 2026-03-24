@@ -4,8 +4,6 @@
 #include "system/soundCommand.h"
 
 
-// 0x20 toggles whether we use the alternate sample bank
-#define SOUND_BANK_FLAG_ALT_SAMPLE_BANK      (1u << 5)   // 0x20
 
 // the instrument index window that is eligible for bank remap
 #define SOUND_BANK_REMAP_BASE_INDEX          0x20u       // first remappable instrument
@@ -18,9 +16,9 @@ extern s32 D_80094FAC[];
 extern s32 D_80094FFC;
 
 //----------------------------------------------------------------------------------------------------------------------
-u16 Sound_MapInstrumentToAltSampleBank( u32 in_Flags, FSoundChannel* in_pChannel )
+u16 Sound_MapInstrumentToAltSampleBank( u32 in_StatusFlags, FSoundChannel* in_pChannel )
 {
-    if( in_Flags & SOUND_BANK_FLAG_ALT_SAMPLE_BANK &&
+    if( in_StatusFlags & SOUND_BANK_FLAG_ALT_SAMPLE_BANK &&
             (in_pChannel->InstrumentIndex - SOUND_BANK_REMAP_BASE_INDEX) < SOUND_BANK_REMAP_COUNT
     )
     {
@@ -32,9 +30,9 @@ u16 Sound_MapInstrumentToAltSampleBank( u32 in_Flags, FSoundChannel* in_pChannel
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-u16 Sound_MapInstrumentToBaseSampleBank( u32 in_Flags, FSoundChannel* in_Channel )
+u16 Sound_MapInstrumentToBaseSampleBank( u32 in_StatusFlags, FSoundChannel* in_Channel )
 {
-    if( (in_Flags & SOUND_BANK_FLAG_ALT_SAMPLE_BANK) && 
+    if( (in_StatusFlags & SOUND_BANK_FLAG_ALT_SAMPLE_BANK) && 
             (in_Channel->InstrumentIndex - SOUND_BANK_REMAP_BASE_INDEX) < SOUND_BANK_REMAP_COUNT
     )
     {
@@ -404,9 +402,6 @@ void Sound_KillMusicContext( FSoundMusicContext* in_Context, FSoundChannel* in_p
 #ifndef NON_MATCHING
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound2", Sound_EvictSfxVoice);
 #else
-#define SOUND_CHANNEL_UPDATE_VOICE_ACTIVE         ( 1 << 20 )  // Voice is actively processing  
-#define SOUND_CHANNEL_UPDATE_PENDING_RELEASE      ( 1 << 21 )  // Voice marked for release
-
 #define RELEASE_MODE_PRIORITY   0x40000000
 #define RELEASE_MODE_PAIR       0x80000000  // Negative value check
 
