@@ -16,7 +16,7 @@ void Sound_Cutscene_StopStream()
         SetVoiceRepeatAddr( g_Sound_Cutscene_StreamState.VoiceIndex + 1, 0x1030U );
         g_Sound_SfxState.ReverbVoiceFlags &= ~g_Sound_Cutscene_StreamState.VoicesInUseFlags;
         g_Sound_Cutscene_StreamState.VoicesInUseFlags = 0;
-        g_Sound_GlobalFlags.UpdateFlags |= 0x100;
+        g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_08;
     }
 }
 
@@ -45,7 +45,7 @@ s32 Sound_Cutscene_FindFreeVoicePair()
             return VoiceIndex + 0xb;
         }
 
-        Sound_EvictSfxVoice( 0, 0x40000000 );
+        Sound_EvictSfxVoice( 0, 1 << 30 );
 
     } while( BusyMask != ( g_Sound_SfxState.ActiveVoiceMask | g_Sound_SfxState.SuspendedVoiceMask ) );
 
@@ -82,7 +82,7 @@ void Sound_Cutscene_InitVoice( u32 in_Voice, s32 in_PanMode, u32 in_StartAddr, u
             VolR = ( VolHalfQ16 >> 0x11 ) + ( VolHalfQ16 >> 0x12 );
             VolL = VolR;
         }
-        else
+        else // PAN_MODE_STEREO
         {
             u8 Mask = 0xFF;
             VolL = ( ( g_Sound_Cutscene_StreamState.Volume * g_Sound_StereoPanGainTableQ15[g_Sound_Cutscene_StreamState.PanPosition] ) >> 0x10 );
@@ -122,15 +122,15 @@ void Sound_Cmd_E4_SetCutsceneVolume( FSoundCommandParams* in_Params )
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_E5_FadeOutCutscene( FSoundCommandParams* in_Params )
 {
-    u16 var_a1;
+    u16 Length;
 
-    var_a1 = 1;
+    Length = 1;
     if( in_Params->Param1 != 0 )
     {
-        var_a1 = (u16)in_Params->Param1;
+        Length = (u16)in_Params->Param1;
     }
-    g_Sound_Cutscene_StreamState.VolFadeStepSize = (s16) ((s16) (in_Params->Param2 - g_Sound_Cutscene_StreamState.Volume) / (s16) var_a1);
-    g_Sound_Cutscene_StreamState.VolFadeStepsRemaining = (s16) var_a1;
+    g_Sound_Cutscene_StreamState.VolFadeStepSize = (s16) ((s16) (in_Params->Param2 - g_Sound_Cutscene_StreamState.Volume) / (s16) Length);
+    g_Sound_Cutscene_StreamState.VolFadeStepsRemaining = (s16) Length;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

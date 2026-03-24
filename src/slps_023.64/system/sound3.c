@@ -181,96 +181,113 @@ void func_80051F7C(void) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-
 void func_800535E4(FSoundChannel*, u32);
-extern u8 D_80094F8E;
 extern s32 D_80094FFC;
 
-u32 func_80052458(FSoundChannel* arg0, s32 arg1) {
-    FSoundChannel* chan;
-    s32 tempoStep;
-    u32 chanMask;
-    u32 chanBit;
-    u32 tempoScale;
-    u32 updateFlags;    
-    tempoStep = (u16)(g_pActiveMusicContext->Tempo >> 16);
+u32 Music_UpdateChannels( FSoundChannel* in_pChannel, EMusicContextType in_ContextType )
+{
+    FSoundChannel* pChannel;
+    s32 TempoStep;
+    u32 ActiveChannelMask;
+    u32 ChannelBit;
+    u32 TempoScale;
+    u32 GlobalUpdateFlags;    
 
-    tempoScale = D_80094F8E;
-    if (tempoScale != 0) {
-        if (tempoScale < 0x80U) {
-            tempoStep += (tempoStep * tempoScale) >> 7;
-        } else {
-            tempoStep = (tempoStep * tempoScale) >> 8;
+    TempoStep = (u16)(g_pActiveMusicContext->Tempo >> 16);
+    TempoScale = (u8)(g_Sound_TempoScale >> 16);
+
+    if( TempoScale != 0 )
+    {
+        if( TempoScale < 0x80U )
+        {
+            TempoStep += ( TempoStep * TempoScale ) >> 7;
+        }
+        else
+        {
+            TempoStep = ( TempoStep * TempoScale ) >> 8;
         }
     }
 
-    g_pActiveMusicContext->TempoUpdate += tempoStep;
+    g_pActiveMusicContext->TempoUpdate += TempoStep;
 
-    if ((g_pActiveMusicContext->TempoUpdate & 0xFFFF0000) || (D_80094FFC & 4)) {
+    if( ( g_pActiveMusicContext->TempoUpdate & 0xFFFF0000 ) || ( D_80094FFC & (1 << 2) ) )
+    {
         g_pActiveMusicContext->TempoUpdate &= 0xFFFF;
 
         do {
             do {
-                chan = arg0;
-                chanMask = g_pActiveMusicContext->ActiveChannelMask;
-                chanBit = 1;
-    
+                pChannel = in_pChannel;
+                ActiveChannelMask = g_pActiveMusicContext->ActiveChannelMask;
+                ChannelBit = 1;
+
                 do {
-                    if (chanMask & chanBit) {
-                        --chan->Length1;
-                        --chan->Length2;
-    
-                        if (chan->Length1 == 0) {
-                            func_800535E4(chan, chanBit);
-                        } else if (chan->Length2 == 0) {
-                            g_pActiveMusicContext->PendingKeyOffMask |= chanBit;
+                    if( ActiveChannelMask & ChannelBit )
+                    {
+                        pChannel->Length1--;
+                        pChannel->Length2--;
+
+                        if( pChannel->Length1 == 0 )
+                        {
+                            func_800535E4( pChannel, ChannelBit );
                         }
-    
-                        Sound_UpdateSlidesAndDelays(chan, chanBit, 0);
-                        chanMask &= ~chanBit;
+                        else if( pChannel->Length2 == 0 )
+                        {
+                            g_pActiveMusicContext->PendingKeyOffMask |= ChannelBit;
+                        }
+
+                        Sound_UpdateSlidesAndDelays( pChannel, ChannelBit, SOUND_CHANNEL_TYPE_MUSIC );
+                        ActiveChannelMask &= ~ChannelBit;
                     }
-    
-                    ++chan;
-                    chanBit <<= 1;
-                } while (chanMask != 0);
-    
-                if (g_pActiveMusicContext->TempoSlideLength != 0) {
-                    --g_pActiveMusicContext->TempoSlideLength;
+
+                    pChannel++;
+                    ChannelBit <<= 1;
+                } while( ActiveChannelMask != 0 );
+
+                if( g_pActiveMusicContext->TempoSlideLength != 0 )
+                {
+                    g_pActiveMusicContext->TempoSlideLength--;
                     g_pActiveMusicContext->Tempo += g_pActiveMusicContext->TempoSlideStep;
                 }
-    
-                if (g_pActiveMusicContext->ReverbDepthSlideLength != 0) {
-                    --g_pActiveMusicContext->ReverbDepthSlideLength;
+
+                if( g_pActiveMusicContext->ReverbDepthSlideLength != 0 )
+                {
+                    g_pActiveMusicContext->ReverbDepthSlideLength--;
                     g_pActiveMusicContext->RevDepth += g_pActiveMusicContext->ReverbDepthSlideStep;
-    
-                    updateFlags = g_Sound_GlobalFlags.UpdateFlags;
-                    if (arg1 == 0) {
-                        g_Sound_GlobalFlags.UpdateFlags = (updateFlags) | 0x80;
+
+                    GlobalUpdateFlags = g_Sound_GlobalFlags.UpdateFlags;
+                    if( in_ContextType == MUSIC_CONTEXT_ACTIVE )
+                    {
+                        g_Sound_GlobalFlags.UpdateFlags = GlobalUpdateFlags | SOUND_GLOBAL_UPDATE_07;
                     }
                 }
-    
-                if (g_pActiveMusicContext->TimerLower == 0) {
+
+                if( g_pActiveMusicContext->TimerLower == 0 )
+                {
                     continue;
                 }
-    
-                ++g_pActiveMusicContext->TimerLowerCurrent;
-                if (g_pActiveMusicContext->TimerLowerCurrent != g_pActiveMusicContext->TimerLower) {
+
+                g_pActiveMusicContext->TimerLowerCurrent++;
+                if( g_pActiveMusicContext->TimerLowerCurrent != g_pActiveMusicContext->TimerLower )
+                {
                     continue;
                 }
-    
+
                 g_pActiveMusicContext->TimerLowerCurrent = 0;
-                ++g_pActiveMusicContext->TimerUpperCurrent;
-                if (g_pActiveMusicContext->TimerUpperCurrent != g_pActiveMusicContext->TimerUpper) {
+                g_pActiveMusicContext->TimerUpperCurrent++;
+                if( g_pActiveMusicContext->TimerUpperCurrent != g_pActiveMusicContext->TimerUpper )
+                {
                     continue;
                 }
-    
+
                 g_pActiveMusicContext->TimerUpperCurrent = 0;
-                ++g_pActiveMusicContext->TimerTopCurrent;
-                if (arg1 == 0 && g_Music_LoopCounter != 0) {
-                    --g_Music_LoopCounter;
+                g_pActiveMusicContext->TimerTopCurrent++;
+
+                if( in_ContextType == MUSIC_CONTEXT_ACTIVE && g_Music_LoopCounter != 0 )
+                {
+                    g_Music_LoopCounter--;
                 }
-            } while (arg1 == 0 && g_Music_LoopCounter != 0);
-        } while(0);
+            } while( in_ContextType == MUSIC_CONTEXT_ACTIVE && g_Music_LoopCounter != 0 );
+        } while( 0 );
     }
 
     return g_pActiveMusicContext->ActiveChannelMask;
@@ -356,7 +373,7 @@ void func_80052FB8( FSoundChannel* in_pChannel, u32 in_Note )
     in_pChannel->VoiceParams.StartAddress = InstrumentInfo->StartAddr;
     in_pChannel->VoiceParams.LoopAddress = InstrumentInfo->LoopAddr;
 
-    if( !( UpdateFlags & SOUND_UPDATE_LOCK_ATTACK_RATE ) )
+    if( !( UpdateFlags & SOUND_CHANNEL_UPDATE_LOCK_ATTACK_RATE ) )
     {
         in_pChannel->VoiceParams.AdsrLower = pEntry[3] << SOUND_ADSR_ATTACK_RATE_SHIFT; // AdsrAttackRate
     }
@@ -371,7 +388,7 @@ void func_80052FB8( FSoundChannel* in_pChannel, u32 in_Note )
         | SOUND_ADSR_SUS_LEVEL_MASK
     );
 
-    if( !( UpdateFlags & SOUND_UPDATE_LOCK_SUSTAIN_RATE ) )
+    if( !( UpdateFlags & SOUND_CHANNEL_UPDATE_LOCK_SUSTAIN_RATE ) )
     {
         in_pChannel->VoiceParams.AdsrUpper &= ( SOUND_ADSR_UNKNOWN_MASK | SOUND_ADSR_RELEASE_RATE_MASK );
         in_pChannel->VoiceParams.AdsrUpper |= pEntry[4] << SOUND_ADSR_SUS_RATE_SHIFT; // AdsrSustainRate
@@ -403,7 +420,7 @@ void func_80052FB8( FSoundChannel* in_pChannel, u32 in_Note )
             break;
     }
 
-    if( ( UpdateFlags & SOUND_UPDATE_LOCK_RELEASE_RATE ) == 0 )
+    if( ( UpdateFlags & SOUND_CHANNEL_UPDATE_LOCK_RELEASE_RATE ) == 0 )
     {
         in_pChannel->VoiceParams.AdsrUpper &= ~SOUND_ADSR_RELEASE_RATE_MASK;
         in_pChannel->VoiceParams.AdsrUpper |= pEntry[6]; // ReleaseRate
@@ -513,7 +530,7 @@ s32 Sound_PlayKeymapNote( FSoundChannel* in_pChannel, s32 in_ChannelMask, s32 in
     in_pChannel->VoiceParams.StartAddress = InstrumentInfo->StartAddr;
     in_pChannel->VoiceParams.LoopAddress = InstrumentInfo->LoopAddr;
 
-    if( !( UpdateFlags & SOUND_UPDATE_LOCK_ATTACK_RATE ) )
+    if( !( UpdateFlags & SOUND_CHANNEL_UPDATE_LOCK_ATTACK_RATE ) )
     {
         in_pChannel->VoiceParams.AdsrLower = Keymap->AdsrAttackRate << SOUND_ADSR_ATTACK_RATE_SHIFT;
     }
@@ -528,7 +545,7 @@ s32 Sound_PlayKeymapNote( FSoundChannel* in_pChannel, s32 in_ChannelMask, s32 in
         | SOUND_ADSR_SUS_LEVEL_MASK 
     );
 
-    if( !( UpdateFlags & SOUND_UPDATE_LOCK_SUSTAIN_RATE ) )
+    if( !( UpdateFlags & SOUND_CHANNEL_UPDATE_LOCK_SUSTAIN_RATE ) )
     {
         in_pChannel->VoiceParams.AdsrUpper &= (SOUND_ADSR_UNKNOWN_MASK | SOUND_ADSR_RELEASE_RATE_MASK);
         in_pChannel->VoiceParams.AdsrUpper |= Keymap->AdsrSustainRate << SOUND_ADSR_SUS_RATE_SHIFT;
@@ -560,7 +577,7 @@ s32 Sound_PlayKeymapNote( FSoundChannel* in_pChannel, s32 in_ChannelMask, s32 in
             break;
     }
 
-    if( !( UpdateFlags & SOUND_UPDATE_LOCK_RELEASE_RATE ) )
+    if( !( UpdateFlags & SOUND_CHANNEL_UPDATE_LOCK_RELEASE_RATE ) )
     {
         in_pChannel->VoiceParams.AdsrUpper &= ~SOUND_ADSR_RELEASE_RATE_MASK;
         in_pChannel->VoiceParams.AdsrUpper |= Keymap->ReleaseRate;

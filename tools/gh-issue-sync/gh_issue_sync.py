@@ -1,32 +1,34 @@
 #!/usr/bin/env python3
 """
-issue-sync — Markdown ↔ GitHub Issues sync tool
-Location: ./tools/gh-issue-sync/issue_sync.py
+gh-issue-sync - Markdown <-> GitHub Issues sync tool
 
 Usage:
-    issue-sync check  [file]
-    issue-sync pull   [file]
-    issue-sync push   [file]
-    issue-sync sync   [file]
+    gh_issue_sync check  [file]
+    gh_issue_sync pull   [file]
+    gh_issue_sync push   [file]
+    gh_issue_sync sync   [file]
 
 On first run, a config.toml template is created and the tool exits.
 Fill in owner, repo, and token, then run again.
 """
+
+from __future__ import annotations
 
 import argparse
 import json
 import os
 import re
 import sys
+import tomllib
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Constants
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 TOOL_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = TOOL_DIR / "config.toml"
@@ -58,9 +60,9 @@ TODO_HEADER = """\
 -->
 """
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Utilities
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 def die(msg: str, code: int = 1) -> None:
     print(f"error: {msg}", file=sys.stderr)
@@ -71,9 +73,9 @@ def warn(msg: str) -> None:
     print(f"warning: {msg}", file=sys.stderr)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Config
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 @dataclass
 class Config:
@@ -98,65 +100,56 @@ class Config:
         return t
 
 
-CONFIG_TEMPLATE = """\
-# IMPORTANT: Keep this file out of git — add it to .gitignore.
-# your github username e.g. jdperos
-owner = ""
+# ---------------------------------------------------------------------------
+# Config definition
+# Each section: (section_name | None, header_comment | None, [(key, default, comment)])
+# This is the single source of truth for defaults and the generated template.
+# ---------------------------------------------------------------------------
 
-# repo name e.g. chrono-cross-decomp
-repo  = ""
-
-# from root directory
-file  = "todo.md"
-
-[auth]
-# Paste your GitHub personal access token here.
-# Needs 'repo' scope (or 'public_repo' for public repos).
-token = ""
-
-# Alternatively, leave token blank and set an env var instead:
-# token_env = "GITHUB_TOKEN"
-
-[sync]
-pull_comments = true
-push_comments = true
-"""
+CONFIG_SECTIONS: list[tuple] = [
+    (None, "# IMPORTANT: Keep this file out of git — add it to .gitignore.", [
+        ("owner", "",        "Your GitHub username e.g. jdperos"),
+        ("repo",  "",        "Repo name e.g. chrono-cross-decomp"),
+        ("file",  "todo.md", "Path to sync file from repo root"),
+    ]),
+    ("auth", None, [
+        ("token",     "", "Paste your GitHub personal access token here.\n# Needs 'repo' scope (or 'public_repo' for public repos)."),
+        ("token_env", "GITHUB_TOKEN", "Alternatively, leave token blank and set this env var instead"),
+    ]),
+    ("sync", None, [
+        ("pull_comments", True,  "Fetch comments when pulling"),
+        ("push_comments", True,  "Create/update comments when pushing"),
+    ]),
+]
 
 
-def _parse_toml(text: str) -> dict:
-    """Minimal TOML parser covering our config subset."""
-    result: dict = {}
-    section: dict = result
-    for line in text.splitlines():
-        # Strip inline comments
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if line.startswith("[") and line.endswith("]") and not line.startswith("[["):
-            key = line[1:-1].strip()
-            section = {}
-            result[key] = section
-        elif "=" in line:
-            k, _, v = line.partition("=")
-            k = k.strip()
-            v = v.strip()
-            # Strip inline comment from value
-            if "#" in v and not v.startswith('"'):
-                v = v[:v.index("#")].strip()
-            if v.startswith('"') and v.endswith('"'):
-                v = v[1:-1]
-            elif v.lower() == "true":
-                v = True
-            elif v.lower() == "false":
-                v = False
-            section[k] = v
-    return result
+def _toml_value(value: object) -> str:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, list):
+        items = ", ".join(f'"{v}"' for v in value)
+        return f"[{items}]"
+    return f'"{value}"'
+
+
+def write_default_config(path: Path) -> None:
+    lines: list[str] = []
+    for section_name, header_comment, fields in CONFIG_SECTIONS:
+        if header_comment:
+            lines.append(header_comment)
+        if section_name:
+            lines.append(f"\n[{section_name}]")
+        for key, default, comment in fields:
+            lines.append(f"# {comment}")
+            lines.append(f"{key} = {_toml_value(default)}")
+        lines.append("")
+    path.write_text("\n".join(lines), encoding="utf-8")
 
 
 def load_config() -> Config:
     if not CONFIG_PATH.exists():
         TOOL_DIR.mkdir(parents=True, exist_ok=True)
-        CONFIG_PATH.write_text(CONFIG_TEMPLATE)
+        write_default_config(CONFIG_PATH)
         print(
             f"Created config template at:\n"
             f"  {CONFIG_PATH}\n\n"
@@ -165,7 +158,9 @@ def load_config() -> Config:
         )
         sys.exit(0)
 
-    data = _parse_toml(CONFIG_PATH.read_text())
+    with CONFIG_PATH.open("rb") as f:
+        data = tomllib.load(f)
+
     owner = data.get("owner", "").strip()
     repo  = data.get("repo",  "").strip()
 
@@ -178,7 +173,7 @@ def load_config() -> Config:
     auth = data.get("auth", {})
     sync = data.get("sync", {})
 
-    token = auth.get("token", "").strip()
+    token     = auth.get("token",     "").strip()
     token_env = auth.get("token_env", "GITHUB_TOKEN")
 
     return Config(
@@ -207,9 +202,9 @@ def write_config(owner: str, repo: str, file: str = DEFAULT_FILE) -> None:
     )
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Tokeniser / Parser
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 _TOKEN_RE = re.compile(r'\[([^\]]*)\]')
 _LIST_PREFIX_RE = re.compile(r'^(\s*(?:\d+[.)]\s+|[-*+]\s+)|\s+)')
@@ -362,7 +357,7 @@ def _parse_comment_line(raw: str, line_no: int) -> Optional[ParsedCommentLine]:
 
     remainder = rest[last_end:].strip()
 
-    # Parse optional @author — text  (em-dash or hyphen accepted)
+    # Parse optional @author - text  (em-dash or hyphen accepted)
     author = None
     text = remainder
     m = re.match(r'@(\S+)\s+[—\-]\s+(.*)', remainder, re.DOTALL)
@@ -397,7 +392,7 @@ class ParsedDocument:
         while i < n:
             raw = lines[i]
 
-            # ── HTML comment tracking ──────────────────────────────────────
+            # HTML comment tracking 
             if in_html_comment:
                 if "-->" in raw:
                     in_html_comment = False
@@ -410,7 +405,7 @@ class ParsedDocument:
                 i += 1
                 continue
 
-            # ── Issue line? ────────────────────────────────────────────────
+            # Issue line? 
             if _has_token_kind(raw, "issue_new", "issue_num"):
                 parsed = _parse_issue_line(raw, i)
                 if parsed:
@@ -434,7 +429,7 @@ class ParsedDocument:
 
                     continue
 
-            # ── Comment line? ──────────────────────────────────────────────
+            # Comment line? 
             if (
                 current_block is not None
                 and current_block.issue_line.is_top_level
@@ -463,13 +458,13 @@ class ParsedDocument:
 
                     continue
 
-            # ── Everything else is local-only; leave it alone ─────────────
+            # Everything else is local-only; leave it alone 
             i += 1
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Rendering
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 def render_issue_line(
     indent: str,
@@ -536,9 +531,9 @@ def desc_lines_to_body(desc_lines: list[str]) -> str:
     return "\n".join(out)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # File Rewriter
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 class FileRewriter:
     """
@@ -582,9 +577,9 @@ class FileRewriter:
         return result
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # GitHub Client
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 class GitHubError(Exception):
     def __init__(self, status: int, message: str):
@@ -702,9 +697,9 @@ class GitHub:
         )
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Commands
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 def cmd_check(doc: ParsedDocument) -> list[str]:
     """Validate document. Returns list of human-readable error strings."""
@@ -770,7 +765,7 @@ def cmd_pull(doc: ParsedDocument, cfg: Config, gh: GitHub, path: Path) -> None:
         if isinstance(b.issue_line.issue_marker, int)
     }
 
-    # ── 1. Refresh existing tracked issues ───────────────────────────────────
+    # Refresh existing tracked issues 
     for block in doc.issue_blocks:
         il = block.issue_line
         if not isinstance(il.issue_marker, int):
@@ -870,7 +865,7 @@ def cmd_pull(doc: ParsedDocument, cfg: Config, gh: GitHub, path: Path) -> None:
 
             rw.insert_after(insert_after, lines_to_add)
 
-    # ── 2. Append new remote issues not tracked locally ───────────────────────
+    # Append new remote issues not tracked locally 
     try:
         all_remote = gh.list_issues(state="open")
     except GitHubError as e:
@@ -936,7 +931,7 @@ def cmd_push(doc: ParsedDocument, cfg: Config, gh: GitHub, path: Path) -> None:
         body = desc_lines_to_body(block.desc_lines) if il.is_top_level else ""
         actual_number: Optional[int] = None
 
-        # ── Create new issue ───────────────────────────────────────────────
+        # Create new issue 
         if il.issue_marker == "gh":
             try:
                 remote = gh.create_issue(il.title, body, il.labels)
@@ -960,7 +955,7 @@ def cmd_push(doc: ParsedDocument, cfg: Config, gh: GitHub, path: Path) -> None:
                 il.indent, actual_number, new_state, il.labels, il.title
             ))
 
-        # ── Update existing issue ─────────────────────────────────────────
+        # Update existing issue 
         elif isinstance(il.issue_marker, int):
             actual_number = il.issue_marker
 
@@ -984,7 +979,7 @@ def cmd_push(doc: ParsedDocument, cfg: Config, gh: GitHub, path: Path) -> None:
                     il.indent, actual_number, "closed", il.labels, il.title
                 ))
 
-        # ── Comments ───────────────────────────────────────────────────────
+        # Comments 
         if actual_number is None or not il.is_top_level or not cfg.push_comments:
             continue
 
@@ -1019,18 +1014,18 @@ def cmd_sync(doc: ParsedDocument, cfg: Config, gh: GitHub, path: Path) -> None:
             print(f"  {e}")
         sys.exit(1)
 
-    print("── pull ──")
+    print("-- pull --")
     cmd_pull(doc, cfg, gh, path)
 
-    print("── push ──")
+    print("-- push --")
     # Re-parse after pull so push sees the refreshed state
     doc2 = ParsedDocument(path.read_text().splitlines(keepends=True))
     cmd_push(doc2, cfg, gh, path)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # CLI
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 def resolve_path(file_arg: Optional[str], cfg_file: str) -> Path:
     if file_arg:

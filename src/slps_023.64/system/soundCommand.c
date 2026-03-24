@@ -352,9 +352,6 @@ void Sound_Cmd_C4_SetPanByMusicId( FSoundCommandParams* in_pCmd )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/soundCommand", Sound_Cmd_C5_FadePanByMusicId);
-#else
 void Sound_Cmd_C5_FadePanByMusicId( FSoundCommandParams* in_Params )
 {
     FSoundMusicContext* pMusicContext;
@@ -362,9 +359,10 @@ void Sound_Cmd_C5_FadePanByMusicId( FSoundCommandParams* in_Params )
     s32 Length;
     s32 TargetPan;
     s32 MusicId;
+    s32 PanStep;
 
     Length = 1;
-    if ( in_Params->Param2 != 0 )
+    if( in_Params->Param2 != 0 )
     {
         Length = in_Params->Param2;
     }
@@ -375,24 +373,30 @@ void Sound_Cmd_C5_FadePanByMusicId( FSoundCommandParams* in_Params )
     if ( MusicId == 0 || MusicId == g_pActiveMusicContext->MusicId )
     {
         pMusicContext = g_pActiveMusicContext;
-        pMusicContext->MasterPanStep = (s32)( TargetPan - pMusicContext->MasterPanOffset ) / Length;
+        pChannels = g_ActiveMusicChannels;
+        
+        TargetPan -= pMusicContext->MasterPanOffset;
+        PanStep = TargetPan / Length;
+        pMusicContext->MasterPanStep = PanStep;
         pMusicContext->MasterPanStepsRemaining = Length;
-        Sound_MarkActiveChannelsVolumeDirty( pMusicContext, g_ActiveMusicChannels );
-        return;
+        Sound_MarkActiveChannelsVolumeDirty( pMusicContext, pChannels );
     }
-
-    pMusicContext = g_pSuspendedMusicContext;
-
-    if ( pMusicContext == NULL || MusicId == 0 || MusicId != pMusicContext->MusicId )
+    else
     {
-        return;
+        if ( g_pSuspendedMusicContext == NULL || MusicId == 0 || MusicId != g_pSuspendedMusicContext->MusicId )
+        {
+            return;
+        }
+        pMusicContext = g_pSuspendedMusicContext;
+        pChannels = g_pSecondaryMusicChannels;
+        
+        TargetPan -= pMusicContext->MasterPanOffset;
+        PanStep = TargetPan / Length;
+        pMusicContext->MasterPanStep = PanStep;
+        pMusicContext->MasterPanStepsRemaining = Length;
+        Sound_MarkActiveChannelsVolumeDirty( pMusicContext, pChannels );
     }
-
-    pMusicContext->MasterPanStep = (s32)( TargetPan - pMusicContext->MasterPanOffset ) / Length;
-    pMusicContext->MasterPanStepsRemaining = Length;
-    Sound_MarkActiveChannelsVolumeDirty( pMusicContext, g_pSecondaryMusicChannels );
 }
-#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 void Sound_Cmd_70_SetCdVolume( FSoundCommandParams* in_pParams )
@@ -525,7 +529,7 @@ void Sound_Cmd_A8_SetAllSfxVolumeMod( FSoundCommandParams* in_Params )
     ChannelIndex = 0; 
     while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
     {
-        if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
+        if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25 ) )
         {
             pChannel->VolumeMod = ( in_Params->Param1 & 0x7F ) << 8;
             pChannel->VolumeModStepsRemaining = 0;
@@ -548,7 +552,7 @@ void Sound_Cmd_A9_FadeAllSfxVolumeMod( FSoundCommandParams* in_Params )
 
     while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
     {
-        if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
+        if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25 ) )
         {
             s16 Length = 1;
             if( in_Params->Param1 != 0 )
@@ -1051,24 +1055,31 @@ void Sound_Cmd_9A_RestoreMusic( FSoundCommandParams* in_Params )
 {
     if( g_pActiveMusicContext->SuspendedChannelMask != 0 )
     {
-        FSoundChannel* c = g_ActiveMusicChannels;
-        int var_a2 = g_pActiveMusicContext->SuspendedChannelMask;
-        int var_a1 = 1;
-        u_int temp_v1;
+        FSoundChannel* pChannel = g_ActiveMusicChannels;
+        s32 SuspendedChannelMask = g_pActiveMusicContext->SuspendedChannelMask;
+        s32 Mask = 1;
+        u32 ActiveChannelMask;
         do {
-            if( var_a2 & var_a1 )
+            if( SuspendedChannelMask & Mask )
             {
-                var_a2 &= ~var_a1;
-                c->VoiceParams.VoiceParamFlags |= 0x2B13;
+                SuspendedChannelMask &= ~Mask;
+                pChannel->VoiceParams.VoiceParamFlags |= ( 
+                   VOICE_PARAM_VOLUME | 
+                   VOICE_PARAM_SAMPLE_RATE |
+                   VOICE_PARAM_ADSR_AMODE | 
+                   VOICE_PARAM_ADSR_SMODE |
+                   VOICE_PARAM_ADSR_AR | 
+                   VOICE_PARAM_ADSR_SR 
+               );
             }
-            var_a1 *= 2;
-            ++c;
-        } while( var_a2 != 0 );
+            Mask <<= 1;
+            pChannel++;
+        } while( SuspendedChannelMask != 0 );
 
-        temp_v1 = g_pActiveMusicContext->SuspendedChannelMask;
+        ActiveChannelMask = g_pActiveMusicContext->SuspendedChannelMask;
         g_pActiveMusicContext->SuspendedChannelMask = 0;
-        g_pActiveMusicContext->ActiveChannelMask = temp_v1;
-        g_Sound_GlobalFlags.UpdateFlags |= 0x100;
+        g_pActiveMusicContext->ActiveChannelMask = ActiveChannelMask;
+        g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_08;
     }
     D_80094FFC &= ~(1 << 0);
 }
@@ -1091,7 +1102,7 @@ void Sound_Cmd_9D_SuspendSfx( FSoundCommandParams* in_Params )
         ChannelIndex = 0; 
         while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
         {
-            if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & 0x02000000 ) )
+            if( ( ActiveChannelMask & CurrentChannelMask ) && ( pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25 ) )
             {
                 ActiveChannelMask &= ~CurrentChannelMask;
             }
@@ -1244,7 +1255,7 @@ void Sound_Cmd_AF_UnmuteSfx( FSoundCommandParams* in_Params )
         while( ChannelIndex < SOUND_SFX_CHANNEL_COUNT )
         {
             VolumeMod = &g_Sound_MutedSfxVolumes[ ChannelIndex ];
-            if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & 0x02000000 ) )
+            if( ( ActiveChannelMask & CurrentChannelMask ) && !( pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25 ) )
             {
                 pChannel->VolumeModStep = (s16)( ( *VolumeMod << 8 ) + 0x80 ) / Length; // Q8 fixed point, +0x80 for rounding
                 pChannel->VolumeMod = 0;

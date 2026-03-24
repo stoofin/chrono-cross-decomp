@@ -8,77 +8,78 @@
 #define VOICE_INVALID_INDEX VOICE_COUNT
 #define VOICE_MASK_ALL ( 0xFFFFFFU )
 
-#define SOUND_CHANNEL_COUNT 0x20
+#define SOUND_CHANNEL_COUNT (0x20)
 #define SOUND_LFO_COUNT     (0x10)
 
-#define SOUND_SFX_CHANNEL_START_INDEX (12) // Starting voice in th SPU from which SFX can be assigned
 #define SOUND_SFX_CHANNEL_COUNT       (12) // Number of FSoundChannels assigned to SFX
+#define SOUND_SFX_CHANNEL_START_INDEX (VOICE_COUNT - SOUND_SFX_CHANNEL_COUNT) // Starting voice in th SPU from which SFX can be assigned
+#define SOUND_SFX_CHANNEL_LAST_INDEX  (VOICE_COUNT) // Last voice in th SPU from which SFX can be assigned
 
 #define MUSIC_ID_ANY (0)
 
-// Voice parameter update flags
-#define VOICE_PARAM_VOLUME_L      (1 << 0) /* volume (left) */
-#define VOICE_PARAM_VOLUME_R      (1 << 1) /* volume (right) */
-#define VOICE_PARAM_VOLUME        (VOICE_PARAM_VOLUME_L | VOICE_PARAM_VOLUME_R)
-#define	VOICE_PARAM_VOLMODE_L     (1 <<  2) /* volume mode (left) */
-#define	VOICE_PARAM_VOLMODE_R     (1 <<  3) /* volume mode (right) */
-#define VOICE_PARAM_SAMPLE_RATE   (1 <<  4) /* tone (pitch setting)  */
-#define	VOICE_PARAM_NOTE          (1 <<  5) /* tone (note setting)  */
-#define	VOICE_PARAM_SAMPLE_NOTE   (1 <<  6) /* waveform data sample note */
-#define VOICE_PARAM_START_ADDR    (1 <<  7) /* waveform data start address */
-#define	VOICE_PARAM_ADSR_AMODE    (1 <<  8) /* ADSR Attack rate mode */
-#define	VOICE_PARAM_ADSR_SMODE    (1 <<  9) /* ADSR Sustain rate mode */
-#define	VOICE_PARAM_ADSR_RMODE    (1 << 10) /* ADSR Release rate mode */
-#define	VOICE_PARAM_ADSR_AR       (1 << 11) /* ADSR Attack rate */
-#define	VOICE_PARAM_ADSR_DR       (1 << 12) /* ADSR Decay rate */
-#define	VOICE_PARAM_ADSR_SR       (1 << 13) /* ADSR Sustain rate */
-#define	VOICE_PARAM_ADSR_RR       (1 << 14) /* ADSR Release rate */
-#define	VOICE_PARAM_ADSR_SL       (1 << 15) /* ADSR Sustain level */
-#define VOICE_PARAM_ADSR_LOWER    (VOICE_PARAM_ADSR_AMODE | VOICE_PARAM_ADSR_AR | VOICE_PARAM_ADSR_DR | VOICE_PARAM_ADSR_SL)
-#define VOICE_PARAM_ADSR_UPPER    (VOICE_PARAM_ADSR_SMODE | VOICE_PARAM_ADSR_RMODE | VOICE_PARAM_ADSR_SR | VOICE_PARAM_ADSR_RR)
-#define VOICE_PARAM_ADSR_FULL     (VOICE_PARAM_ADSR_LOWER | VOICE_PARAM_ADSR_UPPER)
-#define VOICE_PARAM_LOOP_ADDR     (1 << 16) /* start address for loop */
-#define	VOICE_PARAM_ADSR_ADSR1    (1 << 17) /* ADSR adsr1 for `VagAtr'  */
-#define	VOICE_PARAM_ADSR_ADSR2    (1 << 18) /* ADSR adsr2 for `VagAtr'  */
+typedef enum EVoiceParamFlags
+{
+    VOICE_PARAM_VOLUME_L      = 1U <<  0, /* volume (left) */
+    VOICE_PARAM_VOLUME_R      = 1U <<  1, /* volume (right) */
+    VOICE_PARAM_VOLUME        = VOICE_PARAM_VOLUME_L | VOICE_PARAM_VOLUME_R,
+    VOICE_PARAM_VOLMODE_L     = 1U <<  2, /* volume mode (left) */
+    VOICE_PARAM_VOLMODE_R     = 1U <<  3, /* volume mode (right) */
+    VOICE_PARAM_SAMPLE_RATE   = 1U <<  4, /* tone (pitch setting) */
+    VOICE_PARAM_NOTE          = 1U <<  5, /* tone (note setting) */
+    VOICE_PARAM_SAMPLE_NOTE   = 1U <<  6, /* waveform data sample note */
+    VOICE_PARAM_START_ADDR    = 1U <<  7, /* waveform data start address */
+    VOICE_PARAM_ADSR_AMODE    = 1U <<  8, /* ADSR Attack rate mode */
+    VOICE_PARAM_ADSR_SMODE    = 1U <<  9, /* ADSR Sustain rate mode */
+    VOICE_PARAM_ADSR_RMODE    = 1U << 10, /* ADSR Release rate mode */
+    VOICE_PARAM_ADSR_AR       = 1U << 11, /* ADSR Attack rate */
+    VOICE_PARAM_ADSR_DR       = 1U << 12, /* ADSR Decay rate */
+    VOICE_PARAM_ADSR_SR       = 1U << 13, /* ADSR Sustain rate */
+    VOICE_PARAM_ADSR_RR       = 1U << 14, /* ADSR Release rate */
+    VOICE_PARAM_ADSR_SL       = 1U << 15, /* ADSR Sustain level */
+    VOICE_PARAM_ADSR_LOWER    = VOICE_PARAM_ADSR_AMODE | VOICE_PARAM_ADSR_AR | VOICE_PARAM_ADSR_DR | VOICE_PARAM_ADSR_SL,
+    VOICE_PARAM_ADSR_UPPER    = VOICE_PARAM_ADSR_SMODE | VOICE_PARAM_ADSR_RMODE | VOICE_PARAM_ADSR_SR | VOICE_PARAM_ADSR_RR,
+    VOICE_PARAM_ADSR_FULL     = VOICE_PARAM_ADSR_LOWER | VOICE_PARAM_ADSR_UPPER,
+    VOICE_PARAM_LOOP_ADDR     = 1U << 16, /* start address for loop */
+    VOICE_PARAM_ADSR_ADSR1    = 1U << 17, /* ADSR adsr1 for `VagAtr' */
+    VOICE_PARAM_ADSR_ADSR2    = 1U << 18, /* ADSR adsr2 for `VagAtr' */
+} EVoiceParamFlags;
 
-#define SOUND_CHANNEL_TYPE_MUSIC 0x0
-#define SOUND_CHANNEL_TYPE_SOUND 0x1
-#define SOUND_CHANNEL_TYPE_MENU  0x2
+typedef enum ESoundChannelTypes
+{
+    SOUND_CHANNEL_TYPE_MUSIC = 0,
+    SOUND_CHANNEL_TYPE_SFX   = 1,
+    SOUND_CHANNEL_TYPE_MENU  = 2
+} ESoundChannelTypes;
 
-#define SOUND_CHANNEL_CONFIG_STEREO          ( 1 << 0 )
-#define SOUND_CHANNEL_CONFIG_MONO            ( 1 << 1 )
-#define SOUND_CHANNEL_CONFIG_STEREO_CHANNELS ( 1 << 2 )
+typedef enum ESoundChannelConfigs
+{
+    SOUND_CHANNEL_CONFIG_STEREO          = 1U << 0,
+    SOUND_CHANNEL_CONFIG_MONO            = 1U << 1,
+    SOUND_CHANNEL_CONFIG_STEREO_CHANNELS = 1U << 2
+} ESoundChannelConfigs;
 
 #define SOUND_SFX_LEGATO      0x1
 #define SOUND_SFX_FULL_LENGTH 0x4
 
-#define SOUND_UPDATE_SPU_VOICE    (SPU_VOICE_VOLL       | SPU_VOICE_VOLR)
-#define SOUND_UPDATE_SPU_ADSR     (SPU_VOICE_ADSR_AMODE | SPU_VOICE_ADSR_SMODE | SPU_VOICE_ADSR_RMODE | \
-                                   SPU_VOICE_ADSR_AR    | SPU_VOICE_ADSR_DR    | SPU_VOICE_ADSR_SR | SPU_VOICE_ADSR_RR | SPU_VOICE_ADSR_SL)
-#define SOUND_UPDATE_SPU_BASE_WOR (SPU_VOICE_WDSA       | SPU_VOICE_ADSR_AMODE | SPU_VOICE_ADSR_SMODE | \
-                                   SPU_VOICE_ADSR_AR    | SPU_VOICE_ADSR_DR    | SPU_VOICE_ADSR_SR | \
-                                   SPU_VOICE_ADSR_SL    | SPU_VOICE_LSAX)
-#define SOUND_UPDATE_SPU_BASE     (SOUND_UPDATE_SPU_BASE_WOR | SPU_VOICE_ADSR_RMODE | SPU_VOICE_ADSR_RR)
-#define SOUND_UPDATE_SPU_ALL      (SOUND_UPDATE_SPU_BASE     | SOUND_UPDATE_SPU_VOICE    | SPU_VOICE_PITCH)
-
 typedef enum ESoundUpdateFlags
 {
-    SOUND_UPDATE_VIBRATO           = ( 1 <<  0 ),
-    SOUND_UPDATE_TREMOLO           = ( 1 <<  1 ),
-    SOUND_UPDATE_PAN_LFO           = ( 1 <<  2 ),
-    SOUND_UPDATE_DRUM_MODE         = ( 1 <<  3 ),
-    SOUND_UPDATE_SIDE_CHAIN_PITCH  = ( 1 <<  4 ),
-    SOUND_UPDATE_SIDE_CHAIN_VOL    = ( 1 <<  5 ),
-    SOUND_UPDATE_UNKNOWN_01        = ( 1 <<  6 ),
-    SOUND_UPDATE_OVERLAY           = ( 1 <<  8 ),
-    SOUND_UPDATE_ALTERNATIVE       = ( 1 <<  9 ),
-    SOUND_UPDATE_UNKNOWN_12        = ( 1 << 12 ),
-    SOUND_UPDATE_UNKNOWN_16        = ( 1 << 16 ),
-    SOUND_UPDATE_UNKNOWN_17        = ( 1 << 17 ),
-    SOUND_UPDATE_UNKNOWN_20        = ( 1 << 20 ),
-    SOUND_UPDATE_LOCK_ATTACK_RATE  = ( 1 << 24 ),
-    SOUND_UPDATE_LOCK_SUSTAIN_RATE = ( 1 << 27 ),
-    SOUND_UPDATE_LOCK_RELEASE_RATE = ( 1 << 28 )
+    SOUND_CHANNEL_UPDATE_VIBRATO           = 1U <<  0,
+    SOUND_CHANNEL_UPDATE_TREMOLO           = 1U <<  1,
+    SOUND_CHANNEL_UPDATE_PAN_LFO           = 1U <<  2,
+    SOUND_CHANNEL_UPDATE_DRUM_MODE         = 1U <<  3,
+    SOUND_CHANNEL_UPDATE_SIDE_CHAIN_PITCH  = 1U <<  4,
+    SOUND_CHANNEL_UPDATE_SIDE_CHAIN_VOL    = 1U <<  5,
+    SOUND_CHANNEL_UPDATE_UNKNOWN_06        = 1U <<  6,
+    SOUND_CHANNEL_UPDATE_OVERLAY           = 1U <<  8,
+    SOUND_CHANNEL_UPDATE_ALTERNATIVE       = 1U <<  9,
+    SOUND_CHANNEL_UPDATE_UNKNOWN_12        = 1U << 12,
+    SOUND_CHANNEL_UPDATE_STEREO_LINKED     = 1U << 16, // I do not think this means what I think it means
+    SOUND_CHANNEL_UPDATE_UNKNOWN_17        = 1U << 17,
+    SOUND_CHANNEL_UPDATE_VOICE_ACTIVE      = 1U << 20,  // Voice is actively processing  
+    SOUND_CHANNEL_UPDATE_PENDING_RELEASE   = 1U << 21,  // Voice marked for release
+    SOUND_CHANNEL_UPDATE_LOCK_ATTACK_RATE  = 1U << 24,
+    SOUND_CHANNEL_UPDATE_LOCK_SUSTAIN_RATE = 1U << 27,
+    SOUND_CHANNEL_UPDATE_LOCK_RELEASE_RATE = 1U << 28
 } ESoundUpdateFlags;
 
 
@@ -87,44 +88,42 @@ typedef enum ESoundUpdateFlags
 
 typedef enum ESoundGlobalUpdateFlags
 {
-    SOUND_GLOBAL_UPDATE_00              = ( 1 <<  0 ),
-    SOUND_GLOBAL_UPDATE_01              = ( 1 <<  1 ),
-    SOUND_GLOBAL_UPDATE_02              = ( 1 <<  2 ),
-    SOUND_GLOBAL_UPDATE_03              = ( 1 <<  3 ),
-    SOUND_GLOBAL_UPDATE_04              = ( 1 <<  4 ),
-    SOUND_GLOBAL_UPDATE_05              = ( 1 <<  5 ),
-    SOUND_GLOBAL_UPDATE_06              = ( 1 <<  6 ),
-    SOUND_GLOBAL_UPDATE_07              = ( 1 <<  7 ),
-    SOUND_GLOBAL_UPDATE_08              = ( 1 <<  8 ),
-    SOUND_GLOBAL_UPDATE_09              = ( 1 <<  9 ),
-    SOUND_GLOBAL_UPDATE_10              = ( 1 << 10 ),
-    SOUND_GLOBAL_UPDATE_11              = ( 1 << 11 ),
-    SOUND_GLOBAL_UPDATE_12              = ( 1 << 12 ),
-    SOUND_GLOBAL_UPDATE_13              = ( 1 << 13 ),
-    SOUND_GLOBAL_UPDATE_14              = ( 1 << 14 ),
-    SOUND_GLOBAL_UPDATE_15              = ( 1 << 15 ),
-    SOUND_GLOBAL_UPDATE_16              = ( 1 << 16 ),
-    SOUND_GLOBAL_UPDATE_17              = ( 1 << 17 ),
-    SOUND_GLOBAL_UPDATE_18              = ( 1 << 18 ),
-    SOUND_GLOBAL_UPDATE_19              = ( 1 << 19 ),
-    SOUND_GLOBAL_UPDATE_20              = ( 1 << 20 ),
-    SOUND_GLOBAL_UPDATE_21              = ( 1 << 21 ),
-    SOUND_GLOBAL_UPDATE_22              = ( 1 << 22 ),
-    SOUND_GLOBAL_UPDATE_23              = ( 1 << 23 ),
-    SOUND_GLOBAL_UPDATE_24              = ( 1 << 24 ),
-    SOUND_GLOBAL_UPDATE_25              = ( 1 << 25 ),
-    SOUND_GLOBAL_UPDATE_26              = ( 1 << 26 ),
-    SOUND_GLOBAL_UPDATE_27              = ( 1 << 27 ),
-    SOUND_GLOBAL_UPDATE_28              = ( 1 << 28 ),
-    SOUND_GLOBAL_UPDATE_29              = ( 1 << 29 ),
-    SOUND_GLOBAL_UPDATE_30              = ( 1 << 30 ),
-    SOUND_GLOBAL_UPDATE_31              = ( 1 << 31 ),
-    SOUND_GLOBAL_UPDATE_32              = ( 1 << 32 ),
-    SOUND_GLOBAL_UPDATE_VOICES_CHANGED  = (0x110)
+    SOUND_GLOBAL_UPDATE_00              = 1U <<  0,
+    SOUND_GLOBAL_UPDATE_01              = 1U <<  1,
+    SOUND_GLOBAL_UPDATE_02              = 1U <<  2,
+    SOUND_GLOBAL_UPDATE_03              = 1U <<  3,
+    SOUND_GLOBAL_UPDATE_04              = 1U <<  4,
+    SOUND_GLOBAL_UPDATE_05              = 1U <<  5,
+    SOUND_GLOBAL_UPDATE_06              = 1U <<  6,
+    SOUND_GLOBAL_UPDATE_07              = 1U <<  7,
+    SOUND_GLOBAL_UPDATE_08              = 1U <<  8,
+    SOUND_GLOBAL_UPDATE_09              = 1U <<  9,
+    SOUND_GLOBAL_UPDATE_10              = 1U << 10,
+    SOUND_GLOBAL_UPDATE_11              = 1U << 11,
+    SOUND_GLOBAL_UPDATE_12              = 1U << 12,
+    SOUND_GLOBAL_UPDATE_13              = 1U << 13,
+    SOUND_GLOBAL_UPDATE_14              = 1U << 14,
+    SOUND_GLOBAL_UPDATE_15              = 1U << 15,
+    SOUND_GLOBAL_UPDATE_16              = 1U << 16,
+    SOUND_GLOBAL_UPDATE_17              = 1U << 17,
+    SOUND_GLOBAL_UPDATE_18              = 1U << 18,
+    SOUND_GLOBAL_UPDATE_19              = 1U << 19,
+    SOUND_GLOBAL_UPDATE_20              = 1U << 20,
+    SOUND_GLOBAL_UPDATE_21              = 1U << 21,
+    SOUND_GLOBAL_UPDATE_22              = 1U << 22,
+    SOUND_GLOBAL_UPDATE_23              = 1U << 23,
+    SOUND_GLOBAL_UPDATE_24              = 1U << 24,
+    SOUND_GLOBAL_UPDATE_25              = 1U << 25,
+    SOUND_GLOBAL_UPDATE_26              = 1U << 26,
+    SOUND_GLOBAL_UPDATE_27              = 1U << 27,
+    SOUND_GLOBAL_UPDATE_28              = 1U << 28,
+    SOUND_GLOBAL_UPDATE_29              = 1U << 29,
+    SOUND_GLOBAL_UPDATE_30              = 1U << 30,
+    SOUND_GLOBAL_UPDATE_31              = 1U << 31,
+    SOUND_GLOBAL_UPDATE_32              = 1U << 32,
 } ESoundGlobalUpdateFlags;
 
-
-#define BIT_MASK(width)               ((1u << (width)) - 1u)
+#define BIT_MASK(width)               ((1U << (width)) - 1U)
 #define FIELD_MASK(width, shift)      (BIT_MASK(width) << (shift))
 
 /*
@@ -203,8 +202,8 @@ typedef enum ESoundGlobalUpdateFlags
 
 #define VIBRATO_FLAG_ABSOLUTE         ( 1 << 15 )
 
-#define SOUND_UPDATE_NOISE_CLOCK 0x10
-#define SOUND_UPDATE_REVERB      0x80
+#define SOUND_CHANNEL_UPDATE_NOISE_CLOCK 0x10
+#define SOUND_CHANNEL_UPDATE_REVERB      0x80
 
 #define AKAO_FILE_MAGIC                    (0x4F414B41U) // AKAO in ASCII
 
@@ -252,14 +251,15 @@ typedef enum EPanMode {
     PAN_MODE_CENTER = 3,
 } EPanMode;
 
+#define AKAO_NUM_PROGRAMS (0x100)
 typedef struct FAkaoFileBlob
 {
-    /* 0x000 */ s32  Magic;                          // AKAO
-    /* 0x004 */ u8   unk_0x4[0xC];                   // Padding? Version? Counts? Music Akao blobs have a different flag in here...
-    /* 0x010 */ u16  ProgramOffsets[0x100][2];       // Offsets into bytecode - indexed by Sfx ID
-    /* 0x410 */ u16  MetadataTableA[0x100];          // Some per sfx table
-    /* 0x610 */ u16  AdditionalProgramCounts[0x100]; // Per Sfx, how many additional programs to trigger after the given Sfx index
-    /* 0x810 */ u8   ProgramData[1];                 // Sfx bytecode
+    /* 0x000 */ s32  Magic;                                      // AKAO
+    /* 0x004 */ u8   unk_0x4[0xC];                               // Padding? Version? Counts? Music Akao blobs have a different flag in here...
+    /* 0x010 */ u16  ProgramOffsets[2][AKAO_NUM_PROGRAMS];       // Offsets into bytecode - indexed by Sfx ID
+    /* 0x410 */ u16  MetadataTableA[AKAO_NUM_PROGRAMS];          // Some per sfx table
+    /* 0x610 */ u16  AdditionalProgramCounts[AKAO_NUM_PROGRAMS]; // Per Sfx, how many additional programs to trigger after the given Sfx index
+    /* 0x810 */ u8   ProgramData[1];                             // Sfx bytecode
 } FAkaoFileBlob;
 static_assert( offsetof(FAkaoFileBlob, ProgramOffsets) == 0x010 );
 static_assert( offsetof(FAkaoFileBlob, MetadataTableA) == 0x410 );
@@ -272,10 +272,16 @@ static_assert( sizeof(FAkaoFileBlob) - align(sizeof(member_type(FAkaoFileBlob, P
 // Maybe they are both u8?
 typedef enum EMixMode
 {
-    MIX_MODE_STEREO = 1,
-    MIX_MODE_MONO   = 2
+    MIX_MODE_STEREO         = 1,       /* written at init; not meaningfully read in observed paths - likely historical or reserved */
+    MIX_MODE_MONO           = 2,       /* force dual-mono: bypasses pan law, L=R via 0x440a scale; affects music, SFX, and CD audio */
+    MIX_FLAG_MASTER_FADING  = 1U << 8  /* secondary music fade/teardown in progress; enables periodic fade processing, cleared when channels die */
 } EMixMode;
-#define MIX_FLAG_MASTER_FADING  (1 << 8)
+
+typedef enum EControlLatches
+{
+    SOUND_CTL_INSTRUMENT_TRANSFER_ACTIVE    = 1U <<  0, /* SPU instrument upload/relocation in progress; set before transfer, cleared on finish, gates unk_Spu_8004ac2c() */
+    SOUND_CTL_SFX_FADE_END_CALLBACK_PENDING = 1U << 16, /* set when global SFX fade starts; triggers Sound_Cmd_9D when last channel VolumeModStepsRemaining hits 0 */
+} EControlLatches;
 
 typedef struct
 {
@@ -283,52 +289,7 @@ typedef struct
     u32 MixBehavior;      // global mixing & music-stack behavior flags (see EMixMode's note)
     u32 UpdateFlags;      // deferred SPU / voice-mode update flags
 } FSoundGlobalFlags;
-
-/* =========================
- * ControlLatches
- * ========================= */
-
-/* SPU instrument upload / relocation transaction in progress.
- * - Set before streaming instrument data
- * - Cleared when transfer finishes
- * - Gates unk_Spu_8004ac2c()
- */
-#define SOUND_CTL_INSTRUMENT_TRANSFER_ACTIVE     (1u << 0)
-
-/* Last-active SFX channel fade completion should trigger VM command.
- * - Set when a global SFX fade starts
- * - Checked when VolumeModStepsRemaining reaches 0 on final channel
- * - Causes Sound_Cmd_80050dd4()
- */
-#define SOUND_CTL_SFX_FADE_END_CALLBACK_PENDING  (1u << 16)
-
-
-/* =========================
- * MixBehavior
- * ========================= */
-
-/* Force dual-mono output.
- * - Bypasses pan law table
- * - L = R using 0x440a scale
- * - Affects:
- *     - Music voices
- *     - SFX voices
- *     - CD audio mixing
- */
-#define SOUND_MIX_FORCE_MONO                    (1u << 1)
-
-/* Secondary (pushed) music is in fade / teardown phase.
- * - Enables periodic fade processing
- * - Delays cleanup until fade completes
- * - Cleared automatically when channels die
- */
-#define SOUND_MIX_SECONDARY_MUSIC_FADING        (1u << 8)
-
-/* Legacy / initialization bit.
- * - Written (set to 1) but not meaningfully read in observed paths
- * - Likely historical or reserved
- */
-#define SOUND_MIX_LEGACY_ENABLE                 (1u << 0)
+static_assert( sizeof(FSoundGlobalFlags) == 0xC );
 
 typedef struct
 {
@@ -519,9 +480,17 @@ typedef struct
 } FAkaoSequence; // size 0x40 (header), data blob variable
 static_assert( sizeof(FAkaoSequence) - align(sizeof(member_type(FAkaoSequence,Payload))) == 0x40 );
 
+
+typedef enum EMusicContextStatusFlags
+{
+    VOICE_ALLOC_FLAG_EXHAUSTED      = 1U << 0, // No voice available even after stealing
+    VOICE_ALLOC_FLAG_STOLE          = 1U << 1, // Voice stealing occurred
+    SOUND_BANK_FLAG_ALT_SAMPLE_BANK = 1U << 5  // 0x20 toggles whether we use the alternate sample bank
+} EMusicContextStatusFlags;
+
 typedef struct 
 {
-    /* 0x00 */ u32 StatusFlags; /*   0x01 - Voice exhaustion (couldn't allocate even with stealing) 0x02 - Voice stealing occurred */
+    /* 0x00 */ u32 StatusFlags;
     /* 0x04 */ u32 ActiveChannelMask;
     /* 0x08 */ u32 KeyedMask; /* SPU voices currently keyed-on */
     /* 0x0C */ u32 AllocatedVoiceMask; /* Channels with SPU voices allocated */
@@ -669,13 +638,13 @@ void SetVoiceAdsrSustainLevel( u32 in_VoiceIndex, s32 in_SustainLevel );
 void SetVoiceAdsrSustainRateAndDirection( u32 in_VoiceIndex, s32 in_SustainRate, u32 in_SustainDirection );
 void SetVoiceAdsrReleaseRateAndMode( u32 in_VoiceIndex, s32 in_ReleaseRate, u32 in_ReleaseMode );
 void SetVoiceParams( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 in_VolumeScale );
-void SetVoiceParamsByFlags( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams );
-void Sound_UpdateSlidesAndDelays( FSoundChannel* in_pChannel, u32 in_VoiceFlags, s32 );
-void func_8004C5A4( FSoundChannel* in_pChannel );
+void SetVoiceParamsByFlags( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 in_UpdateFlags );
+void Sound_UpdateSlidesAndDelays( FSoundChannel* in_pChannel, u32 in_VoiceFlags, ESoundChannelTypes in_ChannelType );
+void Sound_UpdateModulation( FSoundChannel* in_pChannel, int arg1 );
 void func_8004CA1C( FSoundChannel* in_pChannel );
 s32 Sound_StealQuietestVoice( s32 in_bForceFullScan );
 s32 Sound_FindFreeVoice( s32 in_bForceFullScan );
-void func_8004CFC4( FSoundChannel* in_pChannel, u32 in_Flags1, u32 in_Flags2, u32* out_KeyOnFlags );
+void Sound_AssignAndUpdateMusicVoice( FSoundChannel* in_pChannel, u32 in_Flags1, u32 in_Flags2, u32* out_KeyOnFlags );
 void Sound_UpdateVoiceEnvelopeStates( u32 in_ProtextedVoiceMask );
 void Sound_ApplyMasterFadeToChannelVolume( FSoundMusicContext* in_Context );
 void Sound_RestoreChannelVolumeFromMasterFade ( FSoundMusicContext* in_Context );
@@ -758,10 +727,17 @@ void Sound_Cmd_XX_Null( FSoundCommandParams* in_Params );
 void Sound_SetReverbMode( s32 in_ReverbMode );
 void* Sound_ExecuteSoundVm2Function( u32 in_FunctionIndex );
 
+typedef enum EMusicContextType
+{
+    MUSIC_CONTEXT_ACTIVE    = 0,
+    MUSIC_CONTEXT_SUSPENDED = 1
+} EMusicContextType;
+
 // Sound 3
 void Sound_UpdateCdVolume();
 void memcpy32( s32* in_Src, s32* in_Dst, uint in_Size );
 void memswap32( s32* in_A, s32* in_B, uint in_Size );
+u32 Music_UpdateChannels( FSoundChannel* in_pChannel, EMusicContextType in_ContextType );
 long Sound_MainLoop();
 s32 Sound_ComputeSlideStep( u32*, s32, s32, s32 );
 void Sound_CopyInstrumentInfoToChannel( FSoundChannel* in_pChannel, FSoundInstrumentInfo* in_pInstrumentInfo, u32 in_StartAddress );
@@ -782,7 +758,7 @@ void SoundVM_A3_ChannelMasterVolume( FSoundChannel* in_pChannel, u32 in_VoiceFla
 void SoundVM_FE12_VolumeBalanceSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 void SoundVM_A8_ChannelVolume( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 void SoundVM_A9_ChannelVolumeSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
-void SoundVM_FE19_80054348( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
+void SoundVM_FE19_KeyOnVolumeSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 void SoundVM_FE1A_800543d8( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 void SoundVM_FE1B_800543ec( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 void SoundVM_AA_ChannelPan( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
@@ -912,14 +888,12 @@ extern s16 g_Sound_CdVolumeFadeLength;
 extern FSoundSfxState g_Sound_SfxState;
 extern FSoundCommandParams g_Sound_Vm2Params;
 extern s32 g_CdVolume;
+extern s32 g_Sound_MutedMusicChannelMask;
 extern FSoundChannel g_PushedMusicChannels[SOUND_CHANNEL_COUNT];
 extern u16* g_Sound_Sfx_AdditionalProgramCounts;
 extern s32 g_Sound_TempoScale;
 extern s32 g_Sound_MasterPitchScaleQ16_16;
 extern FSoundGlobalFlags g_Sound_GlobalFlags;
-
-
-
 extern FSoundMusicContext* g_Sound_VoiceOwnerContexts[VOICE_COUNT];
 extern FSoundVoiceModeFlags g_Sound_VoiceModeFlags;
 

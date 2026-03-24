@@ -205,6 +205,7 @@ clean-extract:
 	$(Q)rm -rf "$(EXTRACT_DIR)"
 
 generate: $(LD_FILES)
+	$(MAKE) generate-clangd-metadata
 
 generate-context: $(CTX_FILE)
 
@@ -252,6 +253,9 @@ clean-progress: clean
 	$(Q)$(MAKE) progress
 
 # Lazy tools
+generate-clangd-metadata:
+	./tools/scripts/generate_compile_commands.py
+
 build-pcsx-tools:
 	./tools/scripts/build_pcsx_tools.sh
 

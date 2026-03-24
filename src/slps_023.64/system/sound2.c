@@ -4,8 +4,6 @@
 #include "system/soundCommand.h"
 
 
-// 0x20 toggles whether we use the alternate sample bank
-#define SOUND_BANK_FLAG_ALT_SAMPLE_BANK      (1u << 5)   // 0x20
 
 // the instrument index window that is eligible for bank remap
 #define SOUND_BANK_REMAP_BASE_INDEX          0x20u       // first remappable instrument
@@ -18,9 +16,9 @@ extern s32 D_80094FAC[];
 extern s32 D_80094FFC;
 
 //----------------------------------------------------------------------------------------------------------------------
-u16 Sound_MapInstrumentToAltSampleBank( u32 in_Flags, FSoundChannel* in_pChannel )
+u16 Sound_MapInstrumentToAltSampleBank( u32 in_StatusFlags, FSoundChannel* in_pChannel )
 {
-    if( in_Flags & SOUND_BANK_FLAG_ALT_SAMPLE_BANK &&
+    if( in_StatusFlags & SOUND_BANK_FLAG_ALT_SAMPLE_BANK &&
             (in_pChannel->InstrumentIndex - SOUND_BANK_REMAP_BASE_INDEX) < SOUND_BANK_REMAP_COUNT
     )
     {
@@ -32,9 +30,9 @@ u16 Sound_MapInstrumentToAltSampleBank( u32 in_Flags, FSoundChannel* in_pChannel
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-u16 Sound_MapInstrumentToBaseSampleBank( u32 in_Flags, FSoundChannel* in_Channel )
+u16 Sound_MapInstrumentToBaseSampleBank( u32 in_StatusFlags, FSoundChannel* in_Channel )
 {
-    if( (in_Flags & SOUND_BANK_FLAG_ALT_SAMPLE_BANK) && 
+    if( (in_StatusFlags & SOUND_BANK_FLAG_ALT_SAMPLE_BANK) && 
             (in_Channel->InstrumentIndex - SOUND_BANK_REMAP_BASE_INDEX) < SOUND_BANK_REMAP_COUNT
     )
     {
@@ -232,7 +230,7 @@ void Sound_LoadAkaoSequence( FAkaoSequence* in_Sequence, s32 in_Mask )
     g_pActiveMusicContext->PendingKeyOffMask = 0;
     g_pActiveMusicContext->PreventRekeyOnMusicResumeMask = 0;
     
-    if( D_80094FFC & 1 )
+    if( D_80094FFC & (1 << 0) )
     {
         g_pActiveMusicContext->ActiveChannelMask = 0;
         g_pActiveMusicContext->SuspendedChannelMask |= ChannelEnableMask & in_Mask;
@@ -279,7 +277,7 @@ void Sound_LoadAkaoSequence( FAkaoSequence* in_Sequence, s32 in_Mask )
             Offset = *pData;
             pChannel->ProgramCounter = &pData[*(u16*)pData];
             pData += 2;
-            if( D_80094FFC & 0x100 )
+            if( D_80094FFC & (1 << 8) )
             {
                 ChannelLength = 0x1E4;
             }
@@ -404,16 +402,11 @@ void Sound_KillMusicContext( FSoundMusicContext* in_Context, FSoundChannel* in_p
 #ifndef NON_MATCHING
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound2", Sound_EvictSfxVoice);
 #else
-#define SOUND_UPDATE_VOICE_ACTIVE         ( 1 << 20 )  // Voice is actively processing  
-#define SOUND_UPDATE_PENDING_RELEASE      ( 1 << 21 )  // Voice marked for release
-
-#define SFX_CHANNEL_COUNT       12
-#define SFX_FIRST_VOICE_BIT     0x1000      // Voice 12 (first SFX voice)
-
-#define VOICE_MASK_24BIT        0x00FFFFFF
 #define RELEASE_MODE_PRIORITY   0x40000000
 #define RELEASE_MODE_PAIR       0x80000000  // Negative value check
 
+// TODO(jperos): This is *not* a voice mask, the way it's being tested
+// Unless it's packed???
 void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
 {
     FSoundChannel* pChannel;
@@ -427,15 +420,15 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
     u32 i;
 
     ActiveVoices = g_Sound_SfxState.ActiveVoiceMask | g_Sound_SfxState.SuspendedVoiceMask;
-    MaskedArg = in_VoiceMask & VOICE_MASK_24BIT;
+    MaskedArg = in_VoiceMask & VOICE_MASK_ALL; // Is this shit packed or what...
 
     if (MaskedArg != 0)
     {
         /* PATH 1: Release voices matching the mask AND channel's unk_Flags filter */
         pChannel = g_SfxSoundChannels;
-        VoiceBit = SFX_FIRST_VOICE_BIT;
+        VoiceBit = 1 << SOUND_SFX_CHANNEL_START_INDEX;
 
-        for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
+        for( i = 0; i < SOUND_SFX_CHANNEL_COUNT; i++ )
         {
             if (ActiveVoices & VoiceBit)
             {
@@ -443,10 +436,10 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
                 {
                     UpdateFlags = pChannel->UpdateFlags;
 
-                    if (UpdateFlags & SOUND_UPDATE_VOICE_ACTIVE)
+                    if (UpdateFlags & SOUND_CHANNEL_UPDATE_VOICE_ACTIVE)
                     {
                         /* Voice is busy - mark for deferred release */
-                        pChannel->UpdateFlags = UpdateFlags | SOUND_UPDATE_PENDING_RELEASE;
+                        pChannel->UpdateFlags = UpdateFlags | SOUND_CHANNEL_UPDATE_PENDING_RELEASE;
                     }
                     else
                     {
@@ -466,7 +459,7 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
     {
         /* PATH 2A: Release stereo voice pair by index */
         pChannel = &g_SfxSoundChannels[in_ChannelIndex];
-        VoiceBit = SFX_FIRST_VOICE_BIT << in_ChannelIndex;
+        VoiceBit = (1 << SOUND_SFX_CHANNEL_START_INDEX) << in_ChannelIndex;
 
         /* Release left voice */
         if (ActiveVoices & VoiceBit)
@@ -491,9 +484,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
 
         /* Pass 1: Filter out voices with non-zero unk_Flags */
         pChannel = g_SfxSoundChannels;
-        VoiceBit = SFX_FIRST_VOICE_BIT;
+        VoiceBit = (1 << SOUND_SFX_CHANNEL_START_INDEX);
 
-        for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
+        for( i = 0; i < SOUND_SFX_CHANNEL_COUNT; i++ )
         {
             if (pChannel->unk_Flags != 0)
             {
@@ -506,10 +499,10 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
 
         /* Pass 2: Find maximum priority (lowest importance = steal first) */
         pChannel = g_SfxSoundChannels;
-        VoiceBit = SFX_FIRST_VOICE_BIT;
+        VoiceBit = 1 << SOUND_SFX_CHANNEL_START_INDEX;
         MaxPriority = 0;
 
-        for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
+        for( i = 0; i < SOUND_SFX_CHANNEL_COUNT; i++ )
         {
             if (ActiveVoices & VoiceBit)
             {
@@ -527,9 +520,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
 
         /* Pass 3: Release all voices with max priority value */
         pChannel = g_SfxSoundChannels;
-        VoiceBit = SFX_FIRST_VOICE_BIT;
+        VoiceBit = 1 << SOUND_SFX_CHANNEL_START_INDEX;
 
-        for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
+        for( i = 0; i < SOUND_SFX_CHANNEL_COUNT; i++ )
         {
             if (ActiveVoices & VoiceBit)
             {
@@ -537,9 +530,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
                 {
                     UpdateFlags = pChannel->UpdateFlags;
 
-                    if (UpdateFlags & SOUND_UPDATE_VOICE_ACTIVE)
+                    if (UpdateFlags & SOUND_CHANNEL_UPDATE_VOICE_ACTIVE)
                     {
-                        pChannel->UpdateFlags = UpdateFlags | SOUND_UPDATE_PENDING_RELEASE;
+                        pChannel->UpdateFlags = UpdateFlags | SOUND_CHANNEL_UPDATE_PENDING_RELEASE;
                     }
                     else
                     {
@@ -558,9 +551,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
     {
         /* PATH 3: Release voices by identifier match */
         pChannel = g_SfxSoundChannels;
-        VoiceBit = SFX_FIRST_VOICE_BIT;
+        VoiceBit = 1 << SOUND_SFX_CHANNEL_START_INDEX;
 
-        for( i = 0; i < SFX_CHANNEL_COUNT; i++ )
+        for( i = 0; i < SOUND_SFX_CHANNEL_COUNT; i++ )
         {
             if (ActiveVoices & VoiceBit)
             {
@@ -573,9 +566,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
                     {
                         UpdateFlags = pChannel->UpdateFlags;
 
-                        if (UpdateFlags & SOUND_UPDATE_VOICE_ACTIVE)
+                        if (UpdateFlags & SOUND_CHANNEL_UPDATE_VOICE_ACTIVE)
                         {
-                            pChannel->UpdateFlags = UpdateFlags | SOUND_UPDATE_PENDING_RELEASE;
+                            pChannel->UpdateFlags = UpdateFlags | SOUND_CHANNEL_UPDATE_PENDING_RELEASE;
                         }
                         else
                         {
@@ -592,9 +585,9 @@ void Sound_EvictSfxVoice( u32 in_ChannelIndex, u32 in_VoiceMask )
                     {
                         UpdateFlags = pChannel->UpdateFlags;
 
-                        if (UpdateFlags & SOUND_UPDATE_VOICE_ACTIVE)
+                        if (UpdateFlags & SOUND_CHANNEL_UPDATE_VOICE_ACTIVE)
                         {
-                            pChannel->UpdateFlags = UpdateFlags | SOUND_UPDATE_PENDING_RELEASE;
+                            pChannel->UpdateFlags = UpdateFlags | SOUND_CHANNEL_UPDATE_PENDING_RELEASE;
                         }
                         else
                         {
@@ -622,8 +615,8 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound2", func_8004E7D8);
 void func_8004E7D8( FSoundChannel* in_pChannel, FSoundCommandParams* in_pCommandParams, s32 in_Flags, u8* in_ProgramCounter )
 {
     FSoundChannel* pChannel;
-    s32 Mask;
-    s32 Flag;
+    s32 SfxChannelCount;
+    s32 SfxChannelMask;
 
     in_pChannel->AkaoProgramIndex = in_pCommandParams->Param1;
     in_pChannel->unk_Flags = in_pCommandParams->Param2;
@@ -633,7 +626,7 @@ void func_8004E7D8( FSoundChannel* in_pChannel, FSoundCommandParams* in_pCommand
     in_pChannel->PanMod = in_pCommandParams->Param3 << 8;
     in_pChannel->Length1 = 2;
     in_pChannel->Length2 = 1;
-    in_pChannel->Type = 1;
+    in_pChannel->Type = SOUND_CHANNEL_TYPE_SFX;
     in_pChannel->VolumeModStepsRemaining = 0;
     in_pChannel->Priority = -2;
     in_pChannel->PitchMod = 0;
@@ -653,21 +646,21 @@ void func_8004E7D8( FSoundChannel* in_pChannel, FSoundCommandParams* in_pCommand
     g_Sound_SfxState.ReverbVoiceFlags &= ~in_Flags;
     g_Sound_SfxState.FmVoiceFlags &= ~in_Flags;
 
-    if( D_80094FFC & 2 )
+    if( D_80094FFC & (1 << 1) )
     {
-        Flag = (1 << 0xC);
+        SfxChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
         pChannel = g_SfxSoundChannels;
-        Mask = 0xC;
+        SfxChannelCount = SOUND_SFX_CHANNEL_COUNT;
         do {
-            if( (g_Sound_SfxState.ActiveVoiceMask & Flag) && !(pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25) )
+            if( (g_Sound_SfxState.ActiveVoiceMask & SfxChannelMask) && !(pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25) )
             {
-                g_Sound_SfxState.ActiveVoiceMask &= ~Flag;
-                g_Sound_SfxState.SuspendedVoiceMask |= Flag;
+                g_Sound_SfxState.ActiveVoiceMask &= ~SfxChannelMask;
+                g_Sound_SfxState.SuspendedVoiceMask |= SfxChannelMask;
             }
-            Mask--;
+            SfxChannelCount--;
             pChannel++;
-            Flag <<= 1;
-        } while( Mask != 0 );
+            SfxChannelMask <<= 1;
+        } while( SfxChannelCount != 0 );
     }
 }
 #endif
@@ -694,12 +687,10 @@ void FreeVoiceChannels( FSoundChannel* in_Channel, u32 in_Voice )
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-#define SOUND_UPDATE_STEREO_LINKED ( 1 << 16 )    // Second channel of stereo pair
-
 void Sound_PlaySfxProgram( FSoundCommandParams* in_pCommandParams, u8* in_pProgramCounter1, u8* in_pProgramCounter2, s32 in_NoEvict )
 {
-    FSoundChannel* channel;
-    u32 voiceBit;
+    FSoundChannel* pChannel;
+    u32 VoiceBit;
     s32 slotsRemaining;
     s32 activeVoices;
     
@@ -715,23 +706,23 @@ void Sound_PlaySfxProgram( FSoundCommandParams* in_pCommandParams, u8* in_pProgr
 
     do
     {
-        channel = &g_SfxSoundChannels[11];
-        voiceBit = 0x00800000;
+        pChannel = &g_SfxSoundChannels[11];
+        VoiceBit = 1 << (SOUND_SFX_CHANNEL_LAST_INDEX - 1);
         activeVoices = ( g_Sound_SfxState.ActiveVoiceMask | g_Sound_SfxState.SuspendedVoiceMask ) | g_Sound_Cutscene_StreamState.VoicesInUseFlags;
         if( ( in_pProgramCounter1 != 0 ) && (in_pProgramCounter2 != 0 ) )
         {
             slotsRemaining = 11; 
-            channel--;
-            voiceBit = 0x00400000;
+            pChannel--;
+            VoiceBit = 1 << (SOUND_SFX_CHANNEL_LAST_INDEX - 2);
             while( slotsRemaining != 0 )
             {
-                if( !( activeVoices & ( voiceBit | ( voiceBit << 1 ) ) ) )
+                if( !( activeVoices & ( VoiceBit | ( VoiceBit << 1 ) ) ) )
                 {
                     break;
                 }
                 slotsRemaining--;
-                channel--;
-                voiceBit >>= 1;
+                pChannel--;
+                VoiceBit >>= 1;
                 if (slotsRemaining == 0) 
                 {
                     break;
@@ -743,13 +734,13 @@ void Sound_PlaySfxProgram( FSoundCommandParams* in_pCommandParams, u8* in_pProgr
             slotsRemaining = 12;
             while( slotsRemaining != 0 )
             {
-                if( !( activeVoices & voiceBit ) )
+                if( !( activeVoices & VoiceBit ) )
                 {
                     break;
                 }
                 slotsRemaining--;
-                channel--;
-                voiceBit >>= 1;
+                pChannel--;
+                VoiceBit >>= 1;
             };
         }
         if (slotsRemaining != 0) 
@@ -757,7 +748,7 @@ void Sound_PlaySfxProgram( FSoundCommandParams* in_pCommandParams, u8* in_pProgr
             break;
         }
         
-        Sound_EvictSfxVoice( 0, 0x40000000 );
+        Sound_EvictSfxVoice( 0, 1 << 30 );
 
         if( activeVoices == (g_Sound_SfxState.ActiveVoiceMask | g_Sound_SfxState.SuspendedVoiceMask | g_Sound_Cutscene_StreamState.VoicesInUseFlags) )
         {
@@ -767,21 +758,21 @@ void Sound_PlaySfxProgram( FSoundCommandParams* in_pCommandParams, u8* in_pProgr
     
     if( in_pProgramCounter1 != 0 )
     {
-        func_8004E7D8( channel, in_pCommandParams, voiceBit, in_pProgramCounter1 );
-        FreeVoiceChannels( g_ActiveMusicChannels, channel->VoiceParams.AssignedVoiceNumber );
+        func_8004E7D8( pChannel, in_pCommandParams, VoiceBit, in_pProgramCounter1 );
+        FreeVoiceChannels( g_ActiveMusicChannels, pChannel->VoiceParams.AssignedVoiceNumber );
     }
     if( in_pProgramCounter2 )
     {
         if( in_pProgramCounter1 != 0 )
         {
-            channel++;
-            voiceBit <<= 1;
+            pChannel++;
+            VoiceBit <<= 1;
         }
-        func_8004E7D8( channel, in_pCommandParams, voiceBit, in_pProgramCounter2 );
-        FreeVoiceChannels( g_ActiveMusicChannels, channel->VoiceParams.AssignedVoiceNumber );
+        func_8004E7D8( pChannel, in_pCommandParams, VoiceBit, in_pProgramCounter2 );
+        FreeVoiceChannels( g_ActiveMusicChannels, pChannel->VoiceParams.AssignedVoiceNumber );
         if( in_pProgramCounter1 != 0 )
         {
-            channel->UpdateFlags |= SOUND_UPDATE_STEREO_LINKED;
+            pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_STEREO_LINKED;
         }
     }
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_04 | SOUND_GLOBAL_UPDATE_08;
@@ -962,7 +953,7 @@ void Sound_SetMusicSequence( FAkaoSequence* in_Sequence, s32 in_SwapWithSavedSta
     g_Sound_SfxState.KeyOffFlags |= VoicesToKeyOff;
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_08;
     
-    if( D_80094FFC & 1 )
+    if( D_80094FFC & ( 1 << 0) )
     {
         PrevActiveChannelMask = g_pActiveMusicContext->ActiveChannelMask;
         g_pActiveMusicContext->ActiveChannelMask = 0;

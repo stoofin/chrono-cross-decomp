@@ -208,7 +208,7 @@ void SoundVM_A9_ChannelVolumeSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlag
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SoundVM_FE19_80054348( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
+void SoundVM_FE19_KeyOnVolumeSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     u16 pPc1;
     s32 Dest;
@@ -233,13 +233,13 @@ void SoundVM_FE19_80054348( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE1A_800543d8( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    in_pChannel->UpdateFlags |= SOUND_UPDATE_UNKNOWN_01;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_UNKNOWN_06;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE1B_800543ec( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    in_pChannel->UpdateFlags &= ~SOUND_UPDATE_UNKNOWN_01;
+    in_pChannel->UpdateFlags &= ~SOUND_CHANNEL_UPDATE_UNKNOWN_06;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -305,11 +305,11 @@ void SoundVM_A1_LoadInstrument( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     in_pChannel->InstrumentIndex = InstrumentIndex;
     in_pChannel->VoiceParams.VolumeScale = 0;
     in_pChannel->UpdateFlags &= ~( 
-        SOUND_UPDATE_DRUM_MODE  | 
-        SOUND_UPDATE_UNKNOWN_12 | 
-        SOUND_UPDATE_LOCK_ATTACK_RATE | 
-        SOUND_UPDATE_LOCK_SUSTAIN_RATE | 
-        SOUND_UPDATE_LOCK_RELEASE_RATE 
+        SOUND_CHANNEL_UPDATE_DRUM_MODE  | 
+        SOUND_CHANNEL_UPDATE_UNKNOWN_12 | 
+        SOUND_CHANNEL_UPDATE_LOCK_ATTACK_RATE | 
+        SOUND_CHANNEL_UPDATE_LOCK_SUSTAIN_RATE | 
+        SOUND_CHANNEL_UPDATE_LOCK_RELEASE_RATE 
     );
 }
 
@@ -323,11 +323,11 @@ void SoundVM_FE0A_ClearInstrument( FSoundChannel* in_pChannel, u32 in_VoiceFlags
     in_pChannel->InstrumentIndex = Index;
     in_pChannel->VoiceParams.VolumeScale = 0;
     in_pChannel->UpdateFlags &= ~(
-        SOUND_UPDATE_DRUM_MODE  |
-        SOUND_UPDATE_UNKNOWN_12 |
-        SOUND_UPDATE_LOCK_ATTACK_RATE |
-        SOUND_UPDATE_LOCK_SUSTAIN_RATE |
-        SOUND_UPDATE_LOCK_RELEASE_RATE
+        SOUND_CHANNEL_UPDATE_DRUM_MODE  |
+        SOUND_CHANNEL_UPDATE_UNKNOWN_12 |
+        SOUND_CHANNEL_UPDATE_LOCK_ATTACK_RATE |
+        SOUND_CHANNEL_UPDATE_LOCK_SUSTAIN_RATE |
+        SOUND_CHANNEL_UPDATE_LOCK_RELEASE_RATE
     );
 }
 
@@ -344,18 +344,18 @@ void SoundVM_FE0A_ClearInstrument( FSoundChannel* in_pChannel, u32 in_VoiceFlags
         if( pPatchTable[PatchIndex] > 0x8000U )
         {
             in_pChannel->VoiceParams.VolumeScale = 0;
-            in_pChannel->UpdateFlags &= ~SOUND_UPDATE_UNKNOWN_12;
+            in_pChannel->UpdateFlags &= ~SOUND_CHANNEL_UPDATE_UNKNOWN_12;
             return;
         }
         in_pChannel->Keymap = (u8*)((int)pPatchTable + pPatchTable[PatchIndex] + 0x20);
         in_pChannel->UpdateFlags &= ~(
-            SOUND_UPDATE_DRUM_MODE  |
-            SOUND_UPDATE_UNKNOWN_12 |
-            SOUND_UPDATE_LOCK_ATTACK_RATE |
-            SOUND_UPDATE_LOCK_SUSTAIN_RATE |
-            SOUND_UPDATE_LOCK_RELEASE_RATE
+            SOUND_CHANNEL_UPDATE_DRUM_MODE  |
+            SOUND_CHANNEL_UPDATE_UNKNOWN_12 |
+            SOUND_CHANNEL_UPDATE_LOCK_ATTACK_RATE |
+            SOUND_CHANNEL_UPDATE_LOCK_SUSTAIN_RATE |
+            SOUND_CHANNEL_UPDATE_LOCK_RELEASE_RATE
         );
-        in_pChannel->UpdateFlags |= SOUND_UPDATE_UNKNOWN_12;
+        in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_UNKNOWN_12;
         in_pChannel->Key = 0xFF;
     }
 }
@@ -367,7 +367,7 @@ void SoundVM_B3_ResetAdsr( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     in_pChannel->VoiceParams.AdsrLower = InstrumentInfo->AdsrLower;
     in_pChannel->VoiceParams.AdsrUpper = InstrumentInfo->AdsrUpper;
     in_pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_ADSR_FULL;
-    in_pChannel->UpdateFlags &= ~(SOUND_UPDATE_LOCK_ATTACK_RATE | SOUND_UPDATE_LOCK_SUSTAIN_RATE | SOUND_UPDATE_LOCK_RELEASE_RATE);
+    in_pChannel->UpdateFlags &= ~(SOUND_CHANNEL_UPDATE_LOCK_ATTACK_RATE | SOUND_CHANNEL_UPDATE_LOCK_SUSTAIN_RATE | SOUND_CHANNEL_UPDATE_LOCK_RELEASE_RATE);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -472,7 +472,7 @@ void SoundVM_B4_Vibrato( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     u32 VibratoBase;
     s32 VibratoDepth;
 
-    in_pChannel->UpdateFlags |= SOUND_UPDATE_VIBRATO;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_VIBRATO;
     if( in_pChannel->Type != SOUND_CHANNEL_TYPE_MUSIC )
     {
         in_pChannel->VibratoDelay = 0;
@@ -590,7 +590,7 @@ void SoundVM_E4_VibratoRateSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags 
 void SoundVM_B6_DisableVibrato( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     in_pChannel->VibratoPitch = 0;
-    in_pChannel->UpdateFlags &= ~SOUND_UPDATE_VIBRATO;
+    in_pChannel->UpdateFlags &= ~SOUND_CHANNEL_UPDATE_VIBRATO;
     in_pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_SAMPLE_RATE;
 }
 
@@ -600,7 +600,7 @@ void SoundVM_B8_Tremelo( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     u16 Delay;
     u32 Rate;
 
-    in_pChannel->UpdateFlags |= SOUND_UPDATE_TREMOLO;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_TREMOLO;
     Delay = *in_pChannel->ProgramCounter++;
 
     if( in_pChannel->Type != 0 )
@@ -678,7 +678,7 @@ void SoundVM_E5_TremeloRateSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags 
 void SoundVM_BA_DisableTremelo( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     in_pChannel->TremeloVolume = 0;
-    in_pChannel->UpdateFlags &= ~SOUND_UPDATE_TREMOLO;
+    in_pChannel->UpdateFlags &= ~SOUND_CHANNEL_UPDATE_TREMOLO;
     in_pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
 }
 
@@ -687,7 +687,7 @@ void SoundVM_BC_AutoPan( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     s32 Rate;
 
-    in_pChannel->UpdateFlags |= SOUND_UPDATE_PAN_LFO;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_PAN_LFO;
     Rate = *in_pChannel->ProgramCounter++ << 0xA;
     in_pChannel->AutoPanRatePhase = Rate;
     if( Rate == 0 )
@@ -747,7 +747,7 @@ void SoundVM_E6_AutoPanRateSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags 
 void SoundVM_BE_DisableAutoPan( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     in_pChannel->AutoPanVolume = 0;
-    in_pChannel->UpdateFlags &= ~SOUND_UPDATE_PAN_LFO;
+    in_pChannel->UpdateFlags &= ~SOUND_CHANNEL_UPDATE_PAN_LFO;
     in_pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_VOLUME;
 }
 
@@ -787,7 +787,7 @@ void SoundVM_C6_EnableFmVoices( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     {
         g_pActiveMusicContext->FmChannelFlags |= in_VoiceFlags;
     }
-    else if( in_pChannel->UpdateFlags & SOUND_UPDATE_UNKNOWN_16 )
+    else if( in_pChannel->UpdateFlags & SOUND_CHANNEL_UPDATE_STEREO_LINKED )
     {
         g_Sound_SfxState.FmVoiceFlags |= in_VoiceFlags;
     }
@@ -896,7 +896,7 @@ void SoundVM_AD_AttackRate( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     in_pChannel->VoiceParams.AdsrLower &= ~SOUND_ADSR_ATTACK_RATE_MASK;
     in_pChannel->VoiceParams.AdsrLower |= AttackRate << SOUND_ADSR_ATTACK_RATE_SHIFT;
     in_pChannel->VoiceParams.VoiceParamFlags |= (VOICE_PARAM_ADSR_AMODE | VOICE_PARAM_ADSR_AR);
-    in_pChannel->UpdateFlags |= SOUND_UPDATE_LOCK_ATTACK_RATE;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_LOCK_ATTACK_RATE;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -924,7 +924,7 @@ void SoundVM_B1_SustainRate( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     in_pChannel->VoiceParams.AdsrUpper &= ~SOUND_ADSR_SUS_RATE_MASK;
     in_pChannel->VoiceParams.AdsrUpper |= SustainRate << SOUND_ADSR_SUS_RATE_SHIFT;
     in_pChannel->VoiceParams.VoiceParamFlags |= (VOICE_PARAM_ADSR_SR | VOICE_PARAM_ADSR_SMODE);
-    in_pChannel->UpdateFlags |= SOUND_UPDATE_LOCK_SUSTAIN_RATE;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_LOCK_SUSTAIN_RATE;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -934,7 +934,7 @@ void SoundVM_B2_ReleaseRate( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
     in_pChannel->VoiceParams.AdsrUpper &= ~SOUND_ADSR_RELEASE_RATE_MASK;
     in_pChannel->VoiceParams.AdsrUpper |= ReleaseRate << SOUND_ADSR_RELEASE_RATE_SHIFT;
     in_pChannel->VoiceParams.VoiceParamFlags |= (VOICE_PARAM_ADSR_RR | VOICE_PARAM_ADSR_RMODE);
-    in_pChannel->UpdateFlags |= SOUND_UPDATE_LOCK_RELEASE_RATE;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_LOCK_RELEASE_RATE;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -955,21 +955,30 @@ void SoundVM_B7_AttackMode( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 void SoundVM_BB_SustainMode( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     u16 Mode = *( in_pChannel->ProgramCounter++ );
-    in_pChannel->VoiceParams.AdsrUpper &= ~( (1 << 14) | (1 << 15) );
+    in_pChannel->VoiceParams.AdsrUpper &= ~( (1 << SOUND_ADSR_SUS_MODE_SHIFT) | (1 << SOUND_ADSR_SUS_DIR_SHIFT) );
 
     switch( Mode )
     {
-        case 3:
-            in_pChannel->VoiceParams.AdsrUpper |= 0x4000;
+        case SUS_CODE_LINEAR_DECREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= ( 
+                SUS_DIR_DEC << SOUND_ADSR_SUS_DIR_SHIFT 
+                | SUS_MODE_LIN << SOUND_ADSR_SUS_MODE_SHIFT 
+            );
             break;
-        case 5:
-            in_pChannel->VoiceParams.AdsrUpper |= 0x8000;
+        case SUS_CODE_EXPONENTIAL_INCREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= ( 
+                SUS_DIR_INC << SOUND_ADSR_SUS_DIR_SHIFT 
+                | SUS_MODE_EXP << SOUND_ADSR_SUS_MODE_SHIFT 
+            );
             break;
-        case 7:
-            in_pChannel->VoiceParams.AdsrUpper |= 0xC000;
+        case SUS_CODE_EXPONENTIAL_DECREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= ( 
+                SUS_DIR_DEC << SOUND_ADSR_SUS_DIR_SHIFT 
+                | SUS_MODE_EXP << SOUND_ADSR_SUS_MODE_SHIFT 
+            );
             break;
     }
-    in_pChannel->VoiceParams.VoiceParamFlags |= 0x200;
+    in_pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_ADSR_SMODE;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1136,13 +1145,13 @@ void SoundVM_FE04_ClearKeymapTable( FSoundChannel* in_pChannel, u32 in_VoiceFlag
     if( g_pActiveMusicContext->KeymapTable != NULL )
     {
         in_pChannel->UpdateFlags &= ~(
-            SOUND_UPDATE_DRUM_MODE  |
-            SOUND_UPDATE_UNKNOWN_12 |
-            SOUND_UPDATE_LOCK_ATTACK_RATE |
-            SOUND_UPDATE_LOCK_SUSTAIN_RATE |
-            SOUND_UPDATE_LOCK_RELEASE_RATE
+            SOUND_CHANNEL_UPDATE_DRUM_MODE  |
+            SOUND_CHANNEL_UPDATE_UNKNOWN_12 |
+            SOUND_CHANNEL_UPDATE_LOCK_ATTACK_RATE |
+            SOUND_CHANNEL_UPDATE_LOCK_SUSTAIN_RATE |
+            SOUND_CHANNEL_UPDATE_LOCK_RELEASE_RATE
         );
-        in_pChannel->UpdateFlags |= SOUND_UPDATE_DRUM_MODE;
+        in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_DRUM_MODE;
     }
 }
 
@@ -1150,7 +1159,7 @@ void SoundVM_FE04_ClearKeymapTable( FSoundChannel* in_pChannel, u32 in_VoiceFlag
 void SoundVM_FE05_MuteVoice( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     in_pChannel->VoiceParams.VolumeScale = 0;
-    in_pChannel->UpdateFlags &= ~SOUND_UPDATE_DRUM_MODE;
+    in_pChannel->UpdateFlags &= ~SOUND_CHANNEL_UPDATE_DRUM_MODE;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1244,8 +1253,8 @@ void SoundVM_D3_ToggleFmDelay( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_CB_DisableVoiceModes( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    in_pChannel->UpdateFlags &= ~( SOUND_UPDATE_SIDE_CHAIN_PITCH | SOUND_UPDATE_SIDE_CHAIN_VOL | SOUND_UPDATE_PAN_LFO |
-        SOUND_UPDATE_TREMOLO | SOUND_UPDATE_VIBRATO );
+    in_pChannel->UpdateFlags &= ~( SOUND_CHANNEL_UPDATE_SIDE_CHAIN_PITCH | SOUND_CHANNEL_UPDATE_SIDE_CHAIN_VOL | SOUND_CHANNEL_UPDATE_PAN_LFO |
+        SOUND_CHANNEL_UPDATE_TREMOLO | SOUND_CHANNEL_UPDATE_VIBRATO );
     SoundVM_C5_DisableNoiseVoices(in_pChannel, in_VoiceFlags);
     SoundVM_C7_DisableFmVoices(in_pChannel, in_VoiceFlags);
     SoundVM_C3_DisableReverbVoices(in_pChannel, in_VoiceFlags);
@@ -1255,25 +1264,25 @@ void SoundVM_CB_DisableVoiceModes( FSoundChannel* in_pChannel, u32 in_VoiceFlags
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_D4_EnablePlaybackRateSidechain( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    in_pChannel->UpdateFlags |= SOUND_UPDATE_SIDE_CHAIN_PITCH;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_SIDE_CHAIN_PITCH;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_D5_DisablePlaybackRateSidechain( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    in_pChannel->UpdateFlags &= ~SOUND_UPDATE_SIDE_CHAIN_PITCH;
+    in_pChannel->UpdateFlags &= ~SOUND_CHANNEL_UPDATE_SIDE_CHAIN_PITCH;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_D6_EnablePitchVolumeSidechain( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    in_pChannel->UpdateFlags |= SOUND_UPDATE_SIDE_CHAIN_VOL;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_SIDE_CHAIN_VOL;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_D7_DisablePitchVolumeSidechain( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    in_pChannel->UpdateFlags &= ~SOUND_UPDATE_SIDE_CHAIN_VOL;
+    in_pChannel->UpdateFlags &= ~SOUND_CHANNEL_UPDATE_SIDE_CHAIN_VOL;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1291,7 +1300,7 @@ void SoundVM_FE0B_800558cc( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_E0_80055944( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    in_pChannel->UpdateFlags |= SOUND_UPDATE_UNKNOWN_20;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_VOICE_ACTIVE;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

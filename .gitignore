@@ -10,6 +10,7 @@ linker/
 tools/pcsx-redux-tools/
 tools/objdiff/config.yaml
 tools/gh-issue-sync/config.toml
+tools/scripts/generate_compile_commands.conf
 .vscode/
 .idea/
 __pycache__/
@@ -18,6 +19,7 @@ nonmatchings/
 expected/
 notes/
 .venv/
+compile_commands.json
 objdiff.json
 todo.md
 
