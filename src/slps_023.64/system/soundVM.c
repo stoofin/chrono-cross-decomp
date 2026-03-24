@@ -208,7 +208,7 @@ void SoundVM_A9_ChannelVolumeSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlag
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SoundVM_FE19_80054348( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
+void SoundVM_FE19_KeyOnVolumeSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     u16 pPc1;
     s32 Dest;
@@ -233,13 +233,13 @@ void SoundVM_FE19_80054348( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE1A_800543d8( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_UNKNOWN_01;
+    in_pChannel->UpdateFlags |= SOUND_CHANNEL_UPDATE_UNKNOWN_06;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void SoundVM_FE1B_800543ec( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
-    in_pChannel->UpdateFlags &= ~SOUND_CHANNEL_UPDATE_UNKNOWN_01;
+    in_pChannel->UpdateFlags &= ~SOUND_CHANNEL_UPDATE_UNKNOWN_06;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

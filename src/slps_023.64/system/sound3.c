@@ -184,13 +184,7 @@ void func_80051F7C(void) {
 void func_800535E4(FSoundChannel*, u32);
 extern s32 D_80094FFC;
 
-typedef enum EMusicContextType
-{
-    MUSIC_CONTEXT_ACTIVE    = 0,
-    MUSIC_CONTEXT_SUSPENDED = 1
-} EMusicContextType;
-
-u32 func_80052458( FSoundChannel* in_pChannel, EMusicContextType in_ContextType )
+u32 Music_UpdateChannels( FSoundChannel* in_pChannel, EMusicContextType in_ContextType )
 {
     FSoundChannel* pChannel;
     s32 TempoStep;
@@ -341,67 +335,83 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", Sound_MainLoop);
 INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", func_80052DA4);
 
 //----------------------------------------------------------------------------------------------------------------------
-void func_80052FB8(FSoundChannel* arg0, u32 arg1) {
-    FSoundInstrumentInfo* temp_a1;
-    s32 updateFlags;
+// TODO(jperos): Something is fucked with this function
+void func_80052FB8( FSoundChannel* in_pChannel, u32 arg1 )
+{
+    FSoundInstrumentInfo* InstrumentInfo;
+    s32 ChannelUpdateFlags;
     s32 temp_v1_2;
-    u8* keyMap;
+    u8* KeyMap;
 
-    if ((arg0->Key < arg1) || (arg0->Key == 0xFF)) {
-        keyMap = arg0->Keymap;
-        while (keyMap[13] != 0 && keyMap[2] < arg1) {
-            keyMap += 8;
+    if( ( in_pChannel->Key < arg1 ) || ( in_pChannel->Key == 0xFF ) )
+    {
+        KeyMap = in_pChannel->Keymap;
+        while( KeyMap[13] != 0 && KeyMap[2] < arg1 )
+        {
+            KeyMap += 8;
         }
-    } else {
-        if (arg1 >= arg0->Key) {
+    }
+    else
+    {
+        if( arg1 >= in_pChannel->Key )
+        {
             return;
         }
-        keyMap = arg0->Keymap;
-        while (keyMap[13] != 0 && arg1 >= keyMap[9]) {
-            keyMap += 8;
+        KeyMap = in_pChannel->Keymap;
+        while( KeyMap[13] != 0 && arg1 >= KeyMap[9] )
+        {
+            KeyMap += 8;
         }
     }
-    
-    temp_v1_2 = keyMap[0];
-    updateFlags = arg0->UpdateFlags;
-    arg0->InstrumentIndex = temp_v1_2;
-    temp_a1 = &g_InstrumentInfo[temp_v1_2];
-    arg0->VoiceParams.StartAddress = temp_a1->StartAddr;
-    arg0->VoiceParams.LoopAddress = temp_a1->LoopAddr;
-    
-    if (!(updateFlags & 0x01000000)) {
-        arg0->VoiceParams.AdsrLower = keyMap[3] << 8;
-    } else {
-        arg0->VoiceParams.AdsrLower &= 0x7F00;
+
+    temp_v1_2 = KeyMap[0];
+    ChannelUpdateFlags = in_pChannel->UpdateFlags;
+    in_pChannel->InstrumentIndex = temp_v1_2;
+    InstrumentInfo = &g_InstrumentInfo[temp_v1_2];
+    in_pChannel->VoiceParams.StartAddress = InstrumentInfo->StartAddr;
+    in_pChannel->VoiceParams.LoopAddress = InstrumentInfo->LoopAddr;
+
+    if( !( ChannelUpdateFlags & SOUND_CHANNEL_UPDATE_LOCK_ATTACK_MODE ) )
+    {
+        in_pChannel->VoiceParams.AdsrLower = KeyMap[3] << 8;
     }
-    
-    arg0->VoiceParams.AdsrLower |= temp_a1->AdsrLower & 0x80FF;
-    
-    if (!(updateFlags & 0x08000000)) {
-        arg0->VoiceParams.AdsrUpper &= 0x201F;
-        arg0->VoiceParams.AdsrUpper |= keyMap[4] << 6;
-    } else {
-        arg0->VoiceParams.AdsrUpper &= 0x3FDF;
+    else
+    {
+        in_pChannel->VoiceParams.AdsrLower &= 0x7F00;
     }
 
-    switch (keyMap[5]) {
-    case 3:
-        arg0->VoiceParams.AdsrUpper |= 0x4000;
-        break;
-    case 5:
-        arg0->VoiceParams.AdsrUpper |= 0x8000;
-        break;
-    case 7:
-        arg0->VoiceParams.AdsrUpper |= 0xC000;
-        break;
+    in_pChannel->VoiceParams.AdsrLower |= InstrumentInfo->AdsrLower & 0x80FF;
+
+    if( !( ChannelUpdateFlags & SOUND_CHANNEL_UPDATE_LOCK_SUSTAIN_RATE ) )
+    {
+        in_pChannel->VoiceParams.AdsrUpper &= 0x201F;
+        in_pChannel->VoiceParams.AdsrUpper |= KeyMap[4] << 6;
     }
-    
-    if ((updateFlags & 0x10000000) == 0) {
-        arg0->VoiceParams.AdsrUpper &= 0xFFE0;
-        arg0->VoiceParams.AdsrUpper |= keyMap[6];
+    else
+    {
+        in_pChannel->VoiceParams.AdsrUpper &= 0x3FDF;
     }
-    arg0->VoiceParams.AdsrUpper |= temp_a1->AdsrUpper & 0x20;
-    arg0->VoiceParams.VolumeScale = keyMap[7];
+
+    switch( KeyMap[5] )
+    {
+        case 3:
+            in_pChannel->VoiceParams.AdsrUpper |= 0x4000;
+            break;
+        case 5:
+            in_pChannel->VoiceParams.AdsrUpper |= 0x8000;
+            break;
+        case 7:
+            in_pChannel->VoiceParams.AdsrUpper |= 0xC000;
+            break;
+    }
+
+    if( ( ChannelUpdateFlags & SOUND_CHANNEL_UPDATE_LOCK_RELEASE_RATE ) == 0 )
+    {
+        in_pChannel->VoiceParams.AdsrUpper &= 0xFFE0;
+        in_pChannel->VoiceParams.AdsrUpper |= KeyMap[6];
+    }
+    in_pChannel->VoiceParams.AdsrUpper |= InstrumentInfo->AdsrUpper & 0x20;
+    in_pChannel->VoiceParams.VolumeScale = KeyMap[7];
 }
 
 #define FINE_TUNE_CENTER (0x80)

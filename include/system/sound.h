@@ -69,7 +69,7 @@ typedef enum ESoundUpdateFlags
     SOUND_CHANNEL_UPDATE_DRUM_MODE         = 1U <<  3,
     SOUND_CHANNEL_UPDATE_SIDE_CHAIN_PITCH  = 1U <<  4,
     SOUND_CHANNEL_UPDATE_SIDE_CHAIN_VOL    = 1U <<  5,
-    SOUND_CHANNEL_UPDATE_UNKNOWN_01        = 1U <<  6,
+    SOUND_CHANNEL_UPDATE_UNKNOWN_06        = 1U <<  6,
     SOUND_CHANNEL_UPDATE_OVERLAY           = 1U <<  8,
     SOUND_CHANNEL_UPDATE_ALTERNATIVE       = 1U <<  9,
     SOUND_CHANNEL_UPDATE_UNKNOWN_12        = 1U << 12,
@@ -727,10 +727,17 @@ void Sound_Cmd_XX_Null( FSoundCommandParams* in_Params );
 void Sound_SetReverbMode( s32 in_ReverbMode );
 void* Sound_ExecuteSoundVm2Function( u32 in_FunctionIndex );
 
+typedef enum EMusicContextType
+{
+    MUSIC_CONTEXT_ACTIVE    = 0,
+    MUSIC_CONTEXT_SUSPENDED = 1
+} EMusicContextType;
+
 // Sound 3
 void Sound_UpdateCdVolume();
 void memcpy32( s32* in_Src, s32* in_Dst, uint in_Size );
 void memswap32( s32* in_A, s32* in_B, uint in_Size );
+u32 Music_UpdateChannels( FSoundChannel* in_pChannel, EMusicContextType in_ContextType );
 long Sound_MainLoop();
 s32 Sound_ComputeSlideStep( u32*, s32, s32, s32 );
 void Sound_CopyInstrumentInfoToChannel( FSoundChannel* in_pChannel, FSoundInstrumentInfo* in_pInstrumentInfo, u32 in_StartAddress );
@@ -751,7 +758,7 @@ void SoundVM_A3_ChannelMasterVolume( FSoundChannel* in_pChannel, u32 in_VoiceFla
 void SoundVM_FE12_VolumeBalanceSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 void SoundVM_A8_ChannelVolume( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 void SoundVM_A9_ChannelVolumeSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
-void SoundVM_FE19_80054348( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
+void SoundVM_FE19_KeyOnVolumeSlide( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 void SoundVM_FE1A_800543d8( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 void SoundVM_FE1B_800543ec( FSoundChannel* in_pChannel, u32 in_VoiceFlags );
 void SoundVM_AA_ChannelPan( FSoundChannel* in_pChannel, u32 in_VoiceFlags );

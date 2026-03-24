@@ -268,7 +268,7 @@ void SetVoiceParams( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 i
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void SetVoiceParamsByFlags( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 in_UpdateFlags )
+void SetVoiceParamsByFlags( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 in_ChannelUpdateFlags )
 {
     s32 flags;
 
