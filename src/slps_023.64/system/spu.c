@@ -182,7 +182,7 @@ void Sound_Setup()
         VoiceIndex++;
         pChannel->UpdateFlags = 0;
         pChannel->VoiceParams.AssignedVoiceNumber = AssignedVoiceNumber;
-        pChannel->Type = SOUND_CHANNEL_TYPE_SOUND;
+        pChannel->Type = SOUND_CHANNEL_TYPE_SFX;
         pChannel->Priority = 0;
         pChannel->VolumeMod = 0x7F00;
         pChannel->VolumeModStepsRemaining = 0;

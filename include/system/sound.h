@@ -47,7 +47,7 @@ typedef enum EVoiceParamFlags
 typedef enum ESoundChannelTypes
 {
     SOUND_CHANNEL_TYPE_MUSIC = 0,
-    SOUND_CHANNEL_TYPE_SOUND = 1,
+    SOUND_CHANNEL_TYPE_SFX   = 1,
     SOUND_CHANNEL_TYPE_MENU  = 2
 } ESoundChannelTypes;
 
@@ -639,7 +639,7 @@ void SetVoiceAdsrSustainRateAndDirection( u32 in_VoiceIndex, s32 in_SustainRate,
 void SetVoiceAdsrReleaseRateAndMode( u32 in_VoiceIndex, s32 in_ReleaseRate, u32 in_ReleaseMode );
 void SetVoiceParams( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 in_VolumeScale );
 void SetVoiceParamsByFlags( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams, s32 in_UpdateFlags );
-void Sound_UpdateSlidesAndDelays( FSoundChannel* in_pChannel, u32 in_VoiceFlags, s32 );
+void Sound_UpdateSlidesAndDelays( FSoundChannel* in_pChannel, u32 in_VoiceFlags, ESoundChannelTypes in_ChannelType );
 void Sound_UpdateModulation( FSoundChannel* in_pChannel, int arg1 );
 void func_8004CA1C( FSoundChannel* in_pChannel );
 s32 Sound_StealQuietestVoice( s32 in_bForceFullScan );

@@ -230,7 +230,7 @@ void Sound_LoadAkaoSequence( FAkaoSequence* in_Sequence, s32 in_Mask )
     g_pActiveMusicContext->PendingKeyOffMask = 0;
     g_pActiveMusicContext->PreventRekeyOnMusicResumeMask = 0;
     
-    if( D_80094FFC & 1 )
+    if( D_80094FFC & (1 << 0) )
     {
         g_pActiveMusicContext->ActiveChannelMask = 0;
         g_pActiveMusicContext->SuspendedChannelMask |= ChannelEnableMask & in_Mask;
@@ -277,7 +277,7 @@ void Sound_LoadAkaoSequence( FAkaoSequence* in_Sequence, s32 in_Mask )
             Offset = *pData;
             pChannel->ProgramCounter = &pData[*(u16*)pData];
             pData += 2;
-            if( D_80094FFC & 0x100 )
+            if( D_80094FFC & (1 << 8) )
             {
                 ChannelLength = 0x1E4;
             }
@@ -615,8 +615,8 @@ INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound2", func_8004E7D8);
 void func_8004E7D8( FSoundChannel* in_pChannel, FSoundCommandParams* in_pCommandParams, s32 in_Flags, u8* in_ProgramCounter )
 {
     FSoundChannel* pChannel;
-    s32 Mask;
-    s32 Flag;
+    s32 SfxChannelCount;
+    s32 SfxChannelMask;
 
     in_pChannel->AkaoProgramIndex = in_pCommandParams->Param1;
     in_pChannel->unk_Flags = in_pCommandParams->Param2;
@@ -626,7 +626,7 @@ void func_8004E7D8( FSoundChannel* in_pChannel, FSoundCommandParams* in_pCommand
     in_pChannel->PanMod = in_pCommandParams->Param3 << 8;
     in_pChannel->Length1 = 2;
     in_pChannel->Length2 = 1;
-    in_pChannel->Type = 1;
+    in_pChannel->Type = SOUND_CHANNEL_TYPE_SFX;
     in_pChannel->VolumeModStepsRemaining = 0;
     in_pChannel->Priority = -2;
     in_pChannel->PitchMod = 0;
@@ -646,21 +646,21 @@ void func_8004E7D8( FSoundChannel* in_pChannel, FSoundCommandParams* in_pCommand
     g_Sound_SfxState.ReverbVoiceFlags &= ~in_Flags;
     g_Sound_SfxState.FmVoiceFlags &= ~in_Flags;
 
-    if( D_80094FFC & 2 )
+    if( D_80094FFC & (1 << 1) )
     {
-        Flag = (1 << 0xC);
+        SfxChannelMask = 1 << SOUND_SFX_CHANNEL_START_INDEX;
         pChannel = g_SfxSoundChannels;
-        Mask = 0xC;
+        SfxChannelCount = SOUND_SFX_CHANNEL_COUNT;
         do {
-            if( (g_Sound_SfxState.ActiveVoiceMask & Flag) && !(pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25) )
+            if( (g_Sound_SfxState.ActiveVoiceMask & SfxChannelMask) && !(pChannel->unk_Flags & SOUND_CHANNEL_UNK_FLAGS_25) )
             {
-                g_Sound_SfxState.ActiveVoiceMask &= ~Flag;
-                g_Sound_SfxState.SuspendedVoiceMask |= Flag;
+                g_Sound_SfxState.ActiveVoiceMask &= ~SfxChannelMask;
+                g_Sound_SfxState.SuspendedVoiceMask |= SfxChannelMask;
             }
-            Mask--;
+            SfxChannelCount--;
             pChannel++;
-            Flag <<= 1;
-        } while( Mask != 0 );
+            SfxChannelMask <<= 1;
+        } while( SfxChannelCount != 0 );
     }
 }
 #endif
@@ -953,7 +953,7 @@ void Sound_SetMusicSequence( FAkaoSequence* in_Sequence, s32 in_SwapWithSavedSta
     g_Sound_SfxState.KeyOffFlags |= VoicesToKeyOff;
     g_Sound_GlobalFlags.UpdateFlags |= SOUND_GLOBAL_UPDATE_08;
     
-    if( D_80094FFC & 1 )
+    if( D_80094FFC & ( 1 << 0) )
     {
         PrevActiveChannelMask = g_pActiveMusicContext->ActiveChannelMask;
         g_pActiveMusicContext->ActiveChannelMask = 0;

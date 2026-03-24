@@ -322,7 +322,7 @@ void SetVoiceParamsByFlags( u32 in_VoiceIndex, FSoundVoiceParams* in_VoiceParams
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-void Sound_UpdateSlidesAndDelays( FSoundChannel* in_pChannel, u32 in_VoiceFlags, s32 in_Arg2 )
+void Sound_UpdateSlidesAndDelays( FSoundChannel* in_pChannel, u32 in_VoiceFlags, ESoundChannelTypes in_ChannelType )
 {
     s16* Wave;
     s32 temp;
@@ -340,7 +340,7 @@ void Sound_UpdateSlidesAndDelays( FSoundChannel* in_pChannel, u32 in_VoiceFlags,
         in_pChannel->Volume = temp;
     }
 
-    if( in_Arg2 == 0 )
+    if( in_ChannelType == SOUND_CHANNEL_TYPE_MUSIC )
     {
         if( in_pChannel->VolumeBalanceSlideLength != 0 )
         {
@@ -400,7 +400,7 @@ void Sound_UpdateSlidesAndDelays( FSoundChannel* in_pChannel, u32 in_VoiceFlags,
         in_pChannel->NoiseTimer--;
         if( !(in_pChannel->NoiseTimer & 0xFFFF) )
         {
-            if (in_Arg2 == 0)
+            if (in_ChannelType == SOUND_CHANNEL_TYPE_MUSIC)
             {
                 g_pActiveMusicContext->NoiseChannelFlags ^= in_VoiceFlags;
             }
@@ -417,7 +417,7 @@ void Sound_UpdateSlidesAndDelays( FSoundChannel* in_pChannel, u32 in_VoiceFlags,
         in_pChannel->FmTimer--;
         if( !(in_pChannel->FmTimer & 0xFFFF) )
         {
-            if (in_Arg2 == 0)
+            if (in_ChannelType == SOUND_CHANNEL_TYPE_MUSIC)
             {
                 g_pActiveMusicContext->FmChannelFlags ^= in_VoiceFlags;
             }

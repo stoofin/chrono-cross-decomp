@@ -955,21 +955,30 @@ void SoundVM_B7_AttackMode( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 void SoundVM_BB_SustainMode( FSoundChannel* in_pChannel, u32 in_VoiceFlags )
 {
     u16 Mode = *( in_pChannel->ProgramCounter++ );
-    in_pChannel->VoiceParams.AdsrUpper &= ~( (1 << 14) | (1 << 15) );
+    in_pChannel->VoiceParams.AdsrUpper &= ~( (1 << SOUND_ADSR_SUS_MODE_SHIFT) | (1 << SOUND_ADSR_SUS_DIR_SHIFT) );
 
     switch( Mode )
     {
-        case 3:
-            in_pChannel->VoiceParams.AdsrUpper |= 0x4000;
+        case SUS_CODE_LINEAR_DECREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= ( 
+                SUS_DIR_DEC << SOUND_ADSR_SUS_DIR_SHIFT 
+                | SUS_MODE_LIN << SOUND_ADSR_SUS_MODE_SHIFT 
+            );
             break;
-        case 5:
-            in_pChannel->VoiceParams.AdsrUpper |= 0x8000;
+        case SUS_CODE_EXPONENTIAL_INCREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= ( 
+                SUS_DIR_INC << SOUND_ADSR_SUS_DIR_SHIFT 
+                | SUS_MODE_EXP << SOUND_ADSR_SUS_MODE_SHIFT 
+            );
             break;
-        case 7:
-            in_pChannel->VoiceParams.AdsrUpper |= 0xC000;
+        case SUS_CODE_EXPONENTIAL_DECREASE:
+            in_pChannel->VoiceParams.AdsrUpper |= ( 
+                SUS_DIR_DEC << SOUND_ADSR_SUS_DIR_SHIFT 
+                | SUS_MODE_EXP << SOUND_ADSR_SUS_MODE_SHIFT 
+            );
             break;
     }
-    in_pChannel->VoiceParams.VoiceParamFlags |= 0x200;
+    in_pChannel->VoiceParams.VoiceParamFlags |= VOICE_PARAM_ADSR_SMODE;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
