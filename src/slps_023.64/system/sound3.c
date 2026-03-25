@@ -11,46 +11,67 @@ void Sound_UpdateCdVolume()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-#ifndef NON_MATCHING
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", memcpy32);
-#else
 void memcpy32( s32* in_Src, s32* in_Dst, u32 in_Size )
 {
-    s32* Src;
-    s32* Dst;
-    u32 WordCount;
-    u32 BlockCount;
+    s32 w0, w1, w2, w3;
 
-    Src = in_Src;
-    Dst = in_Dst;
+    in_Size >>= 2;
 
-    WordCount = in_Size >> 2;
-    BlockCount = WordCount >> 2;
-
-    while( BlockCount != 0 )
+    while( ( in_Size >> 2 ) != 0 )
     {
-        Dst[0] = Src[0];
-        Dst[1] = Src[1];
-        Dst[2] = Src[2];
-        Dst[3] = Src[3];
-        Src += 4;
-        Dst += 4;
-        WordCount -= 4;
-        BlockCount = WordCount >> 2;
+        w0 = in_Src[0];
+        w1 = in_Src[1];
+        w2 = in_Src[2];
+        w3 = in_Src[3];
+        in_Dst[0] = w0;
+        in_Dst[1] = w1;
+        in_Dst[2] = w2;
+        in_Dst[3] = w3;
+        in_Src += 4;
+        in_Dst += 4;
+        in_Size -= 4;
     }
 
-    while( WordCount != 0 )
+    while( in_Size != 0 )
     {
-        *Dst = *Src;
-        Src++;
-        Dst++;
-        WordCount--;
+        *in_Dst++ = *in_Src++;
+        in_Size--;
     }
 }
-#endif
 
 //----------------------------------------------------------------------------------------------------------------------
-INCLUDE_ASM("asm/slps_023.64/nonmatchings/system/sound3", memswap32);
+void memswap32( s32* in_A, s32* in_B, u32 in_Size )
+{
+    s32 a0, a1, b0, b1;
+
+    in_Size >>= 2;
+
+    while( ( in_Size >> 1 ) != 0 )
+    {
+        a0 = in_A[0];
+        b0 = in_B[0];
+        a1 = in_A[1];
+        b1 = in_B[1];
+
+        in_B[0] = a0;
+        in_B[1] = a1;
+        in_A[0] = b0;
+        in_A[1] = b1;
+
+        in_A += 2;
+        in_B += 2;
+
+        in_Size -= 2;
+    }
+    
+    if( in_Size != 0 )
+    {
+        a0 = *in_A;
+        b0 = *in_B;
+        *in_B = a0;
+        *in_A = b0;
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 
